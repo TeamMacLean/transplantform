@@ -1,0 +1,20 @@
+// 1. Import the initial variables
+@import "~bulma/sass/utilities/initial-variables";
+@import "~bulma/sass/utilities/functions";
+
+$cello: #37495C;
+$cello-invert: #fff;
+$primary: $cello;
+$primary-invert: $cello-invert;
+
+//@import "~bulma/sass/utilities/derived-variables";
+//$addColors: (
+//  "twitter":($twitter, $twitter-invert),
+//  "linkedin": ($linkedin, $linkedin-invert),
+//  "github": ($github, $github-invert)
+//);
+//$colors: map-merge($colors, $addColors);
+
+// 6. Import the rest of Bulma
+@import "~bulma/bulma";
+@import "~bulma-tooltip";
