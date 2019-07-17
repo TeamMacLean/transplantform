@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91+devel+osxmenu r12922"
+   sodipodi:docname="drawing.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="47.641147"
+     inkscape:cy="662.16192"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1103"
+     inkscape:window-height="856"
+     inkscape:window-x="1046"
+     inkscape:window-y="238"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4141" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#37495c;stroke-width:8.6929135;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 190 362.51953 C 173.38 362.51953 160 371.43953 160 382.51953 L 160 502.51953 L 160 512.51953 L 160 562.51953 C 160 568.05953 164.46001 572.51953 170 572.51953 L 270 572.51953 C 275.53999 572.51953 280 568.05953 280 562.51953 L 280 512.51953 L 280 502.51953 L 280 382.51953 C 280 371.43953 266.62 362.51953 250 362.51953 L 190 362.51953 z "
+       id="rect4143"
+       inkscape:export-xdpi="109.65641"
+       inkscape:export-ydpi="109.65641"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png"
+       transform="scale(0.26458333)" />
+    <rect
+       style="opacity:1;fill:#37495c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4151"
+       width="3.9687488"
+       height="2.6458282"
+       x="44.979168"
+       y="151.47917"
+       rx="0"
+       ry="0"
+       inkscape:export-xdpi="109.65641"
+       inkscape:export-ydpi="109.65641"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
+    <rect
+       style="opacity:1;fill:#37495c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4151-9"
+       width="3.9687488"
+       height="2.6458282"
+       x="67.46875"
+       y="151.47917"
+       rx="0"
+       ry="0"
+       inkscape:export-xdpi="109.65641"
+       inkscape:export-ydpi="109.65641"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#37495c;stroke-width:2.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 42.333333,118.40625 31.749999,0"
+       id="path4168"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="109.65641"
+       inkscape:export-ydpi="109.65641"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#37495c;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 46.302083,106.5 10e-7,5.29167"
+       id="path4170"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="109.65641"
+       inkscape:export-ydpi="109.65641"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#37495c;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 46.302083,125.02083 0,5.29167"
+       id="path4170-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-xdpi="109.65641"
+       inkscape:export-ydpi="109.65641"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4194"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33333397px;line-height:125%;font-family:Stenc;-inkscape-font-specification:Stenc;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="matrix(0.26458333,0,0,0.26458333,14.022917,-22.489583)"><flowRegion
+         id="flowRegion4196"
+         style="font-size:13.33333397px"><rect
+           id="rect4198"
+           width="70.5"
+           height="42.000008"
+           x="35"
+           y="342.51968"
+           style="font-size:13.33333397px" /></flowRegion><flowPara
+         id="flowPara4200">2a3639ff</flowPara><flowPara
+         id="flowPara4206">ecf0f1ff</flowPara><flowPara
+         id="flowPara4204" /></flowRoot>  </g>
+</svg>
