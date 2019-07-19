@@ -671,48 +671,48 @@ router.post('/stock/new', (req, res) => {
 
 });
 
-// router.post('/stock', (req, res) => {
-//
-//   const editedStock = req.body.stock;
-//
-//
-//   if (editedStock) {
-//
-//     Stock.findById(editedStock._id)
-//       .populate('plate')
-//       .then(dbStock => {
-//         Object.keys(editedStock.plate).forEach(function (key) {
-//           if (key) {
-//             if (dbStock.plate[key] && editedStock.plate[key]) {
-//               if (key.indexOf('_') !== 0) {
-//                 dbStock.plate[key] = editedStock.plate[key];
-//               }
-//             }
-//           }
-//         });
-//
-//         dbStock.plate
-//           .save()
-//           .then(savedPlate => {
-//             return dbStock.save()
-//           })
-//           .then(savedStock => {
-//             return res.status(200).json({stock: savedStock})
-//           })
-//           .catch(err => {
-//             return res.status(500).json({error: err})
-//           })
-//
-//
-//       })
-//       .catch(err => {
-//         return res.status(500).json({error: err})
-//       })
-//   } else {
-//     return res.status(500).json({error: new Error('stock not found')})
-//   }
-//
-// });
+router.post('/stock/:id/save', (req, res) => {
+
+  const editedStock = req.body.stock;
+
+
+  if (editedStock) {
+
+    Stock.findById(editedStock._id)
+      .populate('plate')
+      .then(dbStock => {
+        Object.keys(editedStock.plate).forEach(function (key) {
+          if (key) {
+            if (dbStock.plate[key] && editedStock.plate[key]) {
+              if (key.indexOf('_') !== 0) {
+                dbStock.plate[key] = editedStock.plate[key];
+              }
+            }
+          }
+        });
+
+        dbStock.plate
+          .save()
+          .then(savedPlate => {
+            return dbStock.save()
+          })
+          .then(savedStock => {
+            return res.status(200).json({stock: savedStock})
+          })
+          .catch(err => {
+            return res.status(500).json({error: err})
+          })
+
+
+      })
+      .catch(err => {
+        return res.status(500).json({error: err})
+      })
+  } else {
+    return res.status(500).json({error: new Error('stock not found')})
+  }
+
+});
 
 
 router.get('/master', (req, res) => {

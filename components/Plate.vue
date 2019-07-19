@@ -232,7 +232,11 @@
       buttonValue() {
         if (this.save) {
           if (this.editMode) {
-            return 'Save'
+            if (this.saving) {
+              return 'Saving...'
+            } else {
+              return 'Save'
+            }
           } else {
             return 'Edit'
           }
