@@ -45,9 +45,13 @@
     },
     methods: {
       saveStock: function () {
-        return new Promise((good, bad) => {
-          good();
-        })
+        return this.$axios.post('/api/stock/' + this.stock._id + '/save', {stock: this.stock})
+          // .then((res) => {
+          //   // this.$set(this, 'stock', res.data.stock)
+          // })
+          // .catch(err => {
+          //   console.error(err);
+          // })
       },
       retireStock: function () {
         return this.$axios.post('/api/stock/' + this.stock._id + '/retire')
