@@ -5,7 +5,7 @@
         <!--<img src="/fridge_small.png" width="16" height="28">-->
         <b class="heading" style="font-size:1.2rem;">Fridge</b>
       </nuxt-link>
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" type="button"
          data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -30,18 +30,13 @@
 
         <div v-if="this.$auth.loggedIn" class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
+            <font-awesome-icon :icon="['far', 'user-circle']" class="fa-2x" style="margin-right:8px;"/>
             {{this.$auth.user.name}}
           </a>
 
 
           <div class="navbar-dropdown">
 
-            <div v-if="this.$auth.user.isAdmin">
-              <a class="navbar-item">
-                Admin
-              </a>
-              <hr class="navbar-divider">
-            </div>
             <a class="navbar-item" v-on:click="LogOut">
               Sign out
             </a>
@@ -54,7 +49,7 @@
             <!--<a class="button is-primary">-->
             <!--<strong>Sign up</strong>-->
             <!--</a>-->
-            <nuxt-link to="/signin" class="button is-outlined is-primary">
+            <nuxt-link to="/signin" class="button is-outlined is-primary" type="button">
               Sign in
             </nuxt-link>
           </div>
@@ -73,12 +68,14 @@
     methods: {
       async LogOut() {
         await this.$auth.logout()
+        this.$router.push({
+          path: '/'
+        })
       }
     }
   }
 </script>
 <style>
-
 
 
   .navbar-menu > .navbar-item.is-active {

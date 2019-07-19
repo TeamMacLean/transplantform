@@ -11,6 +11,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^5.9.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@nuxtjs/auth": "^4.8.1",
     "@nuxtjs/axios": "^5.3.6",
@@ -26,7 +27,9 @@
     "nuxt": "^2.0.0",
     "nuxt-fontawesome": "^0.4.0",
     "sass-loader": "^7.1.0",
-    "vue": "latest"
+    "vue": "latest",
+    "vue-sweetalert2": "^2.1.1",
+    "xlsx": "^0.14.3"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"

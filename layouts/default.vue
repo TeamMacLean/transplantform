@@ -1,14 +1,18 @@
 <template>
   <div>
     <Header/>
-    <nuxt/>
+    <section class="section">
+      <div class="container">
+        <nuxt/>
+      </div>
+    </section>
   </div>
 </template>
 
 <style>
-  html, body {
-    background: #F7F7F7;
-  }
+  /*html, body {*/
+  /*!*background: #F7F7F7;*!*/
+  /*}*/
 </style>
 
 

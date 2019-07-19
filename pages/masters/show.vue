@@ -1,9 +1,7 @@
 <template>
-  <section class="section">
-    <section class="section">
-      <Plate :plate="plate" :save="saveStock"/>
-    </section>
-  </section>
+  <div>
+  <Plate :plate="plate" :save="saveStock"/>
+  </div>
 </template>
 
 <script>

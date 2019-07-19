@@ -1,27 +1,30 @@
 <template>
-  <td class="has-text-centered tooltip is-unselectable" v-bind:data-tooltip="item.name" v-longpress="onLongPress"
-      @click="onPress(item)" v-bind:class="{'is-selected':selected}">
 
-    <div v-if="edit">
-      <input class="input is-small" v-model="item.name">
+  <td v-if="item" class=" has-text-centered tooltip is-unselectable" v-bind:data-tooltip="item.ec || 'Empty'"
+      v-longpress="onLongPress"
+      @click="onPress(item)"
+      v-bind:class="{'is-selected':selected, 'is-warning':this.item.volume < 500, 'is-danger':this.item.volume < 200  || !item.fr && !item.ec}">
+
+
+    <div v-if="editMode">
+      <input class="input is-small" v-model="item.fr">
+      <input class="input is-small" v-model="item.ec">
+      <input type="number" class="input is-small" v-model="item.volume" max="900" min="0">
     </div>
     <div v-else>
-      <span>{{item.name}}</span>
+      <span class="small-cell-text">{{item.fr}}</span>
+      <div v-if="!editMode && item.fr && item.ec">
+        {{item.volume}}
+      </div>
     </div>
 
     <br/>
-    {{item.val}}
-    <div v-if="item.val < 500 && item.val > 200">
-      <span
-        style="position: absolute;top:2px;left:2px;width:8px;height:8px;background-color: #FEDC62;border-radius: 50%;"></span>
+
+  </td>
+  <td v-else class="has-text-centered">
+    <div>
+      N/A
     </div>
-
-    <div v-if="item.val < 200">
-      <span
-        style="position: absolute;top:2px;left:2px;width:8px;height:8px;background-color: #FC3C63;border-radius: 50%;"></span>
-    </div>
-
-
   </td>
 </template>
 
@@ -29,15 +32,15 @@
   export default {
     computed: {
       selected() {
-        return this.item.selected
+        return this.item ? this.item.selected : null
       }
     },
-    props: ['item', 'edit', 'onPress', 'onLongPress', 'pos'],
+    props: ['item', 'editMode', 'onPress', 'onLongPress', 'pos'],
   }
 </script>
 
 <style>
-  span {
+  .small-cell-text {
     font-size: 0.65rem
   }
 

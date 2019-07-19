@@ -40,7 +40,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~/plugins/long-press.js'}
+    {src: '~/plugins/long-press.js'}
   ],
   /*
   ** Nuxt.js modules
@@ -49,6 +49,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     'nuxt-fontawesome', //V5
+    'vue-sweetalert2/nuxt',
   ],
   fontawesome: {
     imports: [
@@ -56,6 +57,10 @@ export default {
       {
         set: '@fortawesome/free-solid-svg-icons',
         icons: ['fas']
+      },
+      {
+        set: '@fortawesome/free-regular-svg-icons',
+        icons: ['far']
       },
     ]
   },
@@ -76,7 +81,7 @@ export default {
     }
   },
   router: {
-    linkActiveClass: 'is-active'
+    linkActiveClass: 'is-active',
   },
   /*
   ** Axios module configuration
