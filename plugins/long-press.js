@@ -4,16 +4,16 @@ Vue.directive('longpress', {
     // Make sure expression provided is a function
     if (typeof binding.value !== 'function') {
       // Fetch name of component
-      const compName = vNode.context.name
+      const compName = vNode.context.name;
       // pass warning to console
-      let warn = `[longpress:] provided expression '${binding.expression}' is not a function, but has to be`
+      let warn = `[longpress:] provided expression '${binding.expression}' is not a function, but has to be`;
       if (compName) { warn += `Found in component '${compName}' ` }
 
       console.warn(warn)
     }
 
     // Define variable
-    let pressTimer = null
+    let pressTimer = null;
 
     // Define funtion handlers
     // Create timeout ( run function after 1s )
@@ -29,28 +29,28 @@ Vue.directive('longpress', {
           handler()
         }, 1000)
       }
-    }
+    };
 
     // Cancel Timeout
     let cancel = (e) => {
       // Check if timer has a value or not
       if (pressTimer !== null) {
-        clearTimeout(pressTimer)
+        clearTimeout(pressTimer);
         pressTimer = null
       }
-    }
+    };
     // Run Function
     const handler = (e) => {
       binding.value(e)
-    }
+    };
 
     // Add Event listeners
-    el.addEventListener("mousedown", start);
-    el.addEventListener("touchstart", start);
+    el.addEventListener("mousedown", start,{passive: true});
+    el.addEventListener("touchstart", start,{passive: true});
     // Cancel timeouts if this events happen
-    el.addEventListener("click", cancel);
-    el.addEventListener("mouseout", cancel);
-    el.addEventListener("touchend", cancel);
-    el.addEventListener("touchcancel", cancel);
+    el.addEventListener("click", cancel,{passive: true});
+    el.addEventListener("mouseout", cancel,{passive: true});
+    el.addEventListener("touchend", cancel,{passive: true});
+    el.addEventListener("touchcancel", cancel,{passive: true});
   }
 });

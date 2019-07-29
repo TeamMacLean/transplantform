@@ -1,12 +1,11 @@
 <template>
   <div>
-    <div v-if="plate">
+    <div v-if="plates">
       <div class="columns">
         <div class="column">
-          <p class="title is-4">{{stock.name}}
-            <font-awesome-icon :icon="['far', 'check-circle']" v-if="!stock.active"/>
+          <p class="title is-4">{{master.name}}
+            <font-awesome-icon :icon="['far', 'check-circle']" v-if="!master.active"/>
           </p>
-          <!--<p class="subtitle is-6">Barcode: {{stock.barcode}}; Species: {{stock.species}}</p>-->
           <div class="subtitle">
 
 
@@ -14,21 +13,21 @@
               <div class="control">
                 <div class="tags has-addons">
                   <span class="tag">barcode</span>
-                  <span class="tag is-outlined">{{stock.barcode}}</span>
+                  <span class="tag is-outlined">{{master.barcode}}</span>
                 </div>
               </div>
 
               <div class="control">
                 <div class="tags has-addons">
                   <span class="tag">species</span>
-                  <span class="tag is-outlined">{{stock.species}}</span>
+                  <span class="tag is-outlined">{{master.species}}</span>
                 </div>
               </div>
 
               <div class="control">
                 <div class="tags has-addons">
                   <span class="tag">created</span>
-                  <span class="tag is-outlined">{{moment(stock.created).format('DD/MM/YYYY')}}</span>
+                  <span class="tag is-outlined">{{moment(master.created).format('DD/MM/YYYY')}}</span>
                 </div>
               </div>
             </div>
@@ -46,12 +45,13 @@
               </div>
               <div class="dropdown-menu" id="dropdown-menu3" role="menu">
                 <div class="dropdown-content">
-                  <a class="dropdown-item" @click="retireStock" v-if="stock.active">
+                  <a class="dropdown-item" @click="retireMaster" v-if="master.active">
                     Retire
                   </a>
-                  <a class="dropdown-item" @click="activeateStock" v-if="!stock.active">
+                  <a class="dropdown-item" @click="activateMaster" v-if="!master.active">
                     Activate
                   </a>
+
                   <!--<a class="dropdown-item is-disabled" @click="rename" disabled="disabled">-->
                   <!--Rename-->
                   <!--</a>-->
@@ -62,7 +62,25 @@
         </div>
       </div>
 
-      <Plate :plate="plate" :save="saveStock" :isEditable="stock.active" :canSpawnMasters="stock.active"/>
+      <div class="tabs">
+        <ul>
+          <li v-for="(plate, i) in plates" v-bind:class="{'is-active':activeTab===i}">
+            <a @click="setActiveTab(i)">Plate {{i}}</a>
+          </li>
+        </ul>
+      </div>
+
+
+      <div v-for="(plate, i) in plates">
+        <div v-if="activeTab === i">
+          <div class="columns">
+            <div class="column">
+              <Plate :plate="plate" :save="saveMaster" :isEditable="master.active" :canSpawnMasters="false"
+                     :canTakeVolume="true"/>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
     </div>
@@ -76,11 +94,11 @@
   export default {
     middleware: 'auth',
     computed: {
-      plate() {
-        if (this.stock) {
-          return this.stock.plate
+      plates() {
+        if (this.master) {
+          return this.master.plates
         } else {
-          return null;
+          return [];
         }
       },
       "moment": function () {
@@ -91,39 +109,41 @@
       Plate
     },
     asyncData({$axios, store, params}) {
-      return $axios.get('/api/stock/' + params.id)
+      return $axios.get('/api/master/' + params.id)
         .then((res) => {
           return {
-            stock: res.data.stock
+            master: res.data.master,
+            activeTab: 0,
+            reloadKey: 0
           }
         })
         .catch(err => {
           console.error(err);
-          return {
-            stock: null
-          }
         })
     },
     methods: {
       rename: function () {
 
       },
-      saveStock: function () {
-        return this.$axios.post('/api/stock/' + this.stock._id + '/save', {stock: this.stock})
+      setActiveTab: function (i) {
+        this.activeTab = i;
       },
-      retireStock: function () {
-        return this.$axios.post('/api/stock/' + this.stock._id + '/retire')
+      saveMaster: function () {
+        return this.$axios.post('/api/master/' + this.master._id + '/save', {master: this.master})
+      },
+      retireMaster: function () {
+        return this.$axios.post('/api/master/' + this.master._id + '/retire')
           .then((res) => {
-            this.$set(this.stock, 'active', res.data.active)
+            this.$set(this.master, 'active', res.data.active)
           })
           .catch(err => {
             console.error(err);
           })
       },
-      activeateStock: function () {
-        return this.$axios.post('/api/stock/' + this.stock._id + '/activate')
+      activateMaster: function () {
+        return this.$axios.post('/api/master/' + this.master._id + '/activate')
           .then((res) => {
-            this.$set(this.stock, 'active', res.data.active)
+            this.$set(this.master, 'active', res.data.active)
           })
           .catch(err => {
             console.error(err);

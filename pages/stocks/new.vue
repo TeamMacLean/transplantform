@@ -55,6 +55,7 @@
   import Plate from '../../components/Plate'
 
   export default {
+    middleware: 'auth',
     components: {
       Plate
     },
@@ -132,9 +133,9 @@
             plate: this.plate
           }
         })
-          .then(() => {
+          .then((res) => {
             this.$router.push({
-              path: '/stocks'
+              path: `/stocks/${res.data.stock._id}`
             })
           })
           .catch(err => {

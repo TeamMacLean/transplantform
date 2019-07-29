@@ -8,6 +8,7 @@
   import Plate from '../../components/Plate';
 
   export default {
+    middleware: 'auth',
     computed: {
       plate() {
         return this.stock.plate
@@ -16,7 +17,6 @@
     components: {
       Plate
     },
-    middleware: 'auth',
     asyncData({$axios, store}) {
       return $axios.get('/api/stock')
         .then((res) => {

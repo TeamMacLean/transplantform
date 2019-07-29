@@ -3,7 +3,7 @@
   <td v-if="item" class=" has-text-centered tooltip is-unselectable" v-bind:data-tooltip="item.ec || 'Empty'"
       v-longpress="onLongPress"
       @click="onPress(item)"
-      v-bind:class="{'is-selected':selected, 'is-warning':this.item.volume < 500, 'is-danger':this.item.volume < 200  || !item.fr && !item.ec}">
+      v-bind:class="{'is-selected':selected, 'is-warning':isWarning, 'is-danger':isDanger}">
 
 
     <div v-if="editMode">
@@ -14,11 +14,9 @@
     <div v-else>
       <span class="small-cell-text">{{item.fr}}</span>
       <div v-if="!editMode && item.fr && item.ec">
-        {{item.volume}}
+        {{item.volume}}µl
       </div>
     </div>
-
-    <br/>
 
   </td>
   <td v-else class="has-text-centered">
@@ -31,6 +29,12 @@
 <script>
   export default {
     computed: {
+      isWarning() {
+        return this.item.volume < 500 && this.item.fr && this.item.ec
+      },
+      isDanger() {
+        return this.item.volume < 200 && this.item.fr && this.item.ec
+      },
       selected() {
         return this.item ? this.item.selected : null
       }

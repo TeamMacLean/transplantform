@@ -2,8 +2,8 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <nuxt-link to="/" class="navbar-item">
-        <!--<img src="/fridge_small.png" width="16" height="28">-->
-        <b class="heading" style="font-size:1.2rem;">Fridge</b>
+        <!--<img src="/fridge.png" width="16" height="28" style="margin-right:8px;">-->
+        <b class="heading has-text-primary" style="font-size:1.2rem;">Fridge</b>
       </nuxt-link>
       <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" type="button"
          data-target="navbarBasicExample">

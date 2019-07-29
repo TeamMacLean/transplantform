@@ -11,7 +11,7 @@
       <div class="columns" v-for="i in Math.ceil(stocksActive.length / 4)">
         <div class="column is-3" v-for="stock in stocksActive.slice((i - 1) * 4, i * 4)">
           <nuxt-link v-bind:to="'/stocks/'+stock._id">
-            <StockCard :stock="stock"/>
+            <StockCard :stock="stock"></StockCard>
           </nuxt-link>
         </div>
       </div>
@@ -25,7 +25,7 @@
       <div class="columns" v-for="i in Math.ceil(stocksRetired.length / 4)">
         <div class="column is-3" v-for="stock in stocksRetired.slice((i - 1) * 4, i * 4)">
           <nuxt-link v-bind:to="'/stocks/'+stock._id">
-            <StockCard :stock="stock"/>
+            <StockCard :stock="stock"></StockCard>
           </nuxt-link>
         </div>
       </div>
@@ -41,11 +41,10 @@
 
 <script>
   import StockCard from '../../components/StockCard'
-  import StockLevel from '../../components/StockLevel'
 
   export default {
     middleware: 'auth',
-    components: {StockCard, StockLevel},
+    components: {StockCard},
     asyncData({$axios, store}) {
       return $axios.get('/api/stock')
         .then((res) => {
