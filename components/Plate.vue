@@ -1,8 +1,10 @@
 <template>
   <div>
+
     <table class="table is-bordered is-fullwidth" v-bind:class="{ 'is-select-mode': selectMode }">
       <thead>
       <tr>
+        <th style="border: none;"></th>
         <th class="has-text-centered">1</th>
         <th class="has-text-centered">2</th>
         <th class="has-text-centered">3</th>
@@ -19,7 +21,7 @@
       </thead>
       <tbody>
       <tr>
-
+        <td><strong>A</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a3"/>
@@ -34,6 +36,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a12"/>
       </tr>
       <tr>
+        <td valign="middle"><strong>B</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b3"/>
@@ -48,6 +51,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b12"/>
       </tr>
       <tr>
+        <td><strong>C</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c3"/>
@@ -62,6 +66,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c12"/>
       </tr>
       <tr>
+        <td><strong>D</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d3"/>
@@ -76,6 +81,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d12"/>
       </tr>
       <tr>
+        <td><strong>E</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e3"/>
@@ -90,6 +96,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e12"/>
       </tr>
       <tr>
+        <td><strong>F</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f3"/>
@@ -104,6 +111,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f12"/>
       </tr>
       <tr>
+        <td><strong>G</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g3"/>
@@ -118,6 +126,7 @@
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g12"/>
       </tr>
       <tr>
+        <td><strong>H</strong></td>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h1"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h2"/>
         <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h3"/>
@@ -137,63 +146,204 @@
     <!--for a new Master.</p>-->
 
 
-    <div class="buttons is-pulled-right">
-      <button class="button" v-bind:class="[editMode?'is-success':'', 'button']" v-on:click="toggeleEdit"
-              type="button"
-              v-if="isEditable && !selectMode">
-        {{buttonValue}}
-      </button>
-      <button type="button" class="button" v-if="canSpawnMasters && onLongPress && !editMode && !selectMode"
-              @click="onLongPress">Make Master
-      </button>
+    <div class="field is-grouped is-grouped-right" v-if="!selectMode && !volumeMode">
+      <div class="buttons">
+        <button class="button" v-bind:class="[editMode?'is-success':'', 'button']" v-on:click="toggeleEdit"
+                type="button"
+                v-if="isEditable && !selectMode && !volumeMode">
+          <font-awesome-icon :icon="['far', 'edit']" v-if="!editMode" style="margin-right:8px;"/>
+          <font-awesome-icon :icon="['far', 'save']" v-if="editMode" style="margin-right:8px;"/>
+          {{buttonValue}}
+        </button>
+
+        <button class="button" type="button" @click="takeVolume"
+                v-bind:disabled="volumeMax < 1"
+                v-if="canTakeVolume && !editMode && !selectMode && !volumeMode">
+          <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
+          Take Volume
+        </button>
+
+        <button type="button" class="button"
+                v-if="canSpawnMasters && onLongPress && !editMode && !selectMode && !volumeMode"
+                @click="onLongPress">
+          <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
+          Make Master
+        </button>
+      </div>
     </div>
-    <div class="is-clearfix"></div>
+    <div v-if="volumeMode">
+
+      <div class="field is-grouped is-grouped-right">
+
+        <div class="control">
+          <div class="field has-addons">
+            <p class="control">
+              <a class="button is-static">
+                Vol
+              </a>
+            </p>
+            <div class="control">
+              <input type="number" class="input" v-bind:max="volumeMax"
+                     v-model="volumeToTake"
+                     required>
+            </div>
+          </div>
+        </div>
+
+        <div class="control">
+          <button class="button" type="button" @click="takeVolumeAction"
+                  v-bind:disabled="!(volumeToTake > 0) && volumeToTake <= volumeMax">
+            <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
+            Take Volume
+          </button>
+        </div>
+
+
+      </div>
+
+    </div>
 
     <div v-if="selectMode">
 
       <div class="columns">
         <div class="column">
-          <div class="buttons is-pulled-left">
-            <button class="button is-outlined is-small" @click="selectAll" v-if="selectMode" type="button">
-              Select all
-            </button>
-            <button class="button is-outlined is-small" @click="selectNone" v-if="selectMode && selectedItemKeys.length"
-                    type="button">
-              Clear selection
-            </button>
-            <button class="button is-small" v-bind:class="[editMode?'is-success':'', 'button']" v-on:click="toggeleEdit"
-                    type="button"
-                    v-if="isEditable && !selectMode">
-              {{buttonValue}}
-            </button>
-            <!--<button type="button" class="button is-small">Close</button>-->
+
+          <div class="field is-grouped">
+            <div class="control">
+              <div class="tags has-addons">
+                <span class="tag">Maximum selection</span>
+                <span class="tag is-info">{{newMasterMaxWells}}</span>
+              </div>
+            </div>
+
+            <div class="control" v-if="!isNaN(newMasterMaxVolume)">
+              <div class="tags has-addons">
+                <span class="tag">Maximum volume</span>
+                <span class="tag is-info">{{newMasterMaxVolume}}</span>
+              </div>
+            </div>
+
           </div>
         </div>
+
         <div class="column">
           <div class="field is-grouped is-grouped-right">
+
             <div class="control">
-              <input type="number" class="input" v-bind:max="newMasterMaxVolume || 900" min="0"
-                     v-model="volumeToTransfer"
-                     required>
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    Vol
+                  </a>
+                </p>
+                <div class="control">
+                  <input type="number" class="input" v-bind:max="newMasterMaxVolume || 900" min="0"
+                         v-model="volumeToTransfer"
+                         required>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="control">
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    Reps
+                  </a>
+                </p>
+                <div class="control">
+                  <input type="number" class="input" min="1" max="3"
+                         v-model="replicates"
+                         required>
+                </div>
+              </div>
             </div>
 
             <div class="control">
-              <div class="buttons">
-                <button class="button is-primary"
-                        v-bind:class="{'tooltip':!selectedItemKeys.length || volumeToTransfer < 1}"
-                        v-bind:disabled="!selectMode || selectedItemKeys.length && volumeToTransfer < 1"
-                        type="button"
-                        v-bind:data-tooltip="!selectedItemKeys.length ? 'No wells selected':volumeToTransfer < 1 ? 'Volume not selected':null">
-                  Create plate from selection
-                </button>
-                <button class="button is-outlined" @click="resetSelect" type="button">
-                  Cancel
-                </button>
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    No. Plates
+                  </a>
+                </p>
+                <div class="control">
+                  <input type="number" class="input" min="1" max="5"
+                         v-model="noOfPlates"
+                         required>
+                </div>
               </div>
             </div>
+
+
+          </div>
+
+
+          <div class="field is-grouped is-grouped-right">
+            <div class="control">
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    Name
+                  </a>
+                </p>
+                <div class="control">
+                  <input type="text" class="input"
+                         v-model="masterName"
+                         required>
+                </div>
+              </div>
+            </div>
+            <div class="control">
+
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    Sorting
+                  </a>
+                </p>
+                <div class="control">
+                  <div class="select">
+                    <select v-model="masterLayout">
+                      <option value="0">Numerical</option>
+                      <option value="1">Reverse-Numerical</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="field is-grouped is-grouped-right">
+
+            <div class="field is-grouped">
+              <div class="control">
+                <div class="buttons">
+
+                  <button class="button is-primary"
+                          v-bind:class="{'tooltip':!canCreateMaster}"
+                          v-bind:disabled="!selectMode || !canCreateMaster"
+                          type="button"
+                          v-bind:data-tooltip="makeButtonError"
+                          @click="createMaster">
+                    <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
+                    Create master
+                  </button>
+                  <button class="button is-outlined" @click="resetSelect" type="button">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!--</div>-->
           </div><!--grouped field-->
+
         </div>
       </div>
+
+      <!--</div>-->
+      <!--</div>-->
     </div> <!--select mode-->
   </div>
 </template>
@@ -201,30 +351,94 @@
 <script>
   import PlateCell from '../components/PlateCell';
 
+  const labels = [
+    'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',
+    'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12',
+    'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12',
+    'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10', 'd11', 'd12',
+    'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'e10', 'e11', 'e12',
+    'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12',
+    'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9', 'g10', 'g11', 'g12',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12',
+  ];
+
   export default {
-    props: ['plate', 'save', 'isEditable', 'canSpawnMasters'],
+    props: ['plate', 'save', 'isEditable', 'canSpawnMasters', 'canTakeVolume', 'forceReload'],
     data() {
       return {
-        saving: false,
         editMode: false,
         selectMode: false,
-        volumeToTransfer: 0
+        volumeMode: false,
+
+        _beforeEditingCache: null,
+        saving: false,
+        volumeToTransfer: 0,
+        replicates: 3,
+        noOfPlates: 3,
+        // unedited: null,
+        masterLayout: 0,
+        masterName: '',
+        volumeToTake: 0,
       }
     },
     computed: {
+      allWells() {
+        return labels.map(l => this.plate[l])
+      },
+      makeButtonError() {
+
+        if (!this.selectedWells || !this.selectedWells.length) {
+          return 'No wells selected'
+        } else if (this.volumeToTransfer < 1) {
+          return 'Volume not selected'
+        } else if (this.volumeToTransfer > this.newMasterMaxVolume) {
+          return 'Maximum volume to transfer is ' + this.newMasterMaxVolume;
+        } else if (this.selectedWells.length > this.newMasterMaxWells) {
+          return 'Too many wells selected, maximum is ' + this.newMasterMaxWells;
+        } else if (!this.masterName || !this.masterName.length) {
+          return 'Name for new master not provided'
+        } else {
+          return ''
+        }
+      },
+      volumeMax() {
+        const vm = this.allWells.reduce((prev, curr) => {
+          if (curr && curr.fr && curr.ec && curr.volume) {
+            return prev.volume < curr.volume ? prev : curr;
+          } else {
+            return prev;
+          }
+        }, Number.POSITIVE_INFINITY);
+
+        if (vm === Number.POSITIVE_INFINITY) {
+          return 0
+        } else {
+          return vm.volume;
+        }
+      },
       newMasterMaxVolume() {
         if (this.plate) {
-          return Object.keys(this.plate).filter(k => this.plate[k].selected).map(k => this.plate[k]).reduce((prev, curr) => {
-            return prev.volume < curr.volume ? prev : curr;
-          }, 900).volume
+          const varA = this.selectedWells.reduce((prev, curr) => {
+            if (curr && curr.volume) {
+              return prev.volume < curr.volume ? prev : curr;
+            } else {
+              return prev;
+            }
+          }, 900).volume;
+
+          return varA / this.replicates / this.noOfPlates
+
 
         } else {
           return 0;
         }
       },
-      selectedItemKeys() {
+      newMasterMaxWells() {
+        return Math.floor((96 - 2) / (this.replicates))
+      },
+      selectedWells() {
         if (this.plate) {
-          return Object.keys(this.plate).filter(k => this.plate[k].selected);
+          return this.allWells.filter(k => k.selected);
         } else {
           return []
         }
@@ -247,11 +461,40 @@
             return 'Edit'
           }
         }
+      },
+      canCreateMaster() {
+        return this.selectedWells.length && this.volumeToTransfer > 0 && this.replicates > 0 && this.masterName && this.masterName.length && this.volumeToTransfer < this.newMasterMaxVolume && this.selectedWells.length < this.newMasterMaxWells;
       }
     },
     methods: {
-      toggeleEdit: function () {
 
+      setOriginal() {
+        // Keep track of the original task information
+        this._beforeEditingCache = Object.assign({}, this.plate);
+      },
+      restoreOriginal() {
+        if (this._beforeEditingCache) {
+          // Return the title back to it’s previous state
+          Object.assign(this.plate, this._beforeEditingCache);
+          // Exit editing mode
+          this._beforeEditingCache = null;
+        }
+      },
+      takeVolumeAction() {
+        this.$axios.post(`/api/plate/${this.plate._id}/take`, {volume: this.volumeToTake})
+          .then(res => {
+            this.volumeMode = false;
+            this.volumeToTake = 0;
+            this.plate = res.data.plate;
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      },
+      takeVolume() {
+        this.volumeMode = true;
+      },
+      toggeleEdit() {
         if (this.isEditable) {
           if (this.editMode) {
             //save if possible
@@ -269,6 +512,7 @@
               this.editMode = false;
             }
           } else {
+            // this.unedited = Object.assign({}, this.plate); //DEPPCLONE
             this.editMode = true;
           }
         }
@@ -277,31 +521,35 @@
       resetSelect() {
         this.selectNone();
         this.selectMode = false;
+        this.volumeToTransfer = 0;
+        this.replicates = 3;
+        this.noOfPlates = 3;
+        this.masterLayout = 0;
+        this.masterName = '';
+        this.volumeToTake = 0;
       },
-      selectAll() {
-        const self = this;
-        if (self.selectMode) {
-          const keys = Object.keys(this.plate).filter(k => k.indexOf('_') !== 0 && !this.plate[k].selected && this.plate[k].fr && this.plate[k].ec);
-          const self = this;
-          keys.map(key => {
-            self.$set(this.plate[key], 'selected', true);
-          });
-        }
-      },
+      // selectAll() {
+      //   const self = this;
+      //   if (self.selectMode) {
+      //     const keys = Object.keys(this.plate).filter(k => k.indexOf('_') !== 0 && !this.plate[k].selected && this.plate[k].fr && this.plate[k].ec);
+      //     const self = this;
+      //     keys.map(key => {
+      //       self.$set(this.plate[key], 'selected', true);
+      //     });
+      //   }
+      // },
       onLongPress() {
-        if (this.canSpawnMasters && !this.edit) {
+        if (this.canSpawnMasters && !this.editMode) {
           if (!this.selectMode) {
             this.selectMode = true;
-          } else {
-            //...
           }
         }
       },
       selectNone() {
-        const selectedKeys = Object.keys(this.plate).filter(k => k.indexOf('_') !== 0 && this.plate[k].selected);
+        const selectedWells = this.selectedWells;
         const self = this;
-        selectedKeys.map(selectedKey => {
-          self.$set(this.plate[selectedKey], 'selected', false);
+        selectedWells.map(selectedWell => {
+          self.$set(selectedWell, 'selected', false);
         });
       },
       onPress(item) {
@@ -312,14 +560,43 @@
               if (item.selected) {
                 this.$set(item, 'selected', false);
               } else {
-                this.$set(item, 'selected', true);
+                if (this.selectedWells.length < this.newMasterMaxWells) {
+                  this.$set(item, 'selected', true);
+                }
               }
             }
           }
         }
+      },
+      createMaster() {
+        if (this.selectedWells.length <= this.newMasterMaxWells) {
+          //allowed
+
+          const objToSend = {
+            plate: {id: this.plate._id, _id: this.plate._id, items: []},
+            volume: this.volumeToTransfer,
+            layout: this.masterLayout,
+            replicates: this.replicates,
+            noOfPlates: this.noOfPlates,
+            masterName: this.masterName
+          };
+
+
+          this.selectedWells
+            .map(itemKey => {
+              let item = this.plate[itemKey];
+              objToSend.plate.items.push({well: itemKey, ec: item.ec, fr: item.fr});
+            });
+          this.$axios.post('/api/master/new', objToSend)
+            .then((res) => {
+              // this.redirect(`/masters/${res.data.master.id}`)
+              this.$router.push(`/masters/${res.data.master.id}`)
+            })
+            .catch(err => {
+              console.error(err);
+            })
+        }
       }
-
-
     },
     components: {
       PlateCell
@@ -330,12 +607,6 @@
 
 <style>
   .is-select-mode {
-    outline: 2px solid #3676D9;
+    outline: 2px solid #2B9EEB;
   }
-
-  /*.table.is-scrollable tbody {*/
-  /*overflow-y: scroll;*/
-  /*width: auto;*/
-  /*position: absolute;*/
-  /*}*/
 </style>

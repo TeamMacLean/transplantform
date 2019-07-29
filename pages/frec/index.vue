@@ -1,15 +1,23 @@
 <template>
   <div>
-    <nuxt-link to="/frec/new" class="button is-primary">
-      <font-awesome-icon :icon="['fas', 'plus']" style="margin-right:8px;"/>
-      Add
-    </nuxt-link>
+    <div v-if="ecs.length">
+
+      <div>
+
+        <div class="columns" v-for="i in Math.ceil(ecs.length / 6)">
+          <div class="column is-2" v-for="ec in ecs.slice((i - 1) * 6, i * 6)">
+            <strong>{{ec.ec}}</strong>: {{ec.volume}}µl
+            <div>
+              <div v-for="fr in ec.frs">
+                <nuxt-link v-bind:to="`/plates/${fr.plateID}`">{{fr.fr}}</nuxt-link>
+                : {{fr.volume}}µl
+              </div>
+            </div>
+          </div>
+        </div>
 
 
-    <div v-if="frecs.length">
-      <hr/>
-
-
+      </div>
     </div>
   </div>
 </template>
@@ -22,12 +30,12 @@
       return $axios.get('/api/frec')
         .then((res) => {
           return {
-            frecs: res.data.frecs ? res.data.frecs : [],
+            ecs: res.data.ecs ? res.data.ecs : [],
           }
         })
         .catch(err => {
           console.error(err);
-          return {frecs:[]}
+          return {ecs: []}
         })
     },
   }

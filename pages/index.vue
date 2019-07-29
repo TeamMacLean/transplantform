@@ -25,8 +25,6 @@
   }
 
   .title-index {
-    font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     display: block;
     font-weight: 300 !important;
     font-size: 100px !important;

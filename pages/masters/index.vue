@@ -1,47 +1,48 @@
 <template>
   <div>
     <div v-if="mastersActive.length">
+      <h1 class="title">Active</h1>
       <div class="columns" v-for="i in Math.ceil(mastersActive.length / 4)">
         <div class="column is-3" v-for="master in mastersActive.slice((i - 1) * 4, i * 4)">
-          <nuxt-link v-bind:to="'/master/'+master._id">
-            <div class="card">
-              <div class="card-content">
-                <div class="media">
-                  <div class="media-left">
-                    <figure class="image is-48x48">
-                      <font-awesome-icon :icon="['fas', 'grip-horizontal']" class="fa-3x"/>
-                    </figure>
-                  </div>
-                  <div class="media-content">
-                    <p class="title is-4">{{master.name}}</p>
-                    <p class="subtitle is-6">#{{master.barcode}} @{{master.species}}</p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
+          <nuxt-link v-bind:to="'/masters/'+master._id">
+            <StockCard :stock="master"></StockCard>
           </nuxt-link>
         </div>
       </div>
     </div>
-    <div v-else>
-      <h1 class="tile">No Masters exist, to create one select wells from a&nbsp;<nuxt-link to="stocks">Stock Plate
-      </nuxt-link>
-        .
-      </h1>
+
+
+    <div v-if="mastersRetired.length">
+      <hr/>
+      <h1 class="title">Retired</h1>
+
+      <div class="columns" v-for="i in Math.ceil(mastersRetired.length / 4)">
+        <div class="column is-3" v-for="master in mastersRetired.slice((i - 1) * 4, i * 4)">
+          <nuxt-link v-bind:to="'/masters/'+master._id">
+            <StockCard :stock="master"></StockCard>
+          </nuxt-link>
+        </div>
+      </div>
+
+      <!--<div v-for="stock in stocksRetired">-->
+      <!--<nuxt-link v-bind:to="'/stocks/'+stock._id">-->
+      <!--<StockLevel :stock="stock"/>-->
+      <!--</nuxt-link>-->
+      <!--</div>-->
     </div>
   </div>
 </template>
 
 <script>
-
+  import StockCard from '../../components/StockCard'
   export default {
     middleware: 'auth',
+    components: {StockCard},
     asyncData({$axios, store}) {
       return $axios.get('/api/master')
         .then((res) => {
           return {
-            mastersActive: res.data.stocksActive ? res.data.stocksActive : [],
+            mastersActive: res.data.mastersActive ? res.data.mastersActive : [],
             mastersRetired: res.data.mastersRetired ? res.data.mastersRetired : []
           }
         })

@@ -18,3 +18,16 @@ $primary-invert: $cello-invert;
 // 6. Import the rest of Bulma
 @import "~bulma/bulma";
 @import "~bulma-tooltip";
+
+
+.tag:not(body) {
+  &.is-outlined {
+    background-color: transparent;
+    border: 1px solid $light;
+  }
+}
+
+
+.__nuxt-error-page{
+  top:60px;
+}

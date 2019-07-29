@@ -49,7 +49,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     'nuxt-fontawesome', //V5
-    'vue-sweetalert2/nuxt',
+    // 'vue-sweetalert2/nuxt',
   ],
   fontawesome: {
     imports: [
