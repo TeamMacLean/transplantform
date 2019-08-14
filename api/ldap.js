@@ -1,5 +1,5 @@
 var LdapAuth = require('ldapauth-fork');
-require('dotenv').config();
+// require('dotenv').config();
 // LDAP Connection Settings
 const server = process.env.LDAP_URL; // 192.168.1.1
 const bindDN = process.env.LDAP_BIND_DN; // Username
