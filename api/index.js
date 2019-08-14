@@ -576,10 +576,6 @@ const Master = mongoose.model('Master', {
     ref: 'Plate',
     required: true
   }],
-  barcode: {
-    type: String,
-    required: true
-  },
   species: {
     type: String,
     required: true
@@ -587,6 +583,10 @@ const Master = mongoose.model('Master', {
   stock: {
     type: Schema.Types.ObjectId,
     ref: 'Stock',
+    required: true
+  },
+  volume: {
+    type: Number,
     required: true
   }
 });
@@ -790,6 +790,7 @@ router.post('/master/new', (req, res) => {
           }
         });
 
+
         return stockFromDB.plate.save();
 
       } else {
@@ -817,7 +818,6 @@ router.post('/master/new', (req, res) => {
         newWells[keys[indx]] = {ec: item.ec, fr: item.ec, volume: volumeToTransfer}
       });
 
-
       const platePromises = [];
       for (let i = 0; i < noOfPlates; i++) {
         platePromises.push(new Plate(newWells).save())
@@ -831,13 +831,17 @@ router.post('/master/new', (req, res) => {
 
           return new Master({
             plates: plateIds,
-            barcode: savedStock.barcode,
             species: savedStock.species,
             name: name,
+            volume: volumeToTransfer,
             stock: savedStock.id
           }).save()
         })
         .then(savedMaster => {
+
+          console.log(savedMaster);
+
+
           res.status(200).json({master: {id: savedMaster._id, _id: savedMaster._id}});
         })
         .catch(err => {
