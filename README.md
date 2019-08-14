@@ -1,6 +1,8 @@
 # fridge
 
 > Plate tracking
+[![Actions Status](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/badge/teammaclean/fridge)](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/results/{owner}/{repo})
+
 
 ## Build Setup
 
