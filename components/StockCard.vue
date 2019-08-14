@@ -5,7 +5,7 @@
         <div class="media-content">
           <p class="title is-4">{{stock.name}}</p>
           <div class="field is-grouped is-grouped-multiline">
-            <div class="control">
+            <div class="control" v-if="stock.barcode">
               <div class="tags has-addons"><span class="tag">barcode</span> <span
                 class="tag is-outlined">{{stock.barcode}}</span></div>
             </div>

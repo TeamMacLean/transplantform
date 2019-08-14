@@ -22,127 +22,223 @@
       <tbody>
       <tr>
         <td><strong>A</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.a12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.a12"/>
       </tr>
       <tr>
         <td valign="middle"><strong>B</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.b12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.b12"/>
       </tr>
       <tr>
         <td><strong>C</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.c12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.c12"/>
       </tr>
       <tr>
         <td><strong>D</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.d12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.d12"/>
       </tr>
       <tr>
         <td><strong>E</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.e12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.e12"/>
       </tr>
       <tr>
         <td><strong>F</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.f12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.f12"/>
       </tr>
       <tr>
         <td><strong>G</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.g12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.g12"/>
       </tr>
       <tr>
         <td><strong>H</strong></td>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h1"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h2"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h3"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h4"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h5"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h6"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h7"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h8"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h9"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h10"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h11"/>
-        <PlateCell :onPress="onPress" :onLongPress="onLongPress" :editMode="editMode" :item="plate.h12"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h1"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h2"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h3"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h4"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h5"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h6"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h7"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h8"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h9"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h10"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h11"/>
+        <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
+                   :item="plate.h12"/>
       </tr>
       </tbody>
     </table>
-    <!--<p class="help is-info" v-if="onLongPress && !editMode && !selectMode">Long press on a well to start selecting wells-->
+    <!--<p class="help is-info" v-if="onSelectMode && !editMode && !selectMode">Long press on a well to start selecting wells-->
     <!--for a new Master.</p>-->
 
 
@@ -156,6 +252,8 @@
           {{buttonValue}}
         </button>
 
+        <button class="button" v-if="editMode" @click="cancelEdit">Cancel</button>
+
         <button class="button" type="button" @click="takeVolume"
                 v-bind:disabled="volumeMax < 1"
                 v-if="canTakeVolume && !editMode && !selectMode && !volumeMode">
@@ -164,8 +262,8 @@
         </button>
 
         <button type="button" class="button"
-                v-if="canSpawnMasters && onLongPress && !editMode && !selectMode && !volumeMode"
-                @click="onLongPress">
+                v-if="canSpawnMasters && onSelectMode && !editMode && !selectMode && !volumeMode"
+                @click="onSelectMode">
           <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
           Make Master
         </button>
@@ -382,6 +480,9 @@
       }
     },
     computed: {
+      maxVolume() {
+        return this.plate.volume ? this.plate.volume : 900;
+      },
       allWells() {
         return labels.map(l => this.plate[l])
       },
@@ -468,17 +569,35 @@
     },
     methods: {
 
+      showError(err) {
+        this.$swal({
+          title: 'Error!',
+          text: err,
+          type: 'error',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        })
+      },
+
       setOriginal() {
         // Keep track of the original task information
-        this._beforeEditingCache = Object.assign({}, this.plate);
+        // this._beforeEditingCache = Object.assign({}, this.plate);
+        this._beforeEditingCache = JSON.parse(JSON.stringify(this.plate))
       },
       restoreOriginal() {
+        console.log(this._beforeEditingCache);
         if (this._beforeEditingCache) {
           // Return the title back to it’s previous state
           Object.assign(this.plate, this._beforeEditingCache);
           // Exit editing mode
           this._beforeEditingCache = null;
         }
+      },
+      cancelEdit() {
+        this.restoreOriginal();
+        this.editMode = false;
       },
       takeVolumeAction() {
         this.$axios.post(`/api/plate/${this.plate._id}/take`, {volume: this.volumeToTake})
@@ -488,7 +607,7 @@
             this.plate = res.data.plate;
           })
           .catch(err => {
-            console.error(err);
+            this.showError(err);
           })
       },
       takeVolume() {
@@ -499,20 +618,35 @@
           if (this.editMode) {
             //save if possible
             if (this.save) {
-              this.saving = true;
-              this.save()
-                .then(() => {
-                  this.editMode = false;
-                  this.saving = false;
-                })
-                .catch(err => {
-                  console.error(err);
-                })
+              this.$swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, save changes!'
+              }).then((result) => {
+                if (result.value) {
+
+                  this.saving = true;
+                  this.save()
+                    .then(() => {
+                      this.editMode = false;
+                      this.saving = false;
+                    })
+                    .catch(err => {
+                      this.showError(err);
+                    })
+                }
+              })
+
+
             } else {
               this.editMode = false;
+              this.restoreOriginal();
             }
           } else {
             // this.unedited = Object.assign({}, this.plate); //DEPPCLONE
+            this.setOriginal();
             this.editMode = true;
           }
         }
@@ -538,7 +672,7 @@
       //     });
       //   }
       // },
-      onLongPress() {
+      onSelectMode() {
         if (this.canSpawnMasters && !this.editMode) {
           if (!this.selectMode) {
             this.selectMode = true;
@@ -583,9 +717,8 @@
 
 
           this.selectedWells
-            .map(itemKey => {
-              let item = this.plate[itemKey];
-              objToSend.plate.items.push({well: itemKey, ec: item.ec, fr: item.fr});
+            .map(well => {
+              objToSend.plate.items.push({ec: well.ec, fr: well.fr});
             });
           this.$axios.post('/api/master/new', objToSend)
             .then((res) => {
@@ -593,7 +726,7 @@
               this.$router.push(`/masters/${res.data.master.id}`)
             })
             .catch(err => {
-              console.error(err);
+              this.showError(err);
             })
         }
       }
