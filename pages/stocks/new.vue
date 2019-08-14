@@ -35,6 +35,7 @@
         <Plate :plate="plate" :isEditable="true" :canSpawnMasters="false"/>
       </div>
 
+
       <hr/>
       <div class="field is-grouped">
         <div class="control">
@@ -47,6 +48,10 @@
         </div>
       </div>
     </form>
+
+    <br/>
+    <a href="/test_data.xlsx" class="button is-info is-small">Download test data</a>
+
   </div>
 </template>
 

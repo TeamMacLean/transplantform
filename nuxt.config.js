@@ -5,7 +5,7 @@ export default {
   mode: 'universal',
   server: {
     port: process.env.PORT || 3000, // default: 3000
-    host: '127.0.0.1', // default: localhost
+    // host: '127.0.0.1', // default: localhost
   },
   /*
   ** Headers of the page

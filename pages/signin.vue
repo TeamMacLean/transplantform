@@ -75,7 +75,7 @@
           }
         })
           .then(() => {
-            self.submitting = false
+            self.submitting = false;
 
             this.$router.push({
               path: '/'
