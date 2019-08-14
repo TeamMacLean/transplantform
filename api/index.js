@@ -12,10 +12,6 @@ try {
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 
-// const Fridge = mongoose.model('Fridge', {name: String});
-// const Master = mongoose.model('Master', {name: String});
-// const Well = mongoose.model('Well', {name: String});
-
 const labels = [
   'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',
   'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12',
@@ -27,7 +23,36 @@ const labels = [
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12',
 ];
 
-const labelsFlatAlphabetical = [].concat.apply([], _.zip.apply(_, _.chunk(labels, 12)));
+const labelsChunked = _.chunk(labels, 12);
+const labelsAlphabetical = _.zip.apply(_, labelsChunked);
+const labelsFlatAlphabetical = [].concat.apply([], labelsAlphabetical);
+
+function getKeysForNewMaster(replicates) {
+
+  const labelsWithoutEmpties = labelsChunked.map((labelChunk, index) => {
+    if (index <= (replicates - 1)) { //replicates to 0-base
+      labelChunk = labelChunk.slice(2) //remove 2
+    }
+    return labelChunk;
+  });
+
+  const labelsWithoutEmptiesAlphabetical = _.zip.apply(_, labelsWithoutEmpties);
+
+
+  const newOrder = [];
+  for (let slim = 0; slim + replicates <= 12; slim += replicates) {
+    for (let thicc = 0; thicc < 8; thicc++) {
+      for (let offset = 0; offset < replicates; offset++) {
+        if (labelsWithoutEmptiesAlphabetical[slim + offset].indexOf(undefined) < 0) {
+          newOrder.push(labelsWithoutEmptiesAlphabetical[slim + offset][thicc])
+        }
+      }
+    }
+  }
+
+  return newOrder;
+}
+
 
 String.prototype.toObjectId = function () {
   return new ObjectId(this.toString());
@@ -761,17 +786,17 @@ router.post('/master/new', (req, res) => {
   const name = req.body.masterName;
 
 
-  let sortingMethod = Array.prototype.sort;
-
-
-  if (layout === 0) {
-    sortingMethod = (a, b) => (a.fr > b.fr) ? 1 : ((b.fr > a.fr) ? -1 : 0);
-  } else if (layout === 1) {
-    sortingMethod = (a, b) => (a.fr > b.fr) ? -1 : ((b.fr > a.fr) ? 1 : 0);
-  } else {
-    //dont sort
-  }
-  stockPlateFromPost.items.sort(sortingMethod);
+  // let sortingMethod = Array.prototype.sort;
+  //
+  //
+  // if (layout === 0) {
+  //   sortingMethod = (a, b) => (a.fr > b.fr) ? 1 : ((b.fr > a.fr) ? -1 : 0);
+  // } else if (layout === 1) {
+  //   sortingMethod = (a, b) => (a.fr > b.fr) ? -1 : ((b.fr > a.fr) ? 1 : 0);
+  // } else {
+  //   //dont sort
+  // }
+  // stockPlateFromPost.items.sort(sortingMethod);
 
   const plateID = stockPlateFromPost.id.toObjectId();
 
@@ -812,7 +837,7 @@ router.post('/master/new', (req, res) => {
         return out;
       }));
 
-      const keys = labelsFlatAlphabetical.slice(2);
+      const keys = getKeysForNewMaster(replicates);
 
       replicatedItems.map((item, indx) => {
         newWells[keys[indx]] = {ec: item.ec, fr: item.ec, volume: volumeToTransfer}
@@ -926,25 +951,49 @@ router.get('/frec', (req, res) => {
       //get ecs
       plates.map(plate => {
         labels.map(l => {
+
           let ec = plate[l].ec;
           let fr = plate[l].fr;
           let volume = plate[l].volume;
           let plateID = plate._id;
+
+
           if (ec) {
 
-            //exists
-            let filtered = ecs.filter(e => e.ec === ec);
-            let exists = filtered.length;
 
-            //add if not
-            if (!exists) {
-              ecs.push({ec, volume: volume, frs: [{fr, volume, plateID}]});
+            let filtered = ecs.filter(e => e.ec === ec);
+
+            if (filtered.length) {
+              //merge from same plate
+
+
+              let frsFiltered = filtered[0].frs.filter(f => f.plateID === plateID);
+              if (frsFiltered.length) {
+                frsFiltered[0].volume += volume;
+              } else {
+                filtered[0].volume += volume;
+                filtered[0].frs.push({fr, volume, plateID})
+              }
+
             } else {
-              //add frs
-              filtered[0].volume += volume;
-              filtered[0].frs.push({fr, volume, plateID})
+              ecs.push({ec, volume: volume, frs: [{fr, volume, plateID}]});
             }
 
+
+            //
+            //   //exists
+            //   let filtered = ecs.filter(e => e.ec === ec);
+            //   let exists = filtered.length;
+            //
+            //   //add if not
+            //   if (!exists) {
+            //     ecs.push({ec, volume: volume, frs: [{fr, volume, plateID}]});
+            //   } else {
+            //     //add frs
+            //     filtered[0].volume += volume;
+            //     filtered[0].frs.push({fr, volume, plateID})
+            //   }
+            //
           }
         })
       });

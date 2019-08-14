@@ -15,14 +15,14 @@
           <div class="field">
             <div class="control">
               <input class="input" id="username" type="text" name="username" title="username"
-                     placeholder="Username"
+                     placeholder="Username" autocomplete="current-password"
                      v-model="credentials.username" required autofocus>
             </div>
           </div>
           <div class="field">
             <div class="control">
               <input class="input" id="password" type="password" name="password" title="password"
-                     placeholder="Password"
+                     placeholder="Password" autocomplete="current-password"
                      v-model="credentials.password" required>
             </div>
           </div>
@@ -105,6 +105,7 @@
   #login .card {
     width: 24rem;
     border-radius: 4px;
+    margin-top: -200px;
   }
 
   #login .regular-checkbox {
