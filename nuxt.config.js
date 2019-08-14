@@ -5,7 +5,7 @@ export default {
   mode: 'universal',
   server: {
     port: process.env.PORT || 3000, // default: 3000
-    // host: '127.0.0.1', // default: localhost
+    host: process.env.HOST || '127.0.0.1', // default: localhost
   },
   /*
   ** Headers of the page
@@ -40,8 +40,7 @@ export default {
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-  ],
+  plugins: [],
   /*
   ** Nuxt.js modules
   */
