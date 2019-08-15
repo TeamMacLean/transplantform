@@ -34,8 +34,8 @@
               <span class="has-text-weight-light has-text-dark is-size-7">Remember me</span>
             </div>
 
-            <a class="level-right has-text-weight-light	has-text-dark is-size-7" href="#">Forgot
-              Password?</a>
+            <!--<a class="level-right has-text-weight-light	has-text-dark is-size-7" href="#">Forgot-->
+              <!--Password?</a>-->
           </div>
           <div v-if="submitting">Submitting ....</div>
           <button type="submit" class="button is-primary is-fullwidth is-outlined">Sign in</button>
