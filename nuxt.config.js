@@ -1,8 +1,7 @@
 import bodyParser from 'body-parser';
+
 require('dotenv').config();
 
-
-const liveUrl = process.env.LIVE_URL || '';
 
 export default {
   mode: 'universal',
@@ -66,13 +65,20 @@ export default {
       },
     ]
   },
+  /*
+** Axios module configuration
+** See https://axios.nuxtjs.org/options
+*/
+  axios: {
+    baseURL: process.env.API_URL
+  },
   auth: {
     strategies: {
       local: {
         endpoints: {
-          login: {url: `${liveUrl}/api/login`, method: 'post', propertyName: 'token'},
-          logout: {url: `${liveUrl}/api/logout`, method: 'post'},
-          user: {url: `${liveUrl}/api/user`, method: 'get', propertyName: 'user'}
+          login: {url: '/api/login', method: 'post', propertyName: 'token'},
+          logout: {url: '/api/logout', method: 'post'},
+          user: {url: '/api/user', method: 'get', propertyName: 'user'}
         },
         // tokenRequired: true,
         // tokenType: 'bearer'
@@ -85,11 +91,6 @@ export default {
   router: {
     linkActiveClass: 'is-active',
   },
-  /*
-  ** Axios module configuration
-  ** See https://axios.nuxtjs.org/options
-  */
-  axios: {},
   /*
   ** Build configuration
   */
