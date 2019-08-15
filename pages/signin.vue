@@ -68,6 +68,7 @@
         self.submitting = true;
 
 
+        console.log(this.$auth)
         this.$auth.loginWith('local', {
           data: {
             username: self.credentials.username,
@@ -105,7 +106,7 @@
   #login .card {
     width: 24rem;
     border-radius: 4px;
-    margin-top: -200px;
+    margin-top: -100px;
   }
 
   #login .regular-checkbox {

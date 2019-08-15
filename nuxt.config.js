@@ -1,11 +1,14 @@
 import bodyParser from 'body-parser';
 require('dotenv').config();
 
+
+const liveUrl = process.env.LIVE_URL || '';
+
 export default {
   mode: 'universal',
   server: {
     port: process.env.PORT || 3000, // default: 3000
-    host: process.env.HOST || '127.0.0.1', // default: localhost
+    host: process.env.HOST || 'localhost', // default: localhost
   },
   /*
   ** Headers of the page
@@ -67,9 +70,9 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: {url: '/api/login', method: 'post', propertyName: 'token'},
-          logout: {url: '/api/logout', method: 'post'},
-          user: {url: '/api/user', method: 'get', propertyName: 'user'}
+          login: {url: `${liveUrl}/api/login`, method: 'post', propertyName: 'token'},
+          logout: {url: `${liveUrl}/api/logout`, method: 'post'},
+          user: {url: `${liveUrl}/api/user`, method: 'get', propertyName: 'user'}
         },
         // tokenRequired: true,
         // tokenType: 'bearer'
