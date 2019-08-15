@@ -12,12 +12,17 @@
       <div class="card-content">
         <form @submit.prevent="onSubmit" v-if="!$store.state.user">
 
-          <div class="field">
-            <div class="control">
+          <div class="field has-addons">
+            <p class="control is-expanded">
               <input class="input" id="username" type="text" name="username" title="username"
                      placeholder="Username" autocomplete="current-password"
                      v-model="credentials.username" required autofocus>
-            </div>
+            </p>
+            <p class="control">
+              <a class="button is-static">
+                @nbi.ac.uk
+              </a>
+            </p>
           </div>
           <div class="field">
             <div class="control">
@@ -27,16 +32,16 @@
             </div>
           </div>
 
-          <div class="level options">
-            <div class="checkbox level-left">
-              <input type="checkbox" id="checkbox" class="regular-checkbox">
-              <label for="checkbox"></label>
-              <span class="has-text-weight-light has-text-dark is-size-7">Remember me</span>
-            </div>
+          <!--<div class="level options">-->
+            <!--<div class="checkbox level-left">-->
+              <!--<input type="checkbox" id="checkbox" class="regular-checkbox">-->
+              <!--<label for="checkbox"></label>-->
+              <!--<span class="has-text-weight-light has-text-dark is-size-7">Remember me</span>-->
+            <!--</div>-->
 
             <!--<a class="level-right has-text-weight-light	has-text-dark is-size-7" href="#">Forgot-->
               <!--Password?</a>-->
-          </div>
+          <!--</div>-->
           <div v-if="submitting">Submitting ....</div>
           <button type="submit" class="button is-primary is-fullwidth is-outlined">Sign in</button>
         </form>
