@@ -2,13 +2,14 @@
   <div>
     <h1 class="title">New Stock Plate</h1>
 
-    <form @submit="checkForm">
+    <form @submit="checkFormAndSave">
       <div class="field">
         <label class="label">Name</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Stock plate name" v-model="plateName" minlength="5" required>
+          <input class="input" type="text" placeholder="Stock plate name" v-model="plateName" minlength="5"
+                 @input="checkName" required>
         </div>
-        <p class="help is-success" v-if="plateName.length >= 5">This plate name is available</p>
+        <p class="help is-success" v-if="nameIsOk">This plate name is available</p>
       </div>
 
       <div class="field" v-if="!plate">
@@ -39,7 +40,7 @@
       <hr/>
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-primary" type="submit">Save</button>
+          <button class="button is-primary" type="submit" v-bind:disabled="!canSubmit">Save</button>
         </div>
         <div class="control">
           <button class="button is-text" type="button" v-on:click="reset">
@@ -64,7 +65,30 @@
     components: {
       Plate
     },
+    data() {
+      return {
+        file: null,
+        plate: null,
+        plateName: '',
+        barcode: '',
+        species: '',
+        nameIsOk: false
+      }
+    },
     methods: {
+      checkName() {
+
+        console.log('pre');
+        return this.$axios.$post('/api/stock/check/name', {name: this.plateName})
+          .then(res => {
+            console.log('res', res);
+            this.nameIsOk = !!(this.plateName && this.plateName.length > 5 && res && res.ok);
+          })
+          .catch(err => {
+            this.nameIsOk = false;
+          })
+
+      },
       handleFileUpload() {
         this.file = this.$refs.file.files[0];
         const vm = this;
@@ -120,10 +144,9 @@
         reader.readAsArrayBuffer(this.file);
       },
 
-      checkForm: function (e) {
+      checkFormAndSave: function (e) {
         e.preventDefault();
-
-        if (this.plate && this.plateName) {
+        if (this.canSubmit) {
           this.save();
         }
       },
@@ -153,14 +176,12 @@
         this.plateName = '';
       }
     },
-    data() {
-      return {
-        file: null,
-        plate: null,
-        plateName: '',
-        barcode: '',
-        species: ''
+    computed: {
+      canSubmit() {
+        // console.log(this.nameIsOk)
+        return this.plate && this.nameIsOk
       }
     },
+
   }
 </script>
