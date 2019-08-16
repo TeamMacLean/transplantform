@@ -7,10 +7,15 @@
           EC
         </a>
       </div>
-      <div class="control is-expanded">
+      <div class="control is-expanded has-icons-right">
         <input class="input is-rounded is-large" type="text" placeholder="" v-model="searchInput"
                @input="search(searchInput)">
+        <span class="icon is-small is-right">
+          <font-awesome-icon :icon="['fas', 'spinner']" v-if="isSearching" class="fa-spin"/>
+          <font-awesome-icon :icon="['fas', 'search']" v-if="!isSearching"/>
+        </span>
       </div>
+
     </div>
 
 
@@ -35,17 +40,21 @@
     data() {
       return {
         results: [],
-        searchInput: ''
+        searchInput: '',
+        isSearching: false,
       }
     },
     methods: {
       search(id) {
+        this.isSearching = true;
         return this.$axios.$post('/api/frec/search', {id: 'EC' + id})
           .then(res => {
             this.results = res.results ? res.results : []
+            this.isSearching = false;
           })
           .catch(err => {
             console.error(err);
+            this.isSearching = false;
           })
       }
     }

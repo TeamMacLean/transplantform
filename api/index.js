@@ -466,10 +466,8 @@ router.get('/frec', (req, res) => {
 
 router.post('/frec/search', (req, res) => {
 
-  console.log('looking for', req.body);
 
   const lookingFor = req.body.id;
-
   const results = [];
 
   Plate.find({})
