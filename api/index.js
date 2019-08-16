@@ -464,6 +464,44 @@ router.get('/frec', (req, res) => {
 
 });
 
+router.post('/frec/search', (req, res) => {
+
+  console.log('looking for', req.body);
+
+  const lookingFor = req.body.id;
+
+  const results = [];
+
+  Plate.find({})
+    .then(plates => {
+
+      plates.map(plate => {
+        labels.map(l => {
+
+          let ec = plate[l].ec;
+          let fr = plate[l].fr;
+          let volume = plate[l].volume;
+          let plateID = plate._id;
+
+
+          if (lookingFor.length && lookingFor.length > 2) {
+            if (ec && lookingFor) {
+
+              if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) {
+                results.push({ec, fr, volume, plateID})
+              }
+            }
+          }
+        })
+      });
+      res.status(200).json({results: results})
+    })
+    .catch(err => {
+      sendError(err, res);
+    })
+
+});
+
 
 //PLATE
 

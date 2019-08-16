@@ -78,10 +78,8 @@
     methods: {
       checkName() {
 
-        console.log('pre');
         return this.$axios.$post('/api/stock/check/name', {name: this.plateName})
           .then(res => {
-            console.log('res', res);
             this.nameIsOk = !!(this.plateName && this.plateName.length > 5 && res && res.ok);
           })
           .catch(err => {
