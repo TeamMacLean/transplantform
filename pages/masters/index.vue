@@ -30,6 +30,12 @@
       <!--</nuxt-link>-->
       <!--</div>-->
     </div>
+
+    <div v-if="!mastersActive && !mastersRetired">
+      <div v-else>
+        <p>No Masters Found.</p>
+      </div>
+    </div>
   </div>
 </template>
 
