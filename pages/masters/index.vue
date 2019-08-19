@@ -31,7 +31,7 @@
       <!--</div>-->
     </div>
 
-    <div v-if="!mastersActive && !mastersRetired">
+    <div v-if="!mastersActive.length && !mastersRetired.length">
       <div v-else>
         <p>No Masters Found.</p>
       </div>

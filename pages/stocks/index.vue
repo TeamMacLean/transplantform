@@ -37,7 +37,7 @@
       <!--</div>-->
     </div>
 
-    <div v-if="!stocksActive && !stocksRetired">
+    <div v-if="!stocksActive.length && !stocksRetired.length">
       <div v-else>
         <p>No Stocks Found.</p>
       </div>
