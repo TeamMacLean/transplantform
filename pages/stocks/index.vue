@@ -36,6 +36,12 @@
         <!--</nuxt-link>-->
       <!--</div>-->
     </div>
+
+    <div v-if="!stocksActive && !stocksRetired">
+      <div v-else>
+        <p>No Stocks Found.</p>
+      </div>
+    </div>
   </div>
 </template>
 

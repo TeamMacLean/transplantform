@@ -19,6 +19,9 @@
 
       </div>
     </div>
+    <div v-else>
+      <p>No FR/EC Numbers Found.</p>
+    </div>
   </div>
 </template>
 
