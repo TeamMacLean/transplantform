@@ -23,24 +23,17 @@
           </nuxt-link>
         </div>
       </div>
-
-      <!--<div v-for="stock in stocksRetired">-->
-      <!--<nuxt-link v-bind:to="'/stocks/'+stock._id">-->
-      <!--<StockLevel :stock="stock"/>-->
-      <!--</nuxt-link>-->
-      <!--</div>-->
     </div>
 
     <div v-if="!mastersActive.length && !mastersRetired.length">
-      <div v-else>
-        <p>No Masters Found.</p>
-      </div>
+      <p>No Masters Found.</p>
     </div>
   </div>
 </template>
 
 <script>
   import StockCard from '../../components/StockCard'
+
   export default {
     middleware: 'auth',
     components: {StockCard},
