@@ -1,27 +1,37 @@
 <template>
   <div>
-    <div v-if="ecs.length">
 
-      <div>
+    <div class="field has-addons is-center-custom">
+      <div class="control">
+        <a class="button is-static is-rounded is-medium">
+          EC
+        </a>
+      </div>
+      <div class="control is-expanded has-icons-right">
+        <input class="input is-rounded  is-medium" type="text" placeholder="" v-model="searchInput"
+               @input="search(searchInput)">
+        <span class="icon is-small is-right">
+          <font-awesome-icon :icon="['fas', 'spinner']" v-if="isSearching" class="fa-spin"/>
+          <font-awesome-icon :icon="['fas', 'search']" v-if="!isSearching"/>
+        </span>
+      </div>
 
-        <div class="columns" v-for="i in Math.ceil(ecs.length / 6)">
-          <div class="column is-2" v-for="ec in ecs.slice((i - 1) * 6, i * 6)">
-            <strong>{{ec.ec}}</strong>: {{ec.volume}}µl
-            <div>
-              <div v-for="fr in ec.frs">
-                <nuxt-link v-bind:to="`/plates/${fr.plateID}`">{{fr.fr}}</nuxt-link>
-                : {{fr.volume}}µl
-              </div>
-            </div>
-          </div>
+    </div>
+
+
+    <div class="dropdown-menu is-center-custom" v-bind:class="{'is-block':results.length}">
+      <div class="dropdown-content">
+        <div class="make-scrollable">
+
+          <a v-for="result in results" class="dropdown-item">
+            <span>{{result.ec}} / {{result.fr}} - {{result.volume}}</span>
+          </a>
+
         </div>
-
-
       </div>
     </div>
-    <div v-else>
-      <p>No FR/EC Numbers Found.</p>
-    </div>
+
+
   </div>
 </template>
 
@@ -29,17 +39,46 @@
 <script>
   export default {
     middleware: 'auth',
-    asyncData({$axios, store}) {
-      return $axios.get('/api/frec')
-        .then((res) => {
-          return {
-            ecs: res.data.ecs ? res.data.ecs : [],
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          return {ecs: []}
-        })
+    data() {
+      return {
+        results: [],
+        searchInput: '',
+        isSearching: false,
+      }
     },
+    methods: {
+      search(id) {
+        this.isSearching = true;
+        return this.$axios.$post('/api/frec/search', {id: 'EC' + id})
+          .then(res => {
+            this.results = res.results ? res.results : [];
+
+            console.log(this.results);
+            this.isSearching = false;
+          })
+          .catch(err => {
+            console.error(err);
+            this.isSearching = false;
+          })
+      }
+    }
   }
 </script>
+
+<style>
+  .make-scrollable {
+    max-height: 512px;
+    overflow-y: scroll;
+  }
+
+  .is-center-custom {
+    max-width: 512px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .dropdown-menu.is-wide {
+    min-width: 100%;
+    max-width: 100%;
+  }
+</style>

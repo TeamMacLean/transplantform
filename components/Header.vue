@@ -24,9 +24,6 @@
         <nuxt-link to="/frec" class="navbar-item">
           Frec
         </nuxt-link>
-        <nuxt-link to="/frecv2" class="navbar-item">
-          Frec V2
-        </nuxt-link>
       </div>
       <div class="navbar-end">
 

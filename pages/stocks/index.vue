@@ -30,11 +30,6 @@
         </div>
       </div>
 
-      <!--<div v-for="stock in stocksRetired">-->
-      <!--<nuxt-link v-bind:to="'/stocks/'+stock._id">-->
-      <!--<StockLevel :stock="stock"/>-->
-      <!--</nuxt-link>-->
-      <!--</div>-->
     </div>
 
     <div v-if="!stocksActive.length && !stocksRetired.length">
