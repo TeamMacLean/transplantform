@@ -33,14 +33,17 @@
 
 
       <div v-if="plate">
-        <Plate :plate="plate" :isEditable="true" :canSpawnMasters="false"/>
+        <Plate :plate="plate" :isEditable="true" :canSpawnMasters="false" checkUniqueFRs="true"
+               :onCheckUniqueFRs="onCheckUniqueFRs"/>
       </div>
 
 
       <hr/>
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-primary" type="submit" v-bind:disabled="!canSubmit">Save</button>
+          <button class="button is-primary" type="submit" v-bind:disabled="!canSubmit"
+                  v-bind:data-tooltip="saveErrorText" v-bind:class="{'tooltip':!canSubmit}">Save
+          </button>
         </div>
         <div class="control">
           <button class="button is-text" type="button" v-on:click="reset">
@@ -72,10 +75,14 @@
         plateName: '',
         barcode: '',
         species: '',
-        nameIsOk: false
+        nameIsOk: false,
+        frErrors: false,
       }
     },
     methods: {
+      onCheckUniqueFRs(results) {
+        this.frErrors = !!results;
+      },
       checkName() {
 
         return this.$axios.$post('/api/stock/check/name', {name: this.plateName})
@@ -90,8 +97,6 @@
       handleFileUpload() {
         this.file = this.$refs.file.files[0];
         const vm = this;
-
-        // console.log(this.file)
 
         function formatPlate(table) {
           const labels = [
@@ -112,20 +117,11 @@
 
           const offset = 2;
 
-          labels.map((label, i)=>{
+          labels.map((label, i) => {
             if (table[i + offset][1] && table[i + offset][2]) {
               plate[labels[i]] = {fr: table[i + offset][1], ec: table[i + offset][2], volume: 900}
             }
-          })
-
-          // for (let i = 0; i < 96; i++) {
-          //
-          //   if (table[i + offset][1] && table[i + offset][2]) {
-          //     plate[labels[i]] = {fr: table[i + offset][1], ec: table[i + offset][2], volume: 900}
-          //   } else {
-          //
-          //   }
-          // }
+          });
 
           return plate;
         }
@@ -176,12 +172,21 @@
         this.file = null;
         this.plate = null;
         this.plateName = '';
+        this.checkName();
       }
     },
     computed: {
       canSubmit() {
-        // console.log(this.nameIsOk)
-        return this.plate && this.nameIsOk
+        return this.plate && this.nameIsOk && !this.frErrors
+      },
+      saveErrorText() {
+        if (!this.plate) {
+          return 'No Plate'
+        } else if (!this.nameIsOk) {
+          return 'Name is not valid'
+        } else {
+          return 'One of more FR numbers are already in use'
+        }
       }
     },
 

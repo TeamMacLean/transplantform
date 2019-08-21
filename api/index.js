@@ -169,6 +169,42 @@ router.post('/stock/check/name', (req, res) => {
     })
 });
 
+router.post('/stock/check/frs', (req, res) => {
+
+  const toCheck = req.body.frs;
+  const inUse = [];
+
+  if (toCheck) {
+    Plate.find({})
+      .then(plates => {
+
+        plates.map(plate => {
+          labels.map(l => {
+
+            toCheck.map(tc => {
+
+              if (tc && tc.fr && plate[l] && plate[l].fr) {
+                if (tc.fr === plate[l].fr) {
+                  inUse.push(tc);
+                }
+              }
+            })
+
+
+          })
+        });
+
+        res.send({frs: inUse})
+      })
+      .catch(err => {
+        sendError(err, res)
+      })
+  } else {
+    sendError(new Error('no frs sent'), res)
+  }
+
+});
+
 router.post('/stock/new', (req, res) => {
 
   const stock = req.body.stock;
@@ -252,17 +288,17 @@ router.post('/master/new', (req, res) => {
   const name = req.body.masterName;
 
 
-  // let sortingMethod = Array.prototype.sort;
-  //
-  //
-  // if (layout === 0) {
-  //   sortingMethod = (a, b) => (a.fr > b.fr) ? 1 : ((b.fr > a.fr) ? -1 : 0);
-  // } else if (layout === 1) {
-  //   sortingMethod = (a, b) => (a.fr > b.fr) ? -1 : ((b.fr > a.fr) ? 1 : 0);
-  // } else {
-  //   //dont sort
-  // }
-  // stockPlateFromPost.items.sort(sortingMethod);
+  let sortingMethod = Array.prototype.sort;
+
+
+  if (layout === 0) {
+    sortingMethod = (a, b) => (a.fr > b.fr) ? 1 : ((b.fr > a.fr) ? -1 : 0);
+  } else if (layout === 1) {
+    sortingMethod = (a, b) => (a.fr > b.fr) ? -1 : ((b.fr > a.fr) ? 1 : 0);
+  } else {
+    //dont sort
+  }
+  stockPlateFromPost.items.sort(sortingMethod);
 
   const plateID = stockPlateFromPost.id.toObjectId();
 
@@ -460,20 +496,6 @@ router.get('/frec', (req, res) => {
             }
 
 
-            //
-            //   //exists
-            //   let filtered = ecs.filter(e => e.ec === ec);
-            //   let exists = filtered.length;
-            //
-            //   //add if not
-            //   if (!exists) {
-            //     ecs.push({ec, volume: volume, frs: [{fr, volume, plateID}]});
-            //   } else {
-            //     //add frs
-            //     filtered[0].volume += volume;
-            //     filtered[0].frs.push({fr, volume, plateID})
-            //   }
-            //
           }
         })
       });
@@ -495,7 +517,7 @@ router.post('/frec/search', (req, res) => {
 
   Promise.all([
     Master.find({deleted: false}).populate('plates'),
-    Stock.find({deleted: false}).populate('plate')
+    Stock.find({deleted: false}).populate('plate'),
   ])
     .then(mastersAndStocks => {
 
@@ -505,10 +527,12 @@ router.post('/frec/search', (req, res) => {
 
           if (mors.plates) {
             mors.plates.map(plate => {
+              plate.type = 'master';
               plates.push(plate);
             })
           }
           if (mors.plate) {
+            mors.plate.type = 'stock';
             plates.push(mors.plate)
           }
 
@@ -527,13 +551,13 @@ router.post('/frec/search', (req, res) => {
           if (lookingFor.length && lookingFor.length > 2) {
             if (ec && lookingFor) {
 
-              if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) { //TODO check its not already there
+              if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) {
 
-                if(!results.filter(r=>{
+                if (!results.filter(r => {
                   return r.ec === ec && r.fr === fr && r.volume === volume && r.plateID === plateID
                 }).length)
 
-                results.push({ec, fr, volume, plateID})
+                  results.push({ec, fr, volume, plateID})
               }
             }
           }
@@ -547,33 +571,6 @@ router.post('/frec/search', (req, res) => {
       sendError(err, res);
     })
 
-  // Plate.find({})
-  //   .then(plates => {
-  //
-  //     plates.map(plate => {
-  //       labels.map(l => {
-  //
-  //         let ec = plate[l].ec;
-  //         let fr = plate[l].fr;
-  //         let volume = plate[l].volume;
-  //         let plateID = plate._id;
-  //
-  //
-  //         if (lookingFor.length && lookingFor.length > 2) {
-  //           if (ec && lookingFor) {
-  //
-  //             if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) {
-  //               results.push({ec, fr, volume, plateID})
-  //             }
-  //           }
-  //         }
-  //       })
-  //     });
-  //     res.status(200).json({results: results})
-  //   })
-  //   .catch(err => {
-  //     sendError(err, res);
-  //   })
 
 });
 
@@ -679,11 +676,9 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  // res.redirect('/')
   res.sendStatus(200)
 });
 router.post('/logout', (req, res) => {
-  // res.redirect('/')
   res.sendStatus(200)
 });
 

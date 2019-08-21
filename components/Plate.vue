@@ -461,7 +461,7 @@
   ];
 
   export default {
-    props: ['plate', 'save', 'isEditable', 'canSpawnMasters', 'canTakeVolume', 'forceReload'],
+    props: ['plate', 'save', 'isEditable', 'canSpawnMasters', 'canTakeVolume', 'forceReload', 'checkUniqueFRs', 'onCheckUniqueFRs'],
     data() {
       return {
         editMode: false,
@@ -476,7 +476,17 @@
         // unedited: null,
         masterLayout: 0,
         masterName: '',
-        volumeToTake: 0,
+        volumeToTake: 0
+      }
+    },
+    created() {
+      if (this.checkUniqueFRs) {
+        this.checkFRs()
+      }
+    },
+    updated() {
+      if (this.checkUniqueFRs) {
+        this.checkFRs()
       }
     },
     computed: {
@@ -498,6 +508,10 @@
           return 'Too many wells selected, maximum is ' + this.newMasterMaxWells;
         } else if (!this.masterName || !this.masterName.length) {
           return 'Name for new master not provided'
+        } else if (this.checkingUniqueFrs) {
+          return 'Checking if FRs are unique'
+        } else if (this.uniqueFrErrors) {
+          return 'Duplicate FRs fround'
         } else {
           return ''
         }
@@ -569,6 +583,40 @@
     },
     methods: {
 
+      checkFRs() {
+        if (this.checkUniqueFRs) {
+
+          this.checkingUniqueFrs = true;
+
+          const frs = labels.map(l => {
+            if (this.plate[l]) {
+              return {label: l, fr: this.plate[l].fr}
+            } else {
+              return null
+            }
+          });
+
+          this.$axios.$post('/api/stock/check/frs', {frs: frs})
+            .then(res => {
+
+              if (this.onCheckUniqueFRs) {
+                this.onCheckUniqueFRs((res.frs && res.frs.length))
+              }
+
+              if (res.frs && res.frs.length) {
+                this.uniqueFrErrors = true;
+                res.frs.map(fr => {
+                  this.$set(this.plate[fr.label], 'frTaken', true)
+                })
+              }
+
+            })
+            .catch(err => {
+              console.error(err);
+            });
+
+        }
+      },
       showError(err) {
         this.$swal({
           title: 'Error!',
@@ -587,7 +635,7 @@
         this._beforeEditingCache = JSON.parse(JSON.stringify(this.plate))
       },
       restoreOriginal() {
-        console.log(this._beforeEditingCache);
+        // console.log(this._beforeEditingCache);
         if (this._beforeEditingCache) {
           // Return the title back to it’s previous state
           Object.assign(this.plate, this._beforeEditingCache);
@@ -645,7 +693,6 @@
               this.restoreOriginal();
             }
           } else {
-            // this.unedited = Object.assign({}, this.plate); //DEPPCLONE
             this.setOriginal();
             this.editMode = true;
           }
