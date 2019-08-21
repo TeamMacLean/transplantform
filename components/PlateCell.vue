@@ -3,7 +3,7 @@
   <td v-if="forcedItem" class=" has-text-centered tooltip is-unselectable"
       v-bind:data-tooltip="forcedItem.ec || 'Empty'"
       @click="onPress(forcedItem)"
-      v-bind:class="{'is-selected':selected, 'is-warning':isWarning, 'is-danger':isDanger}">
+      v-bind:class="{'is-selected':selected, 'is-warning':isWarning, 'is-danger':isDanger, 'is-danger-border':isDangerBorder}">
 
 
     <div v-if="editMode">
@@ -29,13 +29,15 @@
 <script>
   export default {
     computed: {
+      isDangerBorder() {
+        // return true;
+        return this.forcedItem.frTaken
+      },
       isWarning() {
         return this.forcedItem.fr && this.forcedItem.ec && this.forcedItem.volume <= Math.ceil(((this.maxVolume / 100) * 30)) //below 30% of total
-        // return this.forcedItem.volume < 500 && this.forcedItem.fr && this.forcedItem.ec
       },
       isDanger() {
         return this.forcedItem.fr && this.forcedItem.ec && this.forcedItem.volume <= Math.ceil(((this.maxVolume / 100) * 10)) //below 10% of total
-        // return this.forcedItem.volume < 200 && this.forcedItem.fr && this.forcedItem.ec
       },
       selected() {
         return this.forcedItem ? this.forcedItem.selected : null
@@ -52,6 +54,10 @@
 <style>
   .small-cell-text {
     font-size: 0.65rem
+  }
+
+  .is-danger-border {
+    outline: 2px solid #FC3C63;
   }
 
   /*.is-selected {*/
