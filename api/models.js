@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
 const Plate = mongoose.model(
   'Plate',
@@ -499,6 +500,10 @@ const Stock = mongoose.model('Stock', {
     type: Date,
     default: Date.now
   },
+  deleted: {
+    type: Boolean,
+    default: false
+  },
   active: {
     type: Boolean,
     required: true,
@@ -528,6 +533,10 @@ const Master = mongoose.model('Master', {
   created: {
     type: Date,
     default: Date.now
+  },
+  deleted: {
+    type: Boolean,
+    default: false
   },
   active: {
     type: Boolean,

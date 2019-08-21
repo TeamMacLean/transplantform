@@ -93,7 +93,7 @@
 
         // console.log(this.file)
 
-        function formatePlate(table) {
+        function formatPlate(table) {
           const labels = [
             'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',
             'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12',
@@ -111,16 +111,21 @@
           const plate = {};
 
           const offset = 2;
-          for (let i = 0; i < 96; i++) {
 
+          labels.map((label, i)=>{
             if (table[i + offset][1] && table[i + offset][2]) {
               plate[labels[i]] = {fr: table[i + offset][1], ec: table[i + offset][2], volume: 900}
-            } else {
-
             }
+          })
 
-
-          }
+          // for (let i = 0; i < 96; i++) {
+          //
+          //   if (table[i + offset][1] && table[i + offset][2]) {
+          //     plate[labels[i]] = {fr: table[i + offset][1], ec: table[i + offset][2], volume: 900}
+          //   } else {
+          //
+          //   }
+          // }
 
           return plate;
         }
@@ -133,7 +138,7 @@
 
 
           try {
-            vm.$set(vm, 'plate', formatePlate(table));
+            vm.$set(vm, 'plate', formatPlate(table));
           } catch (err) {
             console.error(err);
           }
@@ -149,7 +154,6 @@
         }
       },
       save() {
-
 
         return this.$axios.post('/api/stock/new', {
           stock: {

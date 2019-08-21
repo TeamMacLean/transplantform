@@ -52,6 +52,9 @@
                   <a class="dropdown-item" @click="activeateStock" v-if="!stock.active">
                     Activate
                   </a>
+                  <a class="dropdown-item" @click="deleteStock">
+                    Delete
+                  </a>
                   <!--<a class="dropdown-item is-disabled" @click="rename" disabled="disabled">-->
                   <!--Rename-->
                   <!--</a>-->
@@ -105,7 +108,40 @@
         })
     },
     methods: {
-      rename: function () {
+      deleteStock: function () {
+
+
+        this.$swal({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.value) {
+            this.$axios.post('/api/stock/' + this.stock._id + '/delete', {stock: this.stock})
+              .then(() => {
+                this.$swal(
+                  'Deleted!',
+                  'Your stock has been deleted.',
+                  'success'
+                )
+                  .then(() => {
+                    this.$router.push('/stocks/')
+                  })
+              })
+              .catch(err => {
+                this.$swal(
+                  'Fail!',
+                  'Your stock could not be deleted.',
+                  'error'
+                )
+              })
+
+          }
+        })
 
       },
       saveStock: function () {

@@ -535,7 +535,7 @@
         }
       },
       newMasterMaxWells() {
-        return Math.floor((96 - 2) / (this.replicates))
+        return Math.floor((96 - (2 * this.replicates)) / this.replicates)
       },
       selectedWells() {
         if (this.plate) {
@@ -564,7 +564,7 @@
         }
       },
       canCreateMaster() {
-        return this.selectedWells.length && this.volumeToTransfer > 0 && this.replicates > 0 && this.masterName && this.masterName.length && this.volumeToTransfer < this.newMasterMaxVolume && this.selectedWells.length < this.newMasterMaxWells;
+        return this.selectedWells.length && this.volumeToTransfer > 0 && this.replicates > 0 && this.masterName && this.masterName.length && this.volumeToTransfer <= this.newMasterMaxVolume && this.selectedWells.length <= this.newMasterMaxWells;
       }
     },
     methods: {

@@ -25,34 +25,24 @@ const labels = [
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12',
 ];
 
+
 const labelsChunked = _.chunk(labels, 12);
-// const labelsAlphabetical = _.zip.apply(_, labelsChunked);
-// const labelsFlatAlphabetical = [].concat.apply([], labelsAlphabetical);
+
 
 function getKeysForNewMaster(replicates) {
 
-  const labelsWithoutEmpties = labelsChunked.map((labelChunk, index) => {
-    if (index <= (replicates - 1)) { //replicates to 0-base
-      labelChunk = labelChunk.slice(2) //remove 2
-    }
-    return labelChunk;
-  });
-
-  const labelsWithoutEmptiesAlphabetical = _.zip.apply(_, labelsWithoutEmpties);
-
-
   const newOrder = [];
   for (let slim = 0; slim + replicates <= 12; slim += replicates) {
-    for (let thicc = 0; thicc < 8; thicc++) {
+    for (let thicc = 0; thicc < 8; thicc++) {//because its 8 wide
       for (let offset = 0; offset < replicates; offset++) {
-        if (labelsWithoutEmptiesAlphabetical[slim + offset].indexOf(undefined) < 0) {
-          newOrder.push(labelsWithoutEmptiesAlphabetical[slim + offset][thicc])
-        }
+        newOrder.push(labelsChunked[thicc][slim + offset])
       }
     }
   }
 
-  return newOrder;
+  //TODO remove 0, 1
+  newOrder.splice(0, 2 * replicates);
+  return newOrder
 }
 
 
@@ -91,7 +81,7 @@ router.get('/stock', (req, res) => {
 
   Stock.find({})
     .then(stocks => {
-      const sorted = stocks.reduce((all, current) => {
+      const sorted = stocks.filter(s => !s.deleted).reduce((all, current) => {
         current.active ? all.stocksActive.push(current) : all.stocksRetired.push(current);
         return all;
       }, {stocksActive: [], stocksRetired: []});
@@ -146,7 +136,22 @@ router.post('/stock/:id/activate', (req, res) => {
       sendError(err, res)
     })
 });
-
+router.post('/stock/:id/delete', (req, res) => {
+  Stock.findById(req.params.id)
+    .then(stock => {
+      stock.deleted = true;
+      return stock.save()
+    })
+    .then(stock => {
+      return stock.populate('plate').execPopulate();
+    })
+    .then(stock => {
+      res.status(200).json({active: stock.active})
+    })
+    .catch(err => {
+      sendError(err, res)
+    })
+});
 router.post('/stock/check/name', (req, res) => {
   const name = req.body.name;
 
@@ -301,7 +306,7 @@ router.post('/master/new', (req, res) => {
       const keys = getKeysForNewMaster(replicates);
 
       replicatedItems.map((item, indx) => {
-        newWells[keys[indx]] = {ec: item.ec, fr: item.ec, volume: volumeToTransfer}
+        newWells[keys[indx]] = {ec: item.ec, fr: item.fr, volume: volumeToTransfer}
       });
 
       const platePromises = [];
@@ -340,7 +345,7 @@ router.get('/master', (req, res) => {
 
   Master.find({})
     .then(masters => {
-      const sorted = masters.reduce((all, current) => {
+      const sorted = masters.filter(m => !m.deleted).reduce((all, current) => {
         current.active ? all.mastersActive.push(current) : all.mastersRetired.push(current);
         return all;
       }, {mastersActive: [], mastersRetired: []});
@@ -370,7 +375,7 @@ router.post('/master/:id/retire', (req, res) => {
       return master.save()
     })
     .then(master => {
-      return master.populate('plate').execPopulate();
+      return master.populate('plates').execPopulate();
     })
     .then(master => {
       res.status(200).json({active: master.active})
@@ -386,7 +391,25 @@ router.post('/master/:id/activate', (req, res) => {
       return master.save()
     })
     .then(master => {
-      return master.populate('plate').execPopulate();
+      return master.populate('plates').execPopulate();
+    })
+    .then(master => {
+      res.status(200).json({active: master.active})
+    })
+    .catch(err => {
+      sendError(err, res)
+    })
+});
+
+
+router.post('/master/:id/delete', (req, res) => {
+  Master.findById(req.params.id)
+    .then(master => {
+      master.deleted = true;
+      return master.save()
+    })
+    .then(master => {
+      return master.populate('plates').execPopulate();
     })
     .then(master => {
       res.status(200).json({active: master.active})
@@ -470,8 +493,27 @@ router.post('/frec/search', (req, res) => {
   const lookingFor = req.body.id;
   const results = [];
 
-  Plate.find({})
-    .then(plates => {
+  Promise.all([
+    Master.find({deleted: false}).populate('plates'),
+    Stock.find({deleted: false}).populate('plate')
+  ])
+    .then(mastersAndStocks => {
+
+      const plates = [];
+      mastersAndStocks.map(morsGroup => {
+        morsGroup.map(mors => {
+
+          if (mors.plates) {
+            mors.plates.map(plate => {
+              plates.push(plate);
+            })
+          }
+          if (mors.plate) {
+            plates.push(mors.plate)
+          }
+
+        });
+      });
 
       plates.map(plate => {
         labels.map(l => {
@@ -485,7 +527,12 @@ router.post('/frec/search', (req, res) => {
           if (lookingFor.length && lookingFor.length > 2) {
             if (ec && lookingFor) {
 
-              if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) {
+              if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) { //TODO check its not already there
+
+                if(!results.filter(r=>{
+                  return r.ec === ec && r.fr === fr && r.volume === volume && r.plateID === plateID
+                }).length)
+
                 results.push({ec, fr, volume, plateID})
               }
             }
@@ -493,10 +540,40 @@ router.post('/frec/search', (req, res) => {
         })
       });
       res.status(200).json({results: results})
+
+
     })
     .catch(err => {
       sendError(err, res);
     })
+
+  // Plate.find({})
+  //   .then(plates => {
+  //
+  //     plates.map(plate => {
+  //       labels.map(l => {
+  //
+  //         let ec = plate[l].ec;
+  //         let fr = plate[l].fr;
+  //         let volume = plate[l].volume;
+  //         let plateID = plate._id;
+  //
+  //
+  //         if (lookingFor.length && lookingFor.length > 2) {
+  //           if (ec && lookingFor) {
+  //
+  //             if (ec.toUpperCase().indexOf(lookingFor.toUpperCase()) > -1) {
+  //               results.push({ec, fr, volume, plateID})
+  //             }
+  //           }
+  //         }
+  //       })
+  //     });
+  //     res.status(200).json({results: results})
+  //   })
+  //   .catch(err => {
+  //     sendError(err, res);
+  //   })
 
 });
 
