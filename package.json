@@ -11,27 +11,27 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@fortawesome/free-regular-svg-icons": "^5.9.0",
-    "@fortawesome/free-solid-svg-icons": "^5.9.0",
+    "@fortawesome/free-regular-svg-icons": "^5.10.2",
+    "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@nuxtjs/auth": "^4.8.1",
-    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/axios": "^5.6.0",
     "body-parser": "^1.19.0",
     "bulma": "^0.7.5",
     "bulma-tooltip": "^2.0.2",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "ldapauth-fork": "^4.2.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "mongoose": "^5.6.6",
+    "mongoose": "^5.6.10",
     "node-sass": "^4.12.0",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.9.1",
     "nuxt-fontawesome": "^0.4.0",
-    "sass-loader": "^7.1.0",
-    "vue": "latest",
+    "sass-loader": "^7.3.1",
+    "vue": "^2.6.10",
     "vue-sweetalert2": "^2.1.1",
-    "xlsx": "^0.14.4"
+    "xlsx": "^0.14.5"
   },
   "devDependencies": {
     "nodemon": "^1.18.9"
