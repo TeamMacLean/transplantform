@@ -2,7 +2,7 @@
   <div class="container-index">
     <div>
       <div>
-        <img src="/fridge.png">
+        <img src="/fridge.png" alt="FRIDGE Logo">
       </div>
       <h1 class="heading title title-index has-text-primary">
         <b>fridge</b>
