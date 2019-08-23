@@ -14,6 +14,9 @@ export default {
   */
   head: {
     title: process.env.npm_package_name || '',
+    htmlAttrs: {
+      lang: 'en',
+    },
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},
@@ -47,6 +50,7 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/pwa',
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     'nuxt-fontawesome', //V5
@@ -58,12 +62,10 @@ export default {
       {
         set: '@fortawesome/free-solid-svg-icons',
         icons: ['faFillDrip', 'faSpinner', 'faSearch', 'faEllipsisV', 'faUpload']
-        // icons: ['fas']
       },
       {
         set: '@fortawesome/free-regular-svg-icons',
         icons: ['faUserCircle', 'faEdit', 'faSave', 'faCheckCircle']
-        // icons: ['far']
       },
     ]
   },

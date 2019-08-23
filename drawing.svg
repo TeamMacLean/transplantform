@@ -26,15 +26,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="47.641147"
-     inkscape:cy="662.16192"
+     inkscape:cx="169.15535"
+     inkscape:cy="520.59276"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1103"
      inkscape:window-height="856"
      inkscape:window-x="1046"
-     inkscape:window-y="238"
+     inkscape:window-y="216"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -129,5 +129,15 @@
            style="font-size:13.33333397px" /></flowRegion><flowPara
          id="flowPara4200">2a3639ff</flowPara><flowPara
          id="flowPara4206">ecf0f1ff</flowPara><flowPara
-         id="flowPara4204" /></flowRoot>  </g>
+         id="flowPara4204" /></flowRoot>    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.15384614;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4159"
+       width="59.531246"
+       height="59.531246"
+       x="29.104166"
+       y="94.59375"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/icon.png.png"
+       inkscape:export-xdpi="436.90668"
+       inkscape:export-ydpi="436.90668" />
+  </g>
 </svg>
