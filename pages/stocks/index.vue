@@ -17,9 +17,10 @@
       </div>
     </div>
 
+    <hr/>
 
     <div v-if="stocksRetired.length">
-      <hr/>
+
       <h1 class="title">Retired</h1>
 
       <div class="columns" v-for="i in Math.ceil(stocksRetired.length / 4)">
