@@ -40,8 +40,7 @@ function getKeysForNewMaster(replicates) {
     }
   }
 
-  //TODO remove 0, 1
-  newOrder.splice(0, 2 * replicates);
+  newOrder.splice(0, 2 * replicates); //make empty spaces
   return newOrder
 }
 
