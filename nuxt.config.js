@@ -57,11 +57,13 @@ export default {
       //import whole set
       {
         set: '@fortawesome/free-solid-svg-icons',
-        icons: ['fas']
+        icons: ['faFillDrip', 'faSpinner', 'faSearch', 'faEllipsisV', 'faUpload']
+        // icons: ['fas']
       },
       {
         set: '@fortawesome/free-regular-svg-icons',
-        icons: ['far']
+        icons: ['faUserCircle', 'faEdit', 'faSave', 'faCheckCircle']
+        // icons: ['far']
       },
     ]
   },
