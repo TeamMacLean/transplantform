@@ -403,8 +403,10 @@
                 <div class="control">
                   <div class="select">
                     <select v-model="masterLayout">
-                      <option value="0">Numerical</option>
-                      <option value="1">Reverse-Numerical</option>
+                      <option value="0">FR Numerical</option>
+                      <option value="1">FR Reverse-Numerical</option>
+                      <option value="2">EC Reverse-Numerical</option>
+                      <option value="3">Order Selected</option>
                     </select>
                   </div>
                 </div>

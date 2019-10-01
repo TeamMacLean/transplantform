@@ -34,7 +34,7 @@
         return this.forcedItem.frTaken
       },
       isWarning() {
-        return this.forcedItem.fr && this.forcedItem.ec && this.forcedItem.volume <= Math.ceil(((this.maxVolume / 100) * 30)) //below 30% of total
+        return this.forcedItem.fr && this.forcedItem.ec && this.forcedItem.volume <= Math.ceil(((this.maxVolume / 100) * 20)) //below 30% of total
       },
       isDanger() {
         return this.forcedItem.fr && this.forcedItem.ec && this.forcedItem.volume <= Math.ceil(((this.maxVolume / 100) * 10)) //below 10% of total
