@@ -321,8 +321,11 @@ router.post('/master/new', (req, res) => {
     sortingMethod = (a, b) => (a.fr > b.fr) ? 1 : ((b.fr > a.fr) ? -1 : 0);
   } else if (layout === 1) {
     sortingMethod = (a, b) => (a.fr > b.fr) ? -1 : ((b.fr > a.fr) ? 1 : 0);
+  } else  if(layout === 2){
+    //TODO sort ny EC
+    sortingMethod = (a, b) => (a.ec > b.ec) ? -1 : ((b.ec > a.ec) ? 1 : 0)
   } else {
-    //dont sort
+    //keep as is
   }
   stockPlateFromPost.items.sort(sortingMethod);
 

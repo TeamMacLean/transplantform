@@ -15,7 +15,7 @@
           <div class="field has-addons">
             <p class="control is-expanded">
               <input class="input" id="username" type="text" name="username" title="username"
-                     placeholder="Username" autocomplete="current-password"
+                     placeholder="Username"
                      v-model="credentials.username" required autofocus>
             </p>
             <p class="control">
@@ -27,20 +27,20 @@
           <div class="field">
             <div class="control">
               <input class="input" id="password" type="password" name="password" title="password"
-                     placeholder="Password" autocomplete="current-password"
+                     placeholder="Password"
                      v-model="credentials.password" required>
             </div>
           </div>
 
           <!--<div class="level options">-->
-            <!--<div class="checkbox level-left">-->
-              <!--<input type="checkbox" id="checkbox" class="regular-checkbox">-->
-              <!--<label for="checkbox"></label>-->
-              <!--<span class="has-text-weight-light has-text-dark is-size-7">Remember me</span>-->
-            <!--</div>-->
+          <!--<div class="checkbox level-left">-->
+          <!--<input type="checkbox" id="checkbox" class="regular-checkbox">-->
+          <!--<label for="checkbox"></label>-->
+          <!--<span class="has-text-weight-light has-text-dark is-size-7">Remember me</span>-->
+          <!--</div>-->
 
-            <!--<a class="level-right has-text-weight-light	has-text-dark is-size-7" href="#">Forgot-->
-              <!--Password?</a>-->
+          <!--<a class="level-right has-text-weight-light	has-text-dark is-size-7" href="#">Forgot-->
+          <!--Password?</a>-->
           <!--</div>-->
           <div v-if="submitting">Submitting ....</div>
           <button type="submit" class="button is-primary is-fullwidth is-outlined">Sign in</button>

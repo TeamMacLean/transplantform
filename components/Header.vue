@@ -3,7 +3,7 @@
     <div class="navbar-brand">
       <nuxt-link to="/" class="navbar-item">
         <!--<img src="/fridge.png" width="16" height="28" style="margin-right:8px;">-->
-        <b class="heading has-text-primary" style="font-size:1.2rem;">Fridge</b>
+        <b class="has-text-primary">Fridge</b>
       </nuxt-link>
       <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" type="button"
          data-target="navbarBasicExample">
