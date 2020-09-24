@@ -6,7 +6,8 @@ const bindDN = process.env.LDAP_BIND_DN; // Username
 const bindCredentials = process.env.LDAP_BIND_CREDENTIALS; // User password
 const bindSearchBase = process.env.LDAP_SEARCH_BASE; // test.com
 const searchFilter = process.env.LDAP_SEARCH_FILTER;
-const groupRequirement = process.env.LDAP_MUST_BE_MEMBER_OF;
+const groupRequirement = false; //process.env.LDAP_MUST_BE_MEMBER_OF; TEMP HACK figure out group permission issues
+const acceptableList = process.env.ACCEPTED_USERS;
 
 function authenticate(username, password) {
   return new Promise((good, bad) => {
@@ -31,6 +32,9 @@ function authenticate(username, password) {
         if (user) {
           //check for group if required
 
+          // TODO
+          // George, go through this logging to see how it works. perhaps live with user to ensure works.
+          /*
           if (groupRequirement && user.memberOf) {
 
             const groupOptions = groupRequirement.replace(' ', '').split(';');
@@ -53,6 +57,12 @@ function authenticate(username, password) {
 
           } else {
             good(user);
+          }
+          */
+          if (acceptableList.includes(username)) {
+            good(user)
+          } else {
+            bad(new Error(`User ${username} is not part of accepted list by web admins`))
           }
 
         } else {

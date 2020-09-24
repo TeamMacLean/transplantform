@@ -698,7 +698,7 @@ router.post('/login', (req, res) => {
         res.status(401).json({message: 'Bad credentials'})
       });
   } else {
-    res.status(401).json({message: 'Bad credentials'})
+    res.status(401).json({message: 'Incomplete credentials'})
   }
 });
 
