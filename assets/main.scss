@@ -17,7 +17,7 @@ $primary-invert: $cello-invert;
 
 // 6. Import the rest of Bulma
 @import "~bulma/bulma";
-@import "~bulma-tooltip";
+@import "~@creativebulma/bulma-tooltip";
 
 
 .tag:not(body) {

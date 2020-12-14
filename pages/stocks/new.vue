@@ -33,21 +33,27 @@
 
 
       <div v-if="plate">
-        <Plate :plate="plate" :isEditable="true" :canSpawnMasters="false" checkUniqueFRs="true"
-               :onCheckUniqueFRs="onCheckUniqueFRs"/>
+        <Plate 
+          :plate="plate" :isEditable="true" :canSpawnMasters="false" checkUniqueFRs="true"
+          :onCheckUniqueFRs="onCheckUniqueFRs"/>
       </div>
 
 
       <hr/>
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-primary" type="submit" v-bind:disabled="!canSubmit"
-                  v-bind:data-tooltip="saveErrorText" v-bind:class="{'tooltip':!canSubmit}">Save
+          <button class="button is-text" type="button" v-on:click="reset">
+            Reset
           </button>
         </div>
         <div class="control">
-          <button class="button is-text" type="button" v-on:click="reset">
-            Reset
+          <button 
+            type="submit" 
+            :disabled="!canSubmit"
+            :class="calculateSubmissionButtonClass(canSubmit)" 
+            :data-tooltip="saveErrorText"
+          >
+            Save
           </button>
         </div>
       </div>
@@ -80,6 +86,20 @@
       }
     },
     methods: {
+      calculateSubmissionButtonClass(canSubmit) {
+
+      // v-bind:data-tooltip="saveErrorText" v-bind:class="{'tooltip':!canSubmit, 'has-tooltip-right': true}"
+        
+        let result = 'button is-primary';
+        if (!canSubmit){
+          result += ' tooltip has-tooltip-right'
+        }
+
+
+
+
+        return result;
+      },
       onCheckUniqueFRs(results) {
         this.frErrors = !!results;
       },
@@ -181,11 +201,11 @@
       },
       saveErrorText() {
         if (!this.plate) {
-          return 'No Plate'
+          return 'Error: No Plate'
         } else if (!this.nameIsOk) {
-          return 'Name is not valid'
+          return 'Error: Name is not valid'
         } else {
-          return 'One of more FR numbers are already in use'
+          return 'Error: One of more FR numbers are already in use'
         }
       }
     },
