@@ -23,218 +23,314 @@
       <tr>
         <td><strong>A</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a1"/>
+          :item="plate.a1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a2"/>
+          :item="plate.a2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a3"/>
+          :item="plate.a3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a4"/>
+          :item="plate.a4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a5"/>
+          :item="plate.a5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a6"/>
+          :item="plate.a6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a7"/>
+          :item="plate.a7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a8"/>
+          :item="plate.a8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a9"/>
+          :item="plate.a9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a10"/>
+          :item="plate.a10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a11"/>
+          :item="plate.a11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.a12"/>
+          :item="plate.a12
+        "/>
       </tr>
       <tr>
         <td valign="middle"><strong>B</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b1"/>
+          :item="plate.b1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b2"/>
+          :item="plate.b2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b3"/>
+          :item="plate.b3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b4"/>
+          :item="plate.b4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b5"/>
+          :item="plate.b5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b6"/>
+          :item="plate.b6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b7"/>
+          :item="plate.b7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b8"/>
+          :item="plate.b8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b9"/>
+          :item="plate.b9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b10"/>
+          :item="plate.b10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b11"/>
+          :item="plate.b11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.b12"/>
+          :item="plate.b12
+        "/>
       </tr>
       <tr>
         <td><strong>C</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c1"/>
+          :item="plate.c1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c2"/>
+          :item="plate.c2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c3"/>
+          :item="plate.c3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c4"/>
+          :item="plate.c4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c5"/>
+          :item="plate.c5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c6"/>
+          :item="plate.c6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c7"/>
+          :item="plate.c7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c8"/>
+          :item="plate.c8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c9"/>
+          :item="plate.c9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c10"/>
+          :item="plate.c10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c11"/>
+          :item="plate.c11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.c12"/>
+          :item="plate.c12
+        "/>
       </tr>
       <tr>
         <td><strong>D</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d1"/>
+          :item="plate.d1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d2"/>
+          :item="plate.d2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d3"/>
+          :item="plate.d3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d4"/>
+          :item="plate.d4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d5"/>
+          :item="plate.d5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d6"/>
+          :item="plate.d6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d7"/>
+          :item="plate.d7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d8"/>
+          :item="plate.d8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d9"/>
+          :item="plate.d9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d10"/>
+          :item="plate.d10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d11"/>
+          :item="plate.d11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.d12"/>
+          :item="plate.d12
+        "/>
       </tr>
       <tr>
         <td><strong>E</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e1"/>
+          :item="plate.e1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e2"/>
+          :item="plate.e2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e3"/>
+          :item="plate.e3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e4"/>
+          :item="plate.e4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e5"/>
+          :item="plate.e5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e6"/>
+          :item="plate.e6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e7"/>
+          :item="plate.e7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e8"/>
+          :item="plate.e8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e9"/>
+          :item="plate.e9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e10"/>
+          :item="plate.e10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e11"/>
+          :item="plate.e11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.e12"/>
+          :item="plate.e12
+        "/>
       </tr>
       <tr>
         <td><strong>F</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f1"/>
+          :item="plate.f1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f2"/>
+          :item="plate.f2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f3"/>
+          :item="plate.f3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f4"/>
+          :item="plate.f4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f5"/>
+          :item="plate.f5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f6"/>
+          :item="plate.f6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f7"/>
+          :item="plate.f7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f8"/>
+          :item="plate.f8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f9"/>
+          :item="plate.f9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f10"/>
+          :item="plate.f10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f11"/>
+          :item="plate.f11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.f12"/>
+          :item="plate.f12
+        "/>
       </tr>
       <tr>
         <td><strong>G</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g1"/>
+          :item="plate.g1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g2"/>
+          :item="plate.g2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g3"/>
+          :item="plate.g3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g4"/>
+          :item="plate.g4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g5"/>
+          :item="plate.g5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g6"/>
+          :item="plate.g6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g7"/>
+          :item="plate.g7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g8"/>
+          :item="plate.g8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g9"/>
+          :item="plate.g9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g10"/>
+          :item="plate.g10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g11"/>
+          :item="plate.g11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.g12"/>
+          :item="plate.g12
+        "/>
       </tr>
       <tr>
         <td><strong>H</strong></td>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h1"/>
+          :item="plate.h1"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h2"/>
+          :item="plate.h2"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h3"/>
+          :item="plate.h3"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h4"/>
+          :item="plate.h4"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h5"/>
+          :item="plate.h5"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h6"/>
+          :item="plate.h6"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h7"/>
+          :item="plate.h7"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h8"/>
+          :item="plate.h8"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h9"/>
+          :item="plate.h9"
+        />
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h10"/>
+          :item="plate.h10
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h11"/>
+          :item="plate.h11
+        "/>
         <PlateCell :onPress="onPress" :onSelectMode="onSelectMode" :editMode="editMode" :maxVolume="maxVolume"
-                   :item="plate.h12"/>
+          :item="plate.h12
+        "/>
       </tr>
       </tbody>
     </table>
@@ -282,8 +378,8 @@
             </p>
             <div class="control">
               <input type="number" class="input" v-bind:max="volumeMax"
-                     v-model="volumeToTake"
-                     required>
+                    v-model="volumeToTake"
+                    required>
             </div>
           </div>
         </div>
@@ -336,8 +432,8 @@
                 </p>
                 <div class="control">
                   <input type="number" class="input" v-bind:max="newMasterMaxVolume || 900" min="0"
-                         v-model="volumeToTransfer"
-                         required>
+                        v-model="volumeToTransfer"
+                        required>
                 </div>
               </div>
             </div>
@@ -352,8 +448,8 @@
                 </p>
                 <div class="control">
                   <input type="number" class="input" min="1" max="3"
-                         v-model="replicates"
-                         required>
+                        v-model="replicates"
+                        required>
                 </div>
               </div>
             </div>
@@ -367,8 +463,8 @@
                 </p>
                 <div class="control">
                   <input type="number" class="input" min="1" max="5"
-                         v-model="noOfPlates"
-                         required>
+                        v-model="noOfPlates"
+                        required>
                 </div>
               </div>
             </div>
@@ -386,9 +482,11 @@
                   </a>
                 </p>
                 <div class="control">
-                  <input type="text" class="input"
-                         v-model="masterName"
-                         required>
+                  <input type="text" 
+                    class="input"
+                    v-model="masterName"
+                    required
+                  >
                 </div>
               </div>
             </div>
@@ -566,16 +664,16 @@
             if (this.saving) {
               return 'Saving...'
             } else {
-              return 'Save'
+              return 'Save cells'
             }
           } else {
-            return 'Edit'
+            return 'Edit cells'
           }
         } else {
           if (this.editMode) {
-            return 'OK'
+            return 'Save this cell arrangement'
           } else {
-            return 'Edit'
+            return 'Edit cells'
           }
         }
       },
