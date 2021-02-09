@@ -7,7 +7,7 @@
         <label class="label">Name</label>
         <div class="control">
           <input class="input" type="text" placeholder="Stock plate name" v-model="plateName" minlength="5"
-                 @input="checkName" required>
+            @input="checkName" required>
         </div>
         <p class="help is-success" v-if="nameIsOk">This plate name is available</p>
       </div>
@@ -17,10 +17,10 @@
         <div class="file">
           <label class="file-label">
             <input class="file-input" type="file" name="file" ref="file" id="file" accept=".xlsx"
-                   v-on:change="handleFileUpload">
+              v-on:change="handleFileUpload">
             <span class="file-cta">
       <span class="file-icon">
-       <font-awesome-icon :icon="['fas', 'upload']"/>
+        <font-awesome-icon :icon="['fas', 'upload']"/>
       </span>
       <span class="file-label" id="file-label">
         Choose a file…
