@@ -517,7 +517,6 @@ const Stock = mongoose.model('Stock', {
     type: Schema.Types.ObjectId,
     ref: 'Plate',
     required: true
-
   },
   barcode: {
     type: String,
@@ -526,6 +525,18 @@ const Stock = mongoose.model('Stock', {
   species: {
     type: String,
     required: true
+  },
+  optimisation: {
+    type: String,
+    required: false
+  },
+  speciesDescription: {
+    type: String,
+    required: false
+  },
+  type: {
+    type: String,
+    required: false
   }
 });
 

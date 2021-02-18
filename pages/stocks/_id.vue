@@ -6,6 +6,9 @@
           <p class="title is-4">{{stock.name}}
             <font-awesome-icon :icon="['far', 'check-circle']" v-if="!stock.active"/>
           </p>
+
+          <!-- <br /> -->
+
           <!--<p class="subtitle is-6">Barcode: {{stock.barcode}}; Species: {{stock.species}}</p>-->
           <div class="subtitle">
 
@@ -27,6 +30,27 @@
 
               <div class="control">
                 <div class="tags has-addons">
+                  <span class="tag">species description</span>
+                  <span class="tag is-outlined">{{!!stock.speciesDescription ? stock.speciesDescription : 'None registered.'}}</span>
+                </div>
+              </div>
+
+              <div class="control">
+                <div class="tags has-addons">
+                  <span class="tag">type</span>
+                  <span class="tag is-outlined">{{!!stock.type ? stock.type : 'None registered.'}}</span>
+                </div>
+              </div>
+
+              <div class="control">
+                <div class="tags has-addons">
+                  <span class="tag">optimisation</span>
+                  <span class="tag is-outlined">{{!!stock.optimisation ? stock.optimisation : 'None registered.'}}</span>
+                </div>
+              </div>
+
+              <div class="control">
+                <div class="tags has-addons">
                   <span class="tag">created</span>
                   <span class="tag is-outlined">{{moment(stock.created).format('DD/MM/YYYY')}}</span>
                 </div>
@@ -34,6 +58,7 @@
             </div>
           </div>
         </div>
+
         <div class="column">
           <div class="field is-grouped is-grouped-right">
             <div class="dropdown is-hoverable is-right">
@@ -49,7 +74,7 @@
                   <a class="dropdown-item" @click="retireStock" v-if="stock.active">
                     Retire
                   </a>
-                  <a class="dropdown-item" @click="activeateStock" v-if="!stock.active">
+                  <a class="dropdown-item" @click="activateStock" v-if="!stock.active">
                     Activate
                   </a>
                   <a class="dropdown-item" @click="deleteStock">
@@ -156,7 +181,7 @@
             console.error(err);
           })
       },
-      activeateStock: function () {
+      activateStock: function () {
         return this.$axios.post('/api/stock/' + this.stock._id + '/activate')
           .then((res) => {
             this.$set(this.stock, 'active', res.data.active)

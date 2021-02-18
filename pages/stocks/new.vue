@@ -2,6 +2,13 @@
   <div>
     <h1 class="title">New Stock Plate</h1>
 
+    <h4>Name: {{this.plateName}}</h4>
+    <h4>Type: {{this.type}}</h4>
+    <h4>Species Description: {{this.speciesDescription}}</h4>
+    <h4>Optmisation: {{this.optimisation}}</h4>
+    <h4>Barcode: {{this.barcode}}</h4>
+    <h4>plate [object]: {{!!this.plate}}</h4>
+
     <form @submit="checkFormAndSave">
       <div class="field">
         <label class="label">Name</label>
@@ -11,6 +18,27 @@
         </div>
         <p class="help is-success" v-if="nameIsOk">This plate name is available</p>
       </div>
+
+      <b-field 
+        label="Type"
+      >
+        <b-input v-model="type" maxlength="20"></b-input>
+      </b-field>
+
+      <b-field 
+        label="Species Description"
+      >
+        <b-input v-model="speciesDescription" maxlength="30"></b-input>
+      </b-field>
+
+      <b-field label="Optimisation for plate">
+          <b-select v-model="optimisation" placeholder="Select an optimisation">
+              <option value="soybean">Soybean-optimised</option>
+              <option value="corn">Corn-optimised</option>
+          </b-select>
+      </b-field>
+
+      <br />
 
       <div class="field" v-if="!plate">
         <label class="label">File</label>
@@ -51,7 +79,7 @@
             type="submit" 
             :disabled="!canSubmit"
             :class="calculateSubmissionButtonClass(canSubmit)" 
-            :data-tooltip="saveErrorText"
+            :data-tooltip="canSubmit ? 'Submit me!' : saveErrorText"
           >
             Save
           </button>
@@ -70,7 +98,7 @@
   import Plate from '../../components/Plate'
 
   export default {
-    middleware: 'auth',
+    // middleware: 'auth', TEMP remove
     components: {
       Plate
     },
@@ -83,6 +111,9 @@
         species: '',
         nameIsOk: false,
         frErrors: false,
+        type: '',
+        optimisation: '',
+        speciesDescription: ''
       }
     },
     methods: {
@@ -171,12 +202,28 @@
       },
       save() {
 
+        // console.log('would be POSTING:');
+        // console.log({
+        //     name: this.plateName,
+        //     barcode: this.barcode,
+        //     species: this.species,
+        //     speciesDescription: this.speciesDescription,
+        //     plate: this.plate,
+        //     optimisation: this.optimisation,
+        //     type: this.type,
+        //   })
+        // return true;
+        
+
         return this.$axios.post('/api/stock/new', {
           stock: {
             name: this.plateName,
             barcode: this.barcode,
+            speciesDescription: this.speciesDescription,
+            plate: this.plate,
+            optimisation: this.optimisation,
+            type: this.type,
             species: this.species,
-            plate: this.plate
           }
         })
           .then((res) => {
@@ -204,8 +251,10 @@
           return 'Error: No Plate'
         } else if (!this.nameIsOk) {
           return 'Error: Name is not valid'
+        } else if (this.frErrors) {
+          return 'Error: One of more FR numbers are already in use. Please see highlighted cells.'
         } else {
-          return 'Error: One of more FR numbers are already in use'
+          return 'Unknown error'
         }
       }
     },
