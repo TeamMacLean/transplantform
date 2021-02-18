@@ -239,10 +239,13 @@ router.post('/stock/new', (req, res) => {
     .save()
     .then(savedPlate => {
       return new Stock({
-        plate: savedPlate.id,
         barcode: stock.barcode,
+        name: stock.name,
+        optimisation: stock.optimisation,
+        plate: savedPlate.id,
         species: stock.species,
-        name: stock.name
+        speciesDescription: stock.speciesDescription,
+        type: stock.type,
       }).save()
     })
     .then(savedStock => {
