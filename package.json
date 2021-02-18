@@ -14,27 +14,33 @@
     "@fortawesome/free-regular-svg-icons": "^5.10.2",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@nuxtjs/auth": "^4.8.1",
-    "@nuxtjs/axios": "^5.6.0",
-    "@nuxtjs/pwa": "^3.0.0-beta.16",
+    "@nuxtjs/axios": "^5.13.1",
+    "@nuxtjs/pwa": "^3.3.5",
     "body-parser": "^1.19.0",
+    "buefy": "^0.9.4",
     "bulma": "^0.7.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "ldapauth-fork": "^4.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "moment": "^2.24.0",
     "mongoose": "^5.6.10",
-    "node-sass": "^4.12.0",
-    "nuxt": "^2.9.1",
+    "node-sass": "^4.14.1",
+    "nuxt": "^2.15.0",
+    "nuxt-buefy": "^0.4.4",
     "nuxt-fontawesome": "^0.4.0",
     "sass-loader": "^7.3.1",
-    "vue": "^2.6.10",
+    "vue": "^2.6.12",
+    "vue-server-renderer": "^2.6.12",
     "vue-sweetalert2": "^2.1.1",
     "xlsx": "^0.14.5"
   },
   "devDependencies": {
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "nodemon": "^1.18.9"
+  },
+  "comments": {
+    "vue-template-compiler": "^2.6.12"
   }
 }
