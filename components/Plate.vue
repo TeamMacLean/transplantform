@@ -337,6 +337,14 @@
     <!--<p class="help is-info" v-if="onSelectMode && !editMode && !selectMode">Long press on a well to start selecting wells-->
     <!--for a new Master.</p>-->
 
+    <div v-if="selectMode">
+      Selections (in chronological order:) 
+      <span v-for="(item, index) in this.selectedWellsBattleshipGridReferences" :key=item>
+        {{item.toUpperCase()}}{{selectedWellsBattleshipGridReferences.length !== (index + 1) ? ',' : ''}}
+      </span>
+    </div>
+
+    <br />
 
     <div class="field is-grouped is-grouped-right" v-if="!selectMode && !volumeMode">
       <div class="buttons">
@@ -531,7 +539,10 @@
                   <button class="button is-outlined" @click="resetSelect" type="button">
                     Cancel
                   </button>
-                </div>
+                  <button class="button is-outlined" @click="selectNone" type="button">
+                    Reset selections
+                  </button>
+                </div>                
               </div>
             </div>
             <!--</div>-->
@@ -576,7 +587,8 @@
         // unedited: null,
         masterLayout: 0,
         masterName: '',
-        volumeToTake: 0
+        volumeToTake: 0,
+        selectedWells: [],
       }
     },
     created() {
@@ -650,13 +662,17 @@
       },
       newMasterMaxWells() {
         return Math.floor((96 - (2 * this.replicates)) / this.replicates)
-      },
-      selectedWells() {
-        if (this.plate) {
-          return this.allWells.filter(k => k.selected);
-        } else {
-          return []
+      },      
+      selectedWellsBattleshipGridReferences() {
+        // console.log('this selectedwells', this.selectedWells);
+        // console.log('objectkeythis plates', Object.key(this.plates));
+        if (!this.selectedWells || this.selectedWells.length === 0) {
+          return [];
         }
+
+        const targetFrs = this.selectedWells.map(well => well.fr);
+
+        return targetFrs.map(fr => Object.keys(this.plate).find(key => this.plate[key].fr === fr))
       },
       buttonValue() {
         if (this.save) {
@@ -827,11 +843,12 @@
         }
       },
       selectNone() {
-        const selectedWells = this.selectedWells;
+        const selectedWells = [...this.selectedWells];
         const self = this;
         selectedWells.map(selectedWell => {
           self.$set(selectedWell, 'selected', false);
         });
+        this.selectedWells = [];
       },
       onPress(item) {
         if (this.canSpawnMasters) {
@@ -840,9 +857,13 @@
             if (item && item.fr && item.ec && item.volume) {
               if (item.selected) {
                 this.$set(item, 'selected', false);
+                const oldSelectedWells = [...this.selectedWells];
+
+                this.selectedWells = oldSelectedWells.filter(well => well.fr !== item.fr)
               } else {
                 if (this.selectedWells.length < this.newMasterMaxWells) {
                   this.$set(item, 'selected', true);
+                  this.selectedWells.push(item)
                 }
               }
             }
