@@ -55,6 +55,7 @@ export default {
     '@nuxtjs/auth',
     'nuxt-fontawesome', //V5
     'vue-sweetalert2/nuxt',
+    'nuxt-buefy',
   ],
   fontawesome: {
     imports: [
@@ -75,6 +76,8 @@ export default {
 */
   axios: {
     baseURL: process.env.API_URL
+  },
+  buefy: {
   },
   auth: {
     strategies: {
