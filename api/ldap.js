@@ -66,7 +66,7 @@ function authenticate(username, password) {
           }
 
         } else {
-          bad(new Error('user not found'))
+          bad(new Error('user not found. try refreshing the web app?'))
         }
       }
     });
