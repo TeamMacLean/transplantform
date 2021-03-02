@@ -725,7 +725,11 @@ router.post('/masterPlate/:id/take', (req, res) => {
 
       labels.map(l => {
         let well = masterPlate[l];
-        if (well?.upper?.volume & well?.lower?.volume) {
+        if (
+          well &&
+          well.upper && 
+          well.upper.volume    
+        ) {
           well.upper.volume -= volume;
           well.lower.volume -= volume;
         }
