@@ -2,13 +2,6 @@
   <div>
     <h1 class="title">New Stock Plate</h1>
 
-    <h4>Name: {{this.plateName}}</h4>
-    <h4>Type: {{this.type}}</h4>
-    <h4>Species Description: {{this.speciesDescription}}</h4>
-    <h4>Optmisation: {{this.optimisation}}</h4>
-    <h4>Barcode: {{this.barcode}}</h4>
-    <h4>plate [object]: {{!!this.plate}}</h4>
-
     <form @submit="checkFormAndSave">
       <div class="field">
         <label class="label">Name</label>
