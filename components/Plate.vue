@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <table class="table is-bordered is-fullwidth" v-bind:class="{ 'is-select-mode': selectMode }">
+    <table class="table is-bordered" v-bind:class="{ 'is-select-mode': selectMode }">
       <thead>
       <tr>
         <th style="border: none;"></th>
@@ -334,27 +334,31 @@
       </tr>
       </tbody>
     </table>
-    <!--<p class="help is-info" v-if="onSelectMode && !editMode && !selectMode">Long press on a well to start selecting wells-->
-    <!--for a new Master.</p>-->
 
     <div v-if="selectMode">
-      Selections (in chronological order:) 
-      <span v-for="(item, index) in this.selectedWellsBattleshipGridReferences" :key=item>
-        {{item.toUpperCase()}}{{selectedWellsBattleshipGridReferences.length !== (index + 1) ? ',' : ''}}
-      </span>
+      <p>
+        Total number of current selections: {{this.selectedWells.length}}
+      </p>
+      <p>
+        Selections (in chronological click order):
+        <span v-for="(item, index) in this.selectedWellsBattleshipGridReferences" :key=item>
+          {{item.toUpperCase()}}{{selectedWellsBattleshipGridReferences.length !== (index + 1) ? ',' : ''}}
+        </span>
+      </p>
     </div>
 
     <br />
 
     <div class="field is-grouped is-grouped-right" v-if="!selectMode && !volumeMode">
       <div class="buttons">
-        <button class="button" v-bind:class="[editMode?'is-success':'', 'button']" v-on:click="toggeleEdit"
+        <!-- I have disabled edit cells as it doesnt work and not clear its needed for now -->
+        <!-- <button class="button" v-bind:class="[editMode?'is-success':'', 'button']" v-on:click="toggeleEdit"
                 type="button"
                 v-if="isEditable && !selectMode && !volumeMode">
           <font-awesome-icon :icon="['far', 'edit']" v-if="!editMode" style="margin-right:8px;"/>
           <font-awesome-icon :icon="['far', 'save']" v-if="editMode" style="margin-right:8px;"/>
           {{buttonValue}}
-        </button>
+        </button> -->
 
         <button class="button" v-if="editMode" @click="cancelEdit">Cancel</button>
 
@@ -407,8 +411,8 @@
 
     <div v-if="selectMode">
 
-      <div class="columns">
-        <div class="column">
+      <div>
+        <div>
 
           <div class="field is-grouped">
             <div class="control">
@@ -422,14 +426,14 @@
               <div class="tags has-addons">
                 <span class="tag">Maximum volume</span>
                 <span class="tag is-info">{{newMasterMaxVolume}}</span>
-              </div>
+              </div>                            
             </div>
 
           </div>
         </div>
 
-        <div class="column">
-          <div class="field is-grouped is-grouped-right">
+        <div style="margin-top:10px">
+          <div class="field is-grouped is-grouped-left">
 
             <div class="control">
               <div class="field has-addons">
@@ -438,29 +442,36 @@
                     Vol
                   </a>
                 </p>
-                <div class="control">
-                  <input type="number" class="input" v-bind:max="newMasterMaxVolume || 900" min="0"
-                        v-model="volumeToTransfer"
-                        required>
+                <div class="control vol-input-wrapper">
+                  <input
+                    type="number" 
+                    class="input" 
+                    v-bind:max="newMasterMaxVolume || 900" 
+                    min="0"
+                    v-model="volumeToTransfer"
+                    required
+                  />
                 </div>
               </div>
             </div>
 
-
-            <div class="control">
-              <div class="field has-addons">
-                <p class="control">
-                  <a class="button is-static">
-                    Reps
-                  </a>
-                </p>
-                <div class="control">
-                  <input type="number" class="input" min="1" max="3"
+            <b-tooltip label="Contact web admin to make editable">
+              <div class="control" style="margin-right:12px">
+                <div class="field has-addons">
+                  <p class="control">
+                    <a class="button is-static">
+                      Reps
+                    </a>
+                  </p>
+                  <div class="control">
+                      <input disabled type="number" class="input" min="3" max="3"
                         v-model="replicates"
-                        required>
+                        required
+                      >
+                  </div>
                 </div>
               </div>
-            </div>
+            </b-tooltip>
 
             <div class="control">
               <div class="field has-addons">
@@ -481,7 +492,7 @@
           </div>
 
 
-          <div class="field is-grouped is-grouped-right">
+          <div class="field is-grouped is-grouped-left">
             <div class="control">
               <div class="field has-addons">
                 <p class="control">
@@ -518,24 +529,54 @@
                 </div>
               </div>
             </div>
+            <div class="control">
+
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static">
+                    Arrange reps
+                  </a>
+                </p>
+                <div class="control">
+                  <div class="select">
+                    <select v-model="repsLayout" value="horizontally">
+                      <option selected="selected" value="vertically">Vertically (default)</option>
+                      <option value="horizontally">Horizontally</option>
+                      <!-- <option>disabled value="vertically">Vertically (ETA Aug 2021)</option> -->
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
 
-          <div class="field is-grouped is-grouped-right">
+          <div class="field is-grouped is-grouped-left">
 
             <div class="field is-grouped">
               <div class="control">
                 <div class="buttons">
 
-                  <button class="button is-primary"
-                          v-bind:class="{'tooltip':!canCreateMaster}"
-                          v-bind:disabled="!selectMode || !canCreateMaster"
-                          type="button"
-                          v-bind:data-tooltip="makeButtonError"
-                          @click="createMaster">
+                  
+                  <b-tooltip v-if="!selectMode || !canCreateMaster" :label="makeButtonLabel" multilined position="is-right">
+                    <button class="button is-primary buttonMargin"
+                            v-bind:class="{'tooltip':!canCreateMaster}"
+                            disabled
+                            type="button"
+                            @click="createMaster">
+                      <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
+                      Create master
+                    </button>
+                  </b-tooltip>
+                  <button v-else class="button is-primary buttonMargin"
+                    v-bind:class="{'tooltip':!canCreateMaster}"
+                    type="button"
+                    @click="createMaster">
                     <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
                     Create master
                   </button>
+
+
                   <button class="button is-outlined" @click="resetSelect" type="button">
                     Cancel
                   </button>
@@ -575,8 +616,8 @@
     props: ['plate', 'save', 'isEditable', 'canSpawnMasters', 'canTakeVolume', 'forceReload', 'checkUniqueFRs', 'onCheckUniqueFRs'],
     data() {
       return {
-        editMode: false,
-        selectMode: false,
+        editMode: false, 
+        selectMode: false, // TODO move back to false
         volumeMode: false,
 
         _beforeEditingCache: null,
@@ -586,9 +627,11 @@
         noOfPlates: 3,
         // unedited: null,
         masterLayout: 0,
+        repsLayout: 'vertically',
         masterName: '',
         volumeToTake: 0,
         selectedWells: [],
+        validSelectedWellsCounts: [12, 18, 24, 30, 36, 42, 48],
       }
     },
     created() {
@@ -608,10 +651,16 @@
       allWells() {
         return labels.map(l => this.plate[l])
       },
-      makeButtonError() {
+      makeButtonLabel() {
 
         if (!this.selectedWells || !this.selectedWells.length) {
           return 'No wells selected'
+        } else if (!this.validSelectedWellsCounts.includes(this.selectedWells.length)) {
+          const acceptableCountsStr = this.validSelectedWellsCounts.join(', ');
+          return 'Must select one of these counts of wells: ' 
+            + acceptableCountsStr 
+            + '.\nCurrently you have selected ' + this.selectedWells.length + ' wells.'
+          ; 
         } else if (this.volumeToTransfer < 1) {
           return 'Volume not selected'
         } else if (this.volumeToTransfer > this.newMasterMaxVolume) {
@@ -624,8 +673,12 @@
           return 'Checking if FRs are unique'
         } else if (this.uniqueFrErrors) {
           return 'Duplicate FRs fround'
+
+
+        } else if (!(this.noOfPlates < 6) || !(this.noOfPlates > 0) || !(this.replicates === 3)) {
+          return 'Incorrect plates and/or replicates number. Check all inputs.'
         } else {
-          return ''
+          return 'Please submit!'
         }
       },
       volumeMax() {
@@ -644,24 +697,26 @@
         }
       },
       newMasterMaxVolume() {
-        if (this.plate) {
-          const varA = this.selectedWells.reduce((prev, curr) => {
-            if (curr && curr.volume) {
+        if (this.plate && this.selectedWells.length) {
+
+          const volumeOfSmallestSelectedWell = this.selectedWells.reduce((prev, curr) => {
+            if (curr && curr.volume){
               return prev.volume < curr.volume ? prev : curr;
             } else {
               return prev;
             }
+
           }, 900).volume;
-
-          return varA / this.replicates / this.noOfPlates
-
+          // console.log('smallest well', volumeOfSmallestSelectedWell);
+          
+          return Math.floor(volumeOfSmallestSelectedWell / this.replicates / this.noOfPlates);
 
         } else {
-          return 0;
+          return Math.floor(900 / this.replicates / this.noOfPlates);
         }
       },
       newMasterMaxWells() {
-        return Math.floor((96 - (2 * this.replicates)) / this.replicates)
+        return this.validSelectedWellsCounts[this.validSelectedWellsCounts.length - 1];
       },      
       selectedWellsBattleshipGridReferences() {
         // console.log('this selectedwells', this.selectedWells);
@@ -693,8 +748,30 @@
           }
         }
       },
-      canCreateMaster() {
-        return this.selectedWells.length && this.volumeToTransfer > 0 && this.replicates > 0 && this.masterName && this.masterName.length && this.volumeToTransfer <= this.newMasterMaxVolume && this.selectedWells.length <= this.newMasterMaxWells;
+      canCreateMaster() {        
+        return (
+          this.selectedWells.length 
+          &&
+          this.validSelectedWellsCounts.includes(this.selectedWells.length)
+          && 
+          this.volumeToTransfer > 0 
+          && 
+          this.replicates > 0 
+          && 
+          this.masterName 
+          && 
+          this.masterName.length 
+          && 
+          this.volumeToTransfer <= this.newMasterMaxVolume 
+          && 
+          this.selectedWells.length <= this.newMasterMaxWells
+          &&
+          this.noOfPlates < 6
+          &&
+          this.noOfPlates > 0
+          &&
+          this.replicates === 3
+        );
       }
     },
     methods: {
@@ -738,10 +815,8 @@
           title: 'Error!',
           text: err,
           type: 'error',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'OK'
         })
       },
 
@@ -822,6 +897,7 @@
         this.replicates = 3;
         this.noOfPlates = 3;
         this.masterLayout = 0;
+        this.repsLayout = 'vertically';
         this.masterName = '';
         this.volumeToTake = 0;
       },
@@ -836,6 +912,28 @@
       //   }
       // },
       onSelectMode() {
+        // probably useless
+        Object.keys(this.plate).forEach(
+          gridKeyName => {
+            if (this.plate[gridKeyName].selected){
+              delete this.plate[gridKeyName].selected
+            }
+          }
+        );
+        // i.e. selectNone();
+        const selectedWells = [...this.selectedWells];
+        const self = this;
+        selectedWells.map(selectedWell => {
+          if (self.selectedWell){
+            self.$set(selectedWell, 'selected', false);
+          }
+          if (self.selected){
+            self.$set(selectedWell, 'selected', false)
+          }
+        });
+        this.selectedWells = [];
+
+        // useful
         if (this.canSpawnMasters && !this.editMode) {
           if (!this.selectMode) {
             this.selectMode = true;
@@ -877,7 +975,8 @@
           const objToSend = {
             plate: {id: this.plate._id, _id: this.plate._id, items: []},
             volume: this.volumeToTransfer,
-            layout: this.masterLayout,
+            masterLayout: this.masterLayout,
+            repsLayout: this.repsLayout,
             replicates: this.replicates,
             noOfPlates: this.noOfPlates,
             masterName: this.masterName
@@ -889,9 +988,18 @@
               objToSend.plate.items.push({ec: well.ec, fr: well.fr});
             });
           this.$axios.post('/api/master/new', objToSend)
-            .then((res) => {
-              // this.redirect(`/masters/${res.data.master.id}`)
-              this.$router.push(`/masters/${res.data.master.id}`)
+            .then((res) => {             
+              const { data } = res;
+              const { master } = data;
+              const { id } = master;
+
+              // console.log('tigerlog', tempString);              
+
+              // this.$swal({
+              //   title: 'Success!',
+              //   text: tempString,
+              // })
+              this.$router.push(`/masters/${id}`)
             })
             .catch(err => {
               this.showError(err);
@@ -909,5 +1017,18 @@
 <style>
   .is-select-mode {
     outline: 2px solid #2B9EEB;
+  }
+  .buttonMargin {
+    margin-right: 10px;
+  }
+  tbody > tr > td > strong {
+    margin-left: 2px;
+    vertical-align: middle;
+  }
+  .table td, .table th {
+    padding: 5px;
+  }
+  .vol-input-wrapper > input {
+    width: 5rem;
   }
 </style>

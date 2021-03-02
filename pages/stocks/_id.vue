@@ -92,7 +92,6 @@
 
       <Plate :plate="plate" :save="saveStock" :isEditable="stock.active" :canSpawnMasters="stock.active"/>
 
-
     </div>
   </div>
 </template>
@@ -193,4 +192,9 @@
     }
   }
 </script>
+<style>
+table {
+  width: 100%;
+}
+</style>
 
