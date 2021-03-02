@@ -349,8 +349,13 @@
       },
       takeVolumeAction() {
 
-        const keyNamesWithFrTaken = Object.keys(this.masterPlate).filter(labelKeyName => 
-          this.masterPlate[labelKeyName]?.upper?.volume && this.masterPlate[labelKeyName].upper.volume > 0
+        const keyNamesWithFrTaken = Object.keys(this.masterPlate).filter(labelKeyName =>
+          this.masterPlate &&
+          labelKeyName &&
+          this.masterPlate[labelKeyName] &&
+          this.masterPlate[labelKeyName].upper &&
+          this.masterPlate[labelKeyName].upper.volume &&
+          this.masterPlate[labelKeyName].upper.volume > 0
         );
 
         this.$axios.post(`/api/masterPlate/${this.masterPlate._id}/take`, {volume: this.volumeToTake})
