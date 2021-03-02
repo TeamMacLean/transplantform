@@ -98,7 +98,7 @@
   import Plate from '../../components/Plate'
 
   export default {
-    // middleware: 'auth', TEMP remove
+    middleware: 'auth',    
     components: {
       Plate
     },
