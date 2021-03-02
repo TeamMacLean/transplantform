@@ -28,10 +28,10 @@
       <div class="navbar-end">
 
 
-        <div v-if="this.$auth.loggedIn" class="navbar-item has-dropdown is-hoverable">
+        <div v-show="this.$auth.loggedIn" class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">
             <font-awesome-icon :icon="['far', 'user-circle']" class="fa-2x" style="margin-right:8px;"/>
-            {{this.$auth.user.name}}
+            {{this.$auth && this.$auth.user && this.$auth.user.name}}
           </a>
 
 
@@ -43,12 +43,8 @@
           </div>
         </div>
 
-        <div v-else class="navbar-item">
+        <div v-show="!this.$auth.loggedIn" class="navbar-item">
           <div class="buttons">
-
-            <!--<a class="button is-primary">-->
-            <!--<strong>Sign up</strong>-->
-            <!--</a>-->
             <nuxt-link to="/signin" class="button is-outlined is-primary" type="button">
               Sign in
             </nuxt-link>
@@ -64,7 +60,7 @@
 
 
   export default {
-    name: 'HeadeAfterLogin',
+    name: 'HeaderAfterLogin',
     methods: {
       async LogOut() {
         await this.$auth.logout()

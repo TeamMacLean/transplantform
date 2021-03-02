@@ -1,20 +1,20 @@
 <template>
   <div>
     <div v-if="master">
-      <div v-if="plates">
+      <div v-if="masterPlates">
         <div class="columns">
           <div class="column">
-            <p class="title is-4">{{master.name}}
+            <p class="title is-4">{{(master && master.name) || 'problems finding name'}}
               <font-awesome-icon :icon="['far', 'check-circle']" v-if="!master.active"/>
             </p>
             <div class="subtitle">
 
-
               <div class="field is-grouped is-grouped-multiline">
+
                 <div class="control">
                   <div class="tags has-addons">
-                    <span class="tag">barcode</span>
-                    <span class="tag is-outlined">{{master.barcode}}</span>
+                    <span class="tag">created</span>
+                    <span class="tag is-outlined">{{moment(master.created).format('DD/MM/YYYY')}}</span>
                   </div>
                 </div>
 
@@ -25,12 +25,6 @@
                   </div>
                 </div>
 
-                <div class="control">
-                  <div class="tags has-addons">
-                    <span class="tag">created</span>
-                    <span class="tag is-outlined">{{moment(master.created).format('DD/MM/YYYY')}}</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -64,21 +58,21 @@
 
         <div class="tabs">
           <ul>
-            <li v-for="(plate, i) in plates" v-bind:class="{'is-active':activeTab===i}">
-              <a @click="setActiveTab(i)">Plate {{i+1}}</a>
+            <li v-for="(masterPlate, i) in masterPlates" v-bind:class="{'is-active':activeTab===i}" :key="i">
+              <a @click="setActiveTab(i)">Master Plate {{i+1}}</a>
             </li>
           </ul>
         </div>
 
 
-        <div v-for="(plate, i) in plates">
+        <div v-for="(masterPlate, i) in masterPlates" :key="i">
           <div v-if="activeTab === i">
-            <div class="columns">
-              <div class="column">
-                <Plate :plate="plate" :save="saveMaster" :isEditable="master.active" :canSpawnMasters="false"
-                       :canTakeVolume="true"/>
-              </div>
-            </div>
+                <MasterPlate 
+                  :initialPropMasterPlate="masterPlate" 
+                  :save="saveMaster" 
+                  :canSpawnMasters="false"
+                  :canTakeVolume="true"
+                />
           </div>
         </div>
 
@@ -87,22 +81,22 @@
     </div>
     <div v-else>
       <p>
-        Master Not Found.
+        Master Not Found. Please try navigating from Masters top bar menu.
       </p>
     </div>
   </div>
 </template>
 
 <script>
-  import Plate from '../../components/Plate';
+  import MasterPlate from '../../components/MasterPlate';
   import moment from 'moment';
 
   export default {
     middleware: 'auth',
     computed: {
-      plates() {
+      masterPlates() {
         if (this.master) {
-          return this.master.plates
+          return this.master.masterPlates
         } else {
           return [];
         }
@@ -112,15 +106,24 @@
       }
     },
     components: {
-      Plate
+      MasterPlate
     },
-    asyncData({$axios, store, params}) {
+    asyncData({$axios, /** store */ _, params}) {
+      //console.log('IVE BEEN FIRED I AM GREAT', params);
+      
       return $axios.get('/api/master/' + params.id)
         .then((res) => {
+
+          //console.log('IVE GOT DATA WOOP', res.data.master);
+          
+
+          //console.log('res.data', res.data);
+          
           return {
             master: res.data.master,
             activeTab: 0,
-            reloadKey: 0
+            reloadKey: 0,
+            paramsId: params.id,
           }
         })
         .catch(err => {
@@ -164,11 +167,8 @@
                   'error'
                 )
               })
-
           }
         })
-
-
       },
       saveMaster: function () {
         return this.$axios.post('/api/master/' + this.master._id + '/save', {master: this.master})
@@ -192,8 +192,19 @@
           })
       },
       setActiveTab: function (index) {
-        //reset
-        this.activeTab = index;
+        this.$axios.get('/api/master/' + this.paramsId)
+          .then((res) => {
+              this.master = res.data.master;
+              this.activeTab = index;
+              this.reloadKey = 0;
+          }).catch(err => {
+            console.error(err);
+            return {
+              master: null,
+              activeTab: 0,
+              reloadKey: 0
+            }            
+          })
       }
     }
   }

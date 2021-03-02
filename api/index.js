@@ -4,13 +4,14 @@ import jwt from 'jsonwebtoken';
 import ldap from './ldap';
 import _ from 'lodash';
 
+import {Plate, Master, Stock, MasterPlate} from './models'
+import calculateWellsForMasterPlate from './calculateWellsForMasterPlate';
+
 try {
   mongoose.connect('mongodb://localhost:27017/fridge', {useNewUrlParser: true});
 } catch (err) {
   console.error(err);
 }
-
-import {Plate, Master, Stock} from './models'
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -296,118 +297,151 @@ router.post('/stock/:id/save', (req, res) => {
         return res.status(500).json({error: err})
       })
   } else {
-    sendError(new Error('stock not found'), res)
+    sendError(new Error('stock not found; please try refreshing the web app?'), res)
   }
 
 });
 
-
-//MASTER
-
+// MASTER
 router.post('/master/new', (req, res) => {
 
+  /* ******************************************************************************** **/
+
+  // STRATEGY:
+  // 1) PREAMBLE FOR CREATING MASTER
+  // 2) UPDATE STOCK I USED
+  // 3) CREATE MASTER
+
+  /* ******************************************************************************** **/
+
+  // 1) PREAMBLE FOR CREATING MASTER
 
   const stockPlateFromPost = req.body.plate;
-  const volumeToTransfer = req.body.volume;
-
-  const replicates = req.body.replicates;
+  const stockPlateId = stockPlateFromPost.id.toObjectId();
+  const volumePerNewMasterPlateWell = req.body.volume;
+  const replicates = req.body.replicates || 3; // always 3
   const noOfPlates = req.body.noOfPlates;
-  const layout = req.body.layout;
-
   const name = req.body.masterName;
+  const repsLayout = req.body.repsLayout || 'vertically';
+  const masterLayout = parseInt(req.body.masterLayout);
+  
+  let stockPlateItems = [];
+  stockPlateFromPost.items.forEach(item => stockPlateItems.push(item));
 
+  const getInt = (frOrEcStr) => parseInt(frOrEcStr.substring(2));
 
-  let sortingMethod = Array.prototype.sort;
+  if (masterLayout === 0){
 
+    stockPlateItems = stockPlateItems.sort((a, b) =>
+      getInt(a.fr) - getInt(b.fr)
+    )
+    console.log('sorted by asc fr', stockPlateItems.map(i => i.fr));
+  } else if (masterLayout === 1){
+    stockPlateItems = stockPlateItems.sort((a, b) =>
+      getInt(b.fr) - getInt(a.fr)
+    )
+    console.log('sorted by rev fr', stockPlateItems.map(i => i.fr));
 
-  if (layout === 0) {
-    sortingMethod = (a, b) => (a.fr > b.fr) ? 1 : ((b.fr > a.fr) ? -1 : 0);
-  } else if (layout === 1) {
-    sortingMethod = (a, b) => (a.fr > b.fr) ? -1 : ((b.fr > a.fr) ? 1 : 0);
-  } else  if(layout === 2){
-    //TODO sort ny EC
-    sortingMethod = (a, b) => (a.ec > b.ec) ? -1 : ((b.ec > a.ec) ? 1 : 0)
+  } else if (masterLayout === 2){
+    stockPlateItems = stockPlateItems.sort((a, b) =>
+      getInt(b.ec) - getInt(a.ec)
+    )
+    console.log('sorted by rev ec', stockPlateItems.map(i => i.ec));
+    
+  } else if (masterLayout === 3){
+    // no sort, as masterLayout option is to keep click order
+    // stockPlateItems = stockPlateItems;
   } else {
-    //keep as is
+    console.error('error getting sorting strategy')
   }
-  stockPlateFromPost.items.sort(sortingMethod);
 
-  const plateID = stockPlateFromPost.id.toObjectId();
+  
+
+  if (!stockPlateItems || stockPlateItems === {}){
+    console.error('big error stockplate sorting')
+  }
+
+  const wellsForMasterPlate = calculateWellsForMasterPlate(stockPlateItems, repsLayout, volumePerNewMasterPlateWell)
+
+  /* ******************************************************************************** **/
+
+  // 2) UPDATE THE CHANGES TO STOCK PLATE
 
   let stockFromDB = null;
+  Stock.find({plate: stockPlateId})
+  .populate('plate')
+  .then(foundStocks => {
+    if (foundStocks && foundStocks.length) {      
+      stockFromDB = foundStocks[0];
 
-  Stock.find({plate: plateID})
-    .populate('plate')
-    .then(foundStocks => {
-      if (foundStocks && foundStocks.length) {
+      const volToTake = volumePerNewMasterPlateWell * replicates * noOfPlates;
+      console.log('volToTake', volToTake);
+      
+      const frsTaken = Object.keys(stockPlateItems).map(index => {
+        return stockPlateItems[index].fr;
+      });
+      // console.log('frsTaken', frsTaken);  
 
-        stockFromDB = foundStocks[0];
+      labels.forEach(label => {
+        if (frsTaken.includes(stockFromDB.plate[label].fr)) {
+          // console.log('removing vol from', stockFromDB.plate[label]);
+          
+          stockFromDB.plate[label].volume -= volToTake;
+        }
+      });
 
-        stockPlateFromPost.items.map(item => {
-          if (stockFromDB.plate[item.well]) {
-            stockFromDB.plate[item.well].volume -= volumeToTransfer * replicates * noOfPlates;
+      // sendError('EXITING TOO EARLY BY CHOICE', res);
+
+      return stockFromDB.plate.save();
+
+    } else {
+      sendError('Stock plate not found (try refreshing web app?)', res);
+    }
+  })
+  .then(() => {
+    return stockFromDB.save()
+  })
+
+  /* ******************************************************************************** **/
+
+  // 3) CREATE MASTER
+
+  .then((savedStock) => {
+
+    const platePromises = [];
+    for (let i = 0; i < noOfPlates; i++) {
+      platePromises.push(new MasterPlate(wellsForMasterPlate).save())
+    }
+    Promise.all(platePromises)
+      .then(savedMasterPlates => {
+        
+        const masterPlateIds = savedMasterPlates.map(sp => sp.id);
+
+        return new Master({
+          masterPlates: masterPlateIds,
+          species: savedStock.species,
+          name: name,
+          volume: volumePerNewMasterPlateWell,
+          stock: savedStock.id
+        }).save()
+      })
+      .then(savedMaster => {
+
+        res.status(200).json({
+          master: {
+            id: savedMaster._id, 
+            _id: savedMaster._id
           }
         });
 
-
-        return stockFromDB.plate.save();
-
-      } else {
-        sendError('Stock plate not found', res);
-      }
-    })
-    .then(() => {
-      return stockFromDB.save()
-    })
-    .then((savedStock) => {
-
-      let newWells = {};
-
-      const replicatedItems = [].concat.apply([], stockPlateFromPost.items.map(i => {
-        let out = [];
-        for (let ii = 0; ii < replicates; ii++) {
-          out.push(i)
-        }
-        return out;
-      }));
-
-      const keys = getKeysForNewMaster(replicates);
-
-      replicatedItems.map((item, indx) => {
-        newWells[keys[indx]] = {ec: item.ec, fr: item.fr, volume: volumeToTransfer}
-      });
-
-      const platePromises = [];
-      for (let i = 0; i < noOfPlates; i++) {
-        platePromises.push(new Plate(newWells).save())
-      }
-
-      Promise.all(platePromises)
-        .then(savedPlates => {
-
-          //ids
-          const plateIds = savedPlates.map(sp => sp.id);
-
-          return new Master({
-            plates: plateIds,
-            species: savedStock.species,
-            name: name,
-            volume: volumeToTransfer,
-            stock: savedStock.id
-          }).save()
-        })
-        .then(savedMaster => {
-          res.status(200).json({master: {id: savedMaster._id, _id: savedMaster._id}});
-        })
-        .catch(err => {
-          console.error('error', err);
-          sendError(err, res)
-        });
-    });
-
-
+      })
+      .catch(err => {
+        console.error('error', err);
+        sendError(err, res)
+      })
+    ;
+  });
 });
-
 
 router.get('/master', (req, res) => {
 
@@ -426,8 +460,10 @@ router.get('/master', (req, res) => {
 });
 
 router.get('/master/:id', (req, res) => {
+  //console.log('REACHEY JACK JACK');
+  
   Master.findById(req.params.id)
-    .populate('plates')
+    .populate('masterPlates')
     .then(master => {
       res.status(200).json({master: master})
     })
@@ -653,6 +689,53 @@ router.post('/plate/:id/take', (req, res) => {
     })
     .then(savedPlate => {
       res.status(200).json({plate: savedPlate})
+    })
+    .catch(err => {
+      sendError(err, res);
+    })
+
+});
+
+// MASTER PLATE
+
+router.get('/masterPlate/:id', (req, res) => {
+
+  let master = null;
+
+  const masterPlateId = req.params.id.toObjectId();
+
+  Master.find({masterPlate: masterPlateId})
+    .then(masters => {
+      if (masters && masters.length) {
+        master = masters[0];
+      }
+      res.status(200).json({master})
+    })
+    .catch(err => {
+      sendError(err, res);
+    })
+
+});
+
+router.post('/masterPlate/:id/take', (req, res) => {
+
+  const volume = req.body.volume | 0;
+  MasterPlate.findById(req.params.id)
+    .then(masterPlate => {
+
+      labels.map(l => {
+        let well = masterPlate[l];
+        if (well?.upper?.volume & well?.lower?.volume) {
+          well.upper.volume -= volume;
+          well.lower.volume -= volume;
+        }
+      });
+
+      return masterPlate.save()
+
+    })
+    .then(savedMasterPlate => {
+      res.status(200).json({masterPlate: savedMasterPlate})
     })
     .catch(err => {
       sendError(err, res);
