@@ -181,19 +181,29 @@
 
         const reader = new FileReader();
         reader.onload = function (e) {
+
           const data = new Uint8Array(e.target.result);
+          // console.log('data', data);
+
           const workbook = XLSX.read(data, {type: 'array'});
-          const table = XLSX.utils.sheet_to_json(workbook.Sheets.Sheet1, {header: 1});
+          // console.log('workbook', workbook);
 
-          // debug
-          console.log('List of results from upload', table);
+          const firstSheetName = workbook.SheetNames[0];
+          // console.log('firstSheetName', firstSheetName);
 
+          const targetSheet = workbook.Sheets[firstSheetName];
+          // console.log('targetSheet', targetSheet);
+          
+          const table = XLSX.utils.sheet_to_json(targetSheet, {header: 1});
+          // console.log('table', table);
+
+          const formattedPlate = formatPlate(table);
+          
           try {
-            vm.$set(vm, 'plate', formatPlate(table));
+            vm.$set(vm, 'plate', formattedPlate);
           } catch (err) {
             console.error(err);
           }
-
         };
         reader.readAsArrayBuffer(this.file);
       },
