@@ -37,29 +37,26 @@
       <br />
 
       <div class="field" v-if="!plate">
-        <label class="label">File</label>
-        <div class="file">
-          <label class="file-label">
-            <input
-              class="file-input"
-              type="file"
-              name="file"
-              ref="file"
-              id="file"
-              accept=".xlsx"
-              v-on:change="handleFileUpload"
-            >
-              <span class="file-cta">
-              <span class="file-icon">
-                <font-awesome-icon :icon="['fas', 'upload']"/>
-              </span>
-              <span class="file-label" id="file-label">
-                Choose a file…
-              </span>
-            </span>
-          </label>
-        </div>
-        <p class="help is-info">Please select a .xlsx file</p>
+        
+          <label class="label">File</label>
+          <b-field class="file is-primary" :class="{'has-name': !!file}">
+            <b-upload v-model="file" class="file-label" :loading="isFileUploading">
+                <span class="file-cta">
+                    <b-icon class="file-icon" icon="upload"></b-icon>
+                    <span class="file-label">Click to upload</span>
+                </span>
+                <span class="file-name" v-if="file">
+                    {{ file.name }}
+                </span>
+            </b-upload>
+          </b-field>
+
+          <p class="help is-info">Please select a .xlsx file</p>
+
+        <!-- file but no plate -->
+        <b-button @click="createPlate" v-if="this.file" :loading="isCreatingPlate">
+          Create Plate
+        </b-button>
       </div>
 
       <div v-if="plate">
@@ -118,7 +115,9 @@
         frErrors: false,
         type: '',
         optimisation: '',
-        speciesDescription: ''
+        speciesDescription: '',
+        isFileUploading: false,
+        isCreatingPlate: false,
       }
     },
     methods: {
@@ -142,11 +141,10 @@
             this.nameIsOk = false;
           })
       },
-      handleFileUpload() {
-        this.file = this.$refs.file.files[0];
-        const vm = this;
+      createPlate() {
+        this.isCreatingPlate = true;
 
-        function formatPlate(table) {
+        function formatPlate(table, vm) {
           // TODO make global constant
           const labels = [
             'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',
@@ -179,35 +177,42 @@
           return plate;
         }
 
-        const reader = new FileReader();
-        reader.onload = function (e) {
+        try {
+          console.log('this.file', this.file);
+    
+          const vm = this;
+          const reader = new FileReader();
 
-          const data = new Uint8Array(e.target.result);
-          // console.log('data', data);
+          reader.onload = function (e) {
 
-          const workbook = XLSX.read(data, {type: 'array'});
-          // console.log('workbook', workbook);
+            const data = new Uint8Array(e.target.result);
+            console.log('data', data);
 
-          const firstSheetName = workbook.SheetNames[0];
-          // console.log('firstSheetName', firstSheetName);
+            const workbook = XLSX.read(data, {type: 'array'});
+            console.log('workbook', workbook);
 
-          const targetSheet = workbook.Sheets[firstSheetName];
-          // console.log('targetSheet', targetSheet);
-          
-          const table = XLSX.utils.sheet_to_json(targetSheet, {header: 1});
-          // console.log('table', table);
+            const firstSheetName = workbook.SheetNames[0];
+            console.log('firstSheetName', firstSheetName);
 
-          const formattedPlate = formatPlate(table);
-          
-          try {
+            const targetSheet = workbook.Sheets[firstSheetName];
+            console.log('targetSheet', targetSheet);
+            
+            const table = XLSX.utils.sheet_to_json(targetSheet, {header: 1});
+            console.log('table', table);
+
+            const formattedPlate = formatPlate(table, vm);
+            
             vm.$set(vm, 'plate', formattedPlate);
-          } catch (err) {
-            console.error(err);
-          }
-        };
-        reader.readAsArrayBuffer(this.file);
-      },
+          };
 
+          reader.readAsArrayBuffer(this.file);
+
+        } catch (err) {
+            console.error(err);
+        } finally {
+          this.isCreatingPlate = false;
+        }
+      },
       checkFormAndSave: function (e) {
         e.preventDefault();
         if (this.canSubmit) {
