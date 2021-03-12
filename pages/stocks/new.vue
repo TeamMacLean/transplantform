@@ -6,21 +6,24 @@
       <div class="field">
         <label class="label">Name</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Stock plate name" v-model="plateName" minlength="5"
-            @input="checkName" required>
+          <input
+            class="input"
+            type="text"
+            placeholder="Stock plate name"
+            v-model="plateName"
+            minlength="5"
+            @input="checkName"
+            required
+          >
         </div>
         <p class="help is-success" v-if="nameIsOk">This plate name is available</p>
       </div>
 
-      <b-field 
-        label="Type"
-      >
+      <b-field label="Type">
         <b-input v-model="type" maxlength="20"></b-input>
       </b-field>
 
-      <b-field 
-        label="Species Description"
-      >
+      <b-field label="Species Description">
         <b-input v-model="speciesDescription" maxlength="30"></b-input>
       </b-field>
 
@@ -37,28 +40,37 @@
         <label class="label">File</label>
         <div class="file">
           <label class="file-label">
-            <input class="file-input" type="file" name="file" ref="file" id="file" accept=".xlsx"
-              v-on:change="handleFileUpload">
-            <span class="file-cta">
-      <span class="file-icon">
-        <font-awesome-icon :icon="['fas', 'upload']"/>
-      </span>
-      <span class="file-label" id="file-label">
-        Choose a file…
-      </span>
-    </span>
+            <input
+              class="file-input"
+              type="file"
+              name="file"
+              ref="file"
+              id="file"
+              accept=".xlsx"
+              v-on:change="handleFileUpload"
+            >
+              <span class="file-cta">
+              <span class="file-icon">
+                <font-awesome-icon :icon="['fas', 'upload']"/>
+              </span>
+              <span class="file-label" id="file-label">
+                Choose a file…
+              </span>
+            </span>
           </label>
         </div>
         <p class="help is-info">Please select a .xlsx file</p>
       </div>
 
-
       <div v-if="plate">
         <Plate 
-          :plate="plate" :isEditable="true" :canSpawnMasters="false" checkUniqueFRs="true"
-          :onCheckUniqueFRs="onCheckUniqueFRs"/>
+          :plate="plate"
+          :isEditable="true"
+          :canSpawnMasters="false"
+          checkUniqueFRs="true"
+          :onCheckUniqueFRs="onCheckUniqueFRs"
+        />
       </div>
-
 
       <hr/>
       <div class="field is-grouped">
@@ -110,39 +122,32 @@
       }
     },
     methods: {
-      calculateSubmissionButtonClass(canSubmit) {
-
-      // v-bind:data-tooltip="saveErrorText" v-bind:class="{'tooltip':!canSubmit, 'has-tooltip-right': true}"
-        
+      calculateSubmissionButtonClass(canSubmit) {        
         let result = 'button is-primary';
         if (!canSubmit){
           result += ' tooltip has-tooltip-right'
         }
-
-
-
-
         return result;
       },
       onCheckUniqueFRs(results) {
         this.frErrors = !!results;
       },
       checkName() {
-
         return this.$axios.$post('/api/stock/check/name', {name: this.plateName})
           .then(res => {
             this.nameIsOk = !!(this.plateName && this.plateName.length > 5 && res && res.ok);
           })
           .catch(err => {
+            console.error(err)
             this.nameIsOk = false;
           })
-
       },
       handleFileUpload() {
         this.file = this.$refs.file.files[0];
         const vm = this;
 
         function formatPlate(table) {
+          // TODO make global constant
           const labels = [
             'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12',
             'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12',
@@ -158,12 +163,16 @@
           vm.$set(vm, 'species', table[0][3]);
 
           const plate = {};
-
           const offset = 2;
+          const defaultVolume = 900
 
           labels.map((label, i) => {
             if (table[i + offset][1] && table[i + offset][2]) {
-              plate[labels[i]] = {fr: table[i + offset][1], ec: table[i + offset][2], volume: 900}
+              plate[labels[i]] = {
+                fr: table[i + offset][1], 
+                ec: table[i + offset][2], 
+                volume: defaultVolume
+              }
             }
           });
 
@@ -176,6 +185,8 @@
           const workbook = XLSX.read(data, {type: 'array'});
           const table = XLSX.utils.sheet_to_json(workbook.Sheets.Sheet1, {header: 1});
 
+          // debug
+          console.log('List of results from upload', table);
 
           try {
             vm.$set(vm, 'plate', formatPlate(table));
@@ -194,20 +205,6 @@
         }
       },
       save() {
-
-        // console.log('would be POSTING:');
-        // console.log({
-        //     name: this.plateName,
-        //     barcode: this.barcode,
-        //     species: this.species,
-        //     speciesDescription: this.speciesDescription,
-        //     plate: this.plate,
-        //     optimisation: this.optimisation,
-        //     type: this.type,
-        //   })
-        // return true;
-        
-
         return this.$axios.post('/api/stock/new', {
           stock: {
             name: this.plateName,
@@ -241,16 +238,15 @@
       },
       saveErrorText() {
         if (!this.plate) {
-          return 'Error: No Plate'
+          return 'Error: No Plate';
         } else if (!this.nameIsOk) {
-          return 'Error: Name is not valid'
+          return 'Error: Name is not valid';
         } else if (this.frErrors) {
-          return 'Error: One of more FR numbers are already in use. Please see highlighted cells.'
+          return 'Error: One of more FR numbers are already in use. Please see highlighted cells.';
         } else {
-          return 'Unknown error'
+          return 'Unknown error';
         }
       }
     },
-
   }
 </script>
