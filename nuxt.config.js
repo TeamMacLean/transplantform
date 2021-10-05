@@ -4,7 +4,6 @@ require('dotenv').config();
 
 
 export default {
-  mode: 'universal',
   server: {
     port: process.env.PORT || 3000, // default: 3000
     host: process.env.HOST || 'localhost', // default: localhost
