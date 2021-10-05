@@ -30,7 +30,7 @@
     "nuxt": "^2.15.0",
     "nuxt-buefy": "^0.4.4",
     "nuxt-fontawesome": "^0.4.0",
-    "sass-loader": "^7.3.1",
+    "sass-loader": "^10.1.1",
     "vue": "^2.6.12",
     "vue-server-renderer": "^2.6.12",
     "vue-sweetalert2": "^2.1.1",

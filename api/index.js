@@ -8,7 +8,7 @@ import {Plate, Master, Stock, MasterPlate} from './models'
 import calculateWellsForMasterPlate from './calculateWellsForMasterPlate';
 
 try {
-  mongoose.connect('mongodb://localhost:27017/fridge', {useNewUrlParser: true});
+  mongoose.connect('mongodb://localhost:27017/fridge', {useNewUrlParser: true, useUnifiedTopology: true});
 } catch (err) {
   console.error(err);
 }
