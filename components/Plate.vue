@@ -979,7 +979,8 @@
             repsLayout: this.repsLayout,
             replicates: this.replicates,
             noOfPlates: this.noOfPlates,
-            masterName: this.masterName
+            masterName: this.masterName,
+            noOfSelectedWells: this.selectedWells.length,
           };
 
 
