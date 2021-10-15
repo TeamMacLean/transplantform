@@ -4,11 +4,13 @@ import jwt from 'jsonwebtoken';
 import ldap from './ldap';
 import _ from 'lodash';
 
-import {Plate, Master, Stock, MasterPlate} from './models'
+import {Plate, Master, Stock, MasterPlate, ECNames} from './models'
 import calculateWellsForMasterPlate from './calculateWellsForMasterPlate';
 
 try {
-  mongoose.connect('mongodb://localhost:27017/fridge', {useNewUrlParser: true, useUnifiedTopology: true});
+  mongoose.connect('mongodb://localhost:27017/fridge', {
+    useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false,
+  });
 } catch (err) {
   console.error(err);
 }
@@ -232,7 +234,7 @@ router.post('/stock/check/frs', (req, res) => {
 
 });
 
-router.post('/stock/new', (req, res) => {
+router.post('/stock/new', async (req, res) => {
 
   const stock = req.body.stock;
 
@@ -324,6 +326,7 @@ router.post('/master/new', (req, res) => {
   const name = req.body.masterName;
   const repsLayout = req.body.repsLayout || 'vertically';
   const masterLayout = parseInt(req.body.masterLayout);
+  const noOfSelectedWells = req.body.noOfSelectedWells;
   
   let stockPlateItems = [];
   stockPlateFromPost.items.forEach(item => stockPlateItems.push(item));
@@ -354,8 +357,6 @@ router.post('/master/new', (req, res) => {
   } else {
     console.error('error getting sorting strategy')
   }
-
-  
 
   if (!stockPlateItems || stockPlateItems === {}){
     console.error('big error stockplate sorting')
@@ -417,13 +418,22 @@ router.post('/master/new', (req, res) => {
         
         const masterPlateIds = savedMasterPlates.map(sp => sp.id);
 
-        return new Master({
+        var arrangeByTypeStr = 'Order Selected'
+        if (masterLayout === 0){ arrangeByTypeStr = 'Numeric FR'}
+        if (masterLayout === 1){ arrangeByTypeStr = 'Reverse-Numeric FR'}
+        if (masterLayout === 2){ arrangeByTypeStr = 'Reverse-Numeric EC'}
+
+        const masterInfo = {
           masterPlates: masterPlateIds,
           species: savedStock.species,
           name: name,
           volume: volumePerNewMasterPlateWell,
-          stock: savedStock.id
-        }).save()
+          stock: savedStock.id,
+          numberOfWells: noOfSelectedWells,
+          arrangementDirection: repsLayout,
+          arrangeByType: arrangeByTypeStr,
+        };
+        return new Master(masterInfo).save()
       })
       .then(savedMaster => {
 
@@ -446,6 +456,7 @@ router.post('/master/new', (req, res) => {
 router.get('/master', (req, res) => {
 
   Master.find({deleted: false})
+    .populate('masterPlates') // TEMP
     .then(masters => {
       const sorted = masters.filter(m => !m.deleted).reduce((all, current) => {
         current.active ? all.mastersActive.push(current) : all.mastersRetired.push(current);
@@ -798,6 +809,176 @@ router.get('/logout', (req, res) => {
 router.post('/logout', (req, res) => {
   res.sendStatus(200)
 });
+
+router.get('/ec-rc-names', async (req, res) => {
+
+  var namedConstructs = await ECNames.find({})
+  namedConstructs = (namedConstructs && namedConstructs.length) ? namedConstructs : [];
+  const listOfMongoNumbers = namedConstructs.map(c => c.number)
+  
+  // find new EC names
+  var allPlates = await Plate.find({});
+  allPlates = (allPlates && allPlates.length) ? allPlates : [];
+  var infoPlate = allPlates[0]
+  const allEcNumbers = allPlates.map(plate => {
+    const result = [];
+    labels.forEach(label => {
+      if (plate[label] && plate[label].ec && !!(plate[label].ec)){
+        result.push(plate[label].ec)
+      }
+    })
+    return result    
+  })
+
+  const uniqueEcNumbers = [...new Set(allEcNumbers.reduce((flat, val) => flat.concat(val), []))]
+
+  await Promise.all(uniqueEcNumbers.map(async (number) => {
+    if (!listOfMongoNumbers.includes(number)) {
+      await (await new ECNames({number, name: ''})).save();
+    }
+  }))  
+  
+  const updatedNamedConstructs = await ECNames.find({})
+  
+  res.send({namedConstructs: updatedNamedConstructs})
+});
+
+router.post('/ec-rc-names/new', async (req, res) => {
+
+  const oldFields = req.body.initiallyFetchedNamedConstructs;
+  
+  // TODO refactor these stupid names:
+    // {fetchedNumber [i.e. the EC 7-digit code], number [i.e. the new string name]}
+  const changedFields = req.body.changedFields; 
+
+  await Promise.all(changedFields.map(async (changedField) => {
+    const targets = await ECNames.find(
+      {number: changedField.fetchedNumber}
+    )
+    const target = targets[0]
+    target.name = changedField.number
+    await target.save()
+  }));
+
+  var namedConstructs = await ECNames.find({})
+  namedConstructs = (namedConstructs && namedConstructs.length) ? namedConstructs : [];
+
+  res.send({
+    updatedNamedConstructs: namedConstructs,
+  })
+});
+
+router.post('/search/ec', async (req, res) => {
+  const { query } = req.body; 
+
+  // find all EC and FR codes and plateNames
+  var masters = await Master.find({}).populate('masterPlates');
+
+  var duplicatedEcNumbersAndFrsFromPlates = []  
+
+  //var tempMasters = masters.slice(40)
+  var allMasterPlates = masters.forEach(master => {
+
+    master.masterPlates.forEach(plate => {
+      labels.forEach(label => {
+        if (plate[label] && plate[label].higher && plate[label].higher.ec){
+          duplicatedEcNumbersAndFrsFromPlates.push({
+            ec: plate[label].higher.ec, 
+            fr: plate[label].higher.fr, 
+            plateName: master.name,
+            higherOrLower: 'higher',
+            speciesName: master.species,
+          })
+        }
+        if (plate[label] && plate[label].lower && plate[label].lower.ec){
+          duplicatedEcNumbersAndFrsFromPlates.push({
+            ec: plate[label].lower.ec, 
+            fr: plate[label].lower.fr, 
+            plateName: master.name,
+            higherOrLower: 'lower',
+            speciesName: master.species,
+          })
+        }
+      })
+    })
+  })
+  
+  // MAKE UNIQUE
+  let uniqueEcNumbersAndFrsFromPlates = [];
+  duplicatedEcNumbersAndFrsFromPlates.forEach(obj => {
+    const ecNumbersJustAdded = uniqueEcNumbersAndFrsFromPlates.map(uniqueObj => uniqueObj.ec)
+    if (!ecNumbersJustAdded.includes(obj.ec)){
+      uniqueEcNumbersAndFrsFromPlates.push({
+        ec: obj.ec,
+        fr: obj.fr,
+        higherOrLower: obj.higherOrLower,
+        plates: [obj.plateName],
+        species: [obj.speciesName]
+      })
+    } else {
+      uniqueEcNumbersAndFrsFromPlates.forEach(plateObj => {
+        if (plateObj.ec === obj.ec && !plateObj.plates.includes(obj.plateName)){
+          plateObj.plates.push(obj.plateName)
+          plateObj.species.push(obj.speciesName)
+        }
+      })
+    }
+  })
+  
+  // ADD EC NAMES
+  const mongoEcObjs = await ECNames.find({});
+  //const uniqueEcNumbersFromPlates2 = uniqueEcNumbersFromPlates.splice(90)
+  const allUniqueEcsWithNamesAsObjects = uniqueEcNumbersAndFrsFromPlates.map(ecAndFrObj => {
+    // default is blank
+    let targetName = '';
+    
+    // see if name
+    const targetMongoEcNames = mongoEcObjs.filter(mongoEcObj => {
+      if (mongoEcObj.name && mongoEcObj.number === ecAndFrObj.ec){
+        return mongoEcObj.name;
+      }
+    });
+    if (targetMongoEcNames.length){
+      targetName = targetMongoEcNames[0].name;
+    }
+
+    // return object
+    return {
+      'name': targetName,
+      'number': ecAndFrObj.ec,
+      'frNumber': ecAndFrObj.fr,
+      'plates': ecAndFrObj.plates,
+      'species': ecAndFrObj.species,
+    }
+  })
+  
+  // apply filter
+  const matchedUniqueEcObjects = allUniqueEcsWithNamesAsObjects.filter(ecObj => {
+    const result = 
+      (ecObj.name && ecObj.name.length && ecObj.name.toLowerCase().includes(query.toLowerCase())) 
+      || 
+      (ecObj.number && ecObj.number.length && ecObj.number.toLowerCase().includes(query.toLowerCase()))
+      || 
+      (ecObj.frNumber && ecObj.frNumber.length && ecObj.frNumber.toLowerCase().includes(query.toLowerCase()))
+      || 
+      (ecObj.plates && ecObj.plates.length && ecObj.plates.map(p => p.toLowerCase()).includes(query.toLowerCase()))
+      || 
+      (ecObj.species && ecObj.species.length && ecObj.species.map(s => s.toLowerCase()).includes(query.toLowerCase()))
+    ;    
+
+    return result;
+  }
+  );
+
+  res.send({
+    debugging: [
+      'masters', masters,
+      'duplicatedEcNumbersAndFrsFromPlates', duplicatedEcNumbersAndFrsFromPlates,
+      'uniqueEcNumbersAndFrsFromPlates', uniqueEcNumbersAndFrsFromPlates,
+    ],
+    results: matchedUniqueEcObjects,
+  })
+})
 
 // Export the server middleware
 export default {

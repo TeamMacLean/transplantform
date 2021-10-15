@@ -17,6 +17,12 @@
               <div class="tags has-addons"><span class="tag">created</span> <span
                 class="tag is-outlined">{{moment(stock.created).format('DD/MM/YYYY')}}</span></div>
             </div>
+            <div class="control smallerFont" v-if="stock.numberOfWells">
+              <div>Wells count: {{stock.numberOfWells}}</div>
+              <div>Direction: {{stock.arrangementDirection}}</div>
+              <div>Arrange by: {{stock.arrangeByType}}</div>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -36,3 +42,9 @@
     },
   }
 </script>
+
+<style scoped>
+.smallerFont {
+  font-size: .75rem;
+}
+</style>

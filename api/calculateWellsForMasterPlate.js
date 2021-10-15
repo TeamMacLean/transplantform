@@ -124,11 +124,13 @@ const calculateWellsForMasterPlate = (orderedWellSelections, fillDirection, volu
         console.error('object not found, type is', typeof(orderedWellSelections));
     }
 
+    console.log('arrived at calculateWells with no errors. inputs are:', orderedWellSelections, fillDirection, volumeToInsertPerWell)
+
     const theSlots = getSlots(Object.keys(orderedWellSelections).length, fillDirection);
-    //console.log('getSlots result', theSlots);
+    console.log('gotSlots result', theSlots, theSlots.length);
     
     const masterPlateWells = calculateWithSlots(orderedWellSelections, volumeToInsertPerWell, theSlots);
-    //console.log('gotsummintoreturn', masterPlateWells);
+    console.log('gotsummintoreturn', masterPlateWells);
     return masterPlateWells;
 };
 

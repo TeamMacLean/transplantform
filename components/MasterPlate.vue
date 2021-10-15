@@ -1,145 +1,149 @@
 <template>
   <div>
 
-    <table class="table is-bordered is-fullwidth" v-bind:class="{ 'is-select-mode': selectMode }">
+    <table 
+      class="table is-bordered is-fullwidth" v-bind:class="{ 'is-select-mode': selectMode, 
+      'horizontal': (!this.arrangementDirection === 'vertically'), 
+      'vertical': (this.arrangementDirection === 'vertically'), 
+      }">
       <thead>
-      <tr>
-        <th style="border: none;"></th>
-        <th class="has-text-centered">1</th>
-        <th class="has-text-centered">2</th>
-        <th class="has-text-centered">3</th>
-        <th class="has-text-centered">4</th>
-        <th class="has-text-centered">5</th>
-        <th class="has-text-centered">6</th>
-        <th class="has-text-centered">7</th>
-        <th class="has-text-centered">8</th>
-        <th class="has-text-centered">9</th>
-        <th class="has-text-centered">10</th>
-        <th class="has-text-centered">11</th>
-        <th class="has-text-centered">12</th>
-      </tr>
+        <tr>
+          <th style="border: none;"></th>
+          <th class="has-text-centered">1</th>
+          <th class="has-text-centered">2</th>
+          <th class="has-text-centered">3</th>
+          <th class="has-text-centered">4</th>
+          <th class="has-text-centered">5</th>
+          <th class="has-text-centered">6</th>
+          <th class="has-text-centered">7</th>
+          <th class="has-text-centered">8</th>
+          <th class="has-text-centered">9</th>
+          <th class="has-text-centered">10</th>
+          <th class="has-text-centered">11</th>
+          <th class="has-text-centered">12</th>
+        </tr>
       </thead>
       <tbody>
-      <tr>
-        <td><div class='middle'><strong>A</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.a1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.a12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>B</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.b1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.b12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>C</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.c1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.c12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>D</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.d1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.d12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>E</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.e1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.e12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>F</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.f1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.f12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>G</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.g1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.g12" /></td>
-      </tr>
-      <tr>
-        <td class="heading-td"><div class="middle"><strong>H</strong></div></td>
-        <td><MasterPlateDualCell :item="masterPlate.h1" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h2" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h3" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h4" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h5" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h6" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h7" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h8" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h9" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h10" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h11" /></td>
-        <td><MasterPlateDualCell :item="masterPlate.h12" /></td>
-      </tr>
+        <tr>
+          <td><div class='middle'><strong>A</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.a1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.a12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>B</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.b1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.b12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>C</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.c1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.c12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>D</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.d1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.d12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>E</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.e1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.e12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>F</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.f1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.f12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>G</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.g1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.g12" /></td>
+        </tr>
+        <tr>
+          <td class="heading-td"><div class="middle"><strong>H</strong></div></td>
+          <td><MasterPlateDualCell :item="masterPlate.h1" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h2" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h3" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h4" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h5" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h6" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h7" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h8" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h9" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h10" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h11" /></td>
+          <td><MasterPlateDualCell :item="masterPlate.h12" /></td>
+        </tr>
       </tbody>
     </table>
 
@@ -184,7 +188,7 @@
   ];
 
   export default {
-    props: ['initialPropMasterPlate', 'save', 'canSpawnMasters', 'canTakeVolume', 'forceReload', 'checkUniqueFRs', 'onCheckUniqueFRs'],
+    props: ['arrangementDirection', 'initialPropMasterPlate', 'save', 'canSpawnMasters', 'canTakeVolume', 'forceReload', 'checkUniqueFRs', 'onCheckUniqueFRs'],
     data() {
       return {
         selectMode: true,
@@ -532,7 +536,43 @@
     padding: 0;
     padding-bottom: 0;
     vertical-align: middle;
+}
+
+  /** TODO figure out red borders */
+  /** remove is-bordere from:      class="table is-bordered is-fullwidth" v-bind:class="{ 'is-select-mode': selectMode,  */
+
+  /* td:first-child, th:first-child {
+    border-right: solid 3px #d83c20;    
   }
+  td:nth-child(4), th:nth-child(4) {
+    border-right: solid 3px #d83c20;
+  }
+  td:nth-child(7), th:nth-child(7) {
+    border-right: solid 3px #d83c20;
+  }
+  td:nth-child(10), th:nth-child(10) {
+    border-right: solid 3px #d83c20;
+  }
+
+  tbody > tr:nth-child(1), tbody > tr:nth-child(1) {
+    border-top: solid 3px #d83c20;
+  }
+  tbody > tr:nth-child(3), tbody > tr:nth-child(3) {
+    border-top: solid 3px #d83c20;
+  } */
+
+  /** TODO COMMENT OUT AND FIX ANOTHER TIME GEORGE */
+  /** if vertical */
+  /* .vertical > tbody > tr:nth-child(6), .vertical > tbody > tr:nth-child(6) {
+    border-top: solid 3px #d83c20;
+  } */
+  /** if horizontal */
+  /* .horizontal > tbody > tr:nth-child(5), .horizontal > tbody > tr:nth-child(5) {
+    border-top: solid 3px #d83c20;
+  }
+  .horizontal > tbody > tr:nth-child(7), .horizontal > tbody > tr:nth-child(7) {
+    border-top: solid 3px #d83c20;
+  } */
 
   .heading-td {
     vertical-align: middle;

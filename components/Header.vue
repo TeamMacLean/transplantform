@@ -5,8 +5,14 @@
         <!--<img src="/fridge.png" width="16" height="28" style="margin-right:8px;">-->
         <b class="has-text-primary">Fridge</b>
       </nuxt-link>
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" type="button"
-         data-target="navbarBasicExample">
+      <a 
+        role="button" 
+        class="navbar-burger burger" 
+        aria-label="menu" 
+        aria-expanded="false" 
+        type="button"
+        data-target="navbarBasicExample"
+      >
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -21,8 +27,14 @@
         <nuxt-link to="/masters" class="navbar-item">
           Masters
         </nuxt-link>
-        <nuxt-link to="/frec" class="navbar-item">
+        <!-- <nuxt-link to="/frec" class="navbar-item">
           Frec
+        </nuxt-link> -->
+        <nuxt-link to="/search" class="navbar-item">
+          Search
+        </nuxt-link>
+        <nuxt-link to="/ec-rc-names" class="navbar-item">
+          EC/RC names
         </nuxt-link>
       </div>
       <div class="navbar-end">

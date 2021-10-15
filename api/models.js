@@ -2,10 +2,7 @@
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema;
 
-const Plate = mongoose.model(
-  'Plate',
-
-  {
+const Plate = mongoose.model('Plate', {
     a1: {
       fr: {type: String},
       ec: {type: String},
@@ -559,6 +556,15 @@ const Master = mongoose.model('Master', {
     type: String,
     required: true
   },
+  numberOfWells: {
+    type: Number,
+  },
+  arrangementDirection: {
+    type: String,
+  },
+  arrangeByType: {
+    type: String,
+  },
   // TODO remove
   plates: [{
     type: Schema.Types.ObjectId,
@@ -586,10 +592,7 @@ const Master = mongoose.model('Master', {
   }
 });
 
-const MasterPlate = mongoose.model(
-  'MasterPlate',
-
-  {
+const MasterPlate = mongoose.model('MasterPlate', {
     a1: {
       upper: {
         slotNumber: {type: Number}, // for debug purposes
@@ -1944,4 +1947,14 @@ const MasterPlate = mongoose.model(
   }
 );
 
-export {Plate, Stock, Master, MasterPlate}
+const ECNames = mongoose.model('ECNames', {
+  name: {
+    type: String,
+  },
+  number: {
+    type: String,
+    required: true
+  },
+})
+
+export {Plate, Stock, Master, MasterPlate, ECNames}

@@ -25,6 +25,12 @@
                   </div>
                 </div>
 
+                <div class="control" v-if="master.numberOfWells">
+                  <div>Wells count: {{master.numberOfWells}}</div>
+                  <div>Direction: {{master.arrangementDirection}}</div>
+                  <div>Arrange by: {{master.arrangeByType}}</div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -72,6 +78,9 @@
                   :save="saveMaster" 
                   :canSpawnMasters="false"
                   :canTakeVolume="true"
+                  :numberOfWells="master.numberOfWells"
+                  :arrangementDirection="master.arrangementDirection"
+                  :arrangeByType="master.arrangeByType"
                 />
           </div>
         </div>
@@ -108,17 +117,12 @@
     components: {
       MasterPlate
     },
-    asyncData({$axios, /** store */ _, params}) {
-      //console.log('IVE BEEN FIRED I AM GREAT', params);
-      
+    asyncData({$axios, _, params}) {      
       return $axios.get('/api/master/' + params.id)
         .then((res) => {
 
-          //console.log('IVE GOT DATA WOOP', res.data.master);
-          
 
-          //console.log('res.data', res.data);
-          
+
           return {
             master: res.data.master,
             activeTab: 0,
@@ -133,8 +137,8 @@
             activeTab: 0,
             reloadKey: 0
           }
-
-        })
+        }
+      )
     },
     methods: {
       deleteMaster: function () {
