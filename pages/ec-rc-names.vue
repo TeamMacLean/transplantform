@@ -5,6 +5,7 @@
     <h1 class="title">Named constructs</h1>
     <div v-if='namedConstructs && namedConstructs.length'>
 
+      <b-button class='marginBottom' :disabled='isDisabled' type='is-primary' @click="onSubmit">Update named constructs</b-button>
       <div class="rowsContainer">
         <div class="flex-container-header">
           <div class='normal'>
@@ -108,8 +109,17 @@ export default {
         this.toBeDeletedConstructNumbers = []
         this.newEntries = generatedArrayOfEmptyObjectsForNewEntries;
 
+        this.$buefy.toast.open({
+          message: 'Successfully updated EC Names!',
+          type: 'is-success'
+        });
+
       } catch (err) {
         console.error('could not update named constructs:', err)
+        this.$buefy.toast.open({
+            message: 'Could not update EC Names',
+            type: "is-danger",
+          });
       }
     },
   },
@@ -134,6 +144,9 @@ export default {
 .input {
   width: 200px;
   margin: 10px;
+}
+.marginBottom {
+  margin-bottom: 15px;
 }
 
 </style>

@@ -817,22 +817,33 @@ router.get('/ec-rc-names', async (req, res) => {
   const listOfMongoNumbers = namedConstructs.map(c => c.number)
   
   // find new EC names
-  var allPlates = await Plate.find({});
-  allPlates = (allPlates && allPlates.length) ? allPlates : [];
-  var infoPlate = allPlates[0]
-  const allEcNumbers = allPlates.map(plate => {
-    const result = [];
-    labels.forEach(label => {
-      if (plate[label] && plate[label].ec && !!(plate[label].ec)){
-        result.push(plate[label].ec)
-      }
+  var masters = await Master.find({}).populate('masterPlates');
+
+  var uniqueEcNumbers = []  
+
+  masters.forEach(master => {
+
+    master.masterPlates.forEach(plate => {
+      labels.forEach(label => {
+        if (plate[label] && plate[label].higher && plate[label].higher.ec){
+          if (!uniqueEcNumbers.includes(plate[label].higher.ec)) {
+            uniqueEcNumbers.push(plate[label].higher.ec)
+          }
+        }
+        if (plate[label] && plate[label].lower && plate[label].lower.ec){
+          if (!uniqueEcNumbers.includes(plate[label].lower.ec)) {
+            uniqueEcNumbers.push(plate[label].lower.ec)
+          }
+        }
+      })
     })
-    return result    
+
   })
 
-  const uniqueEcNumbers = [...new Set(allEcNumbers.reduce((flat, val) => flat.concat(val), []))]
+  // superfluous
+  const extraUniqueEcNumbers = [...new Set(uniqueEcNumbers.reduce((flat, val) => flat.concat(val), []))]
 
-  await Promise.all(uniqueEcNumbers.map(async (number) => {
+  await Promise.all(extraUniqueEcNumbers.map(async (number) => {
     if (!listOfMongoNumbers.includes(number)) {
       await (await new ECNames({number, name: ''})).save();
     }
@@ -951,20 +962,47 @@ router.post('/search/ec', async (req, res) => {
       'species': ecAndFrObj.species,
     }
   })
+
+  let findingMatchResults = [];
   
   // apply filter
   const matchedUniqueEcObjects = allUniqueEcsWithNamesAsObjects.filter(ecObj => {
+
+    const nameMatchBool = !!(ecObj.name && ecObj.name.length && ecObj.name.toLowerCase().includes(query.toLowerCase()));
+    const numberMatchBool = !!(ecObj.number && ecObj.number.length && ecObj.number.toLowerCase().includes(query.toLowerCase()));
+    const frMatchBool = !!(ecObj.frNumber && ecObj.frNumber.length && ecObj.frNumber.toLowerCase().includes(query.toLowerCase()));
+    
+    let platesMatchBool = !!(ecObj.plates.toString().toLowerCase().includes(query.toLowerCase()))
+    let speciesMatchBool = !!(ecObj.species.toString().toLowerCase().includes(query.toLowerCase()))
+
     const result = 
-      (ecObj.name && ecObj.name.length && ecObj.name.toLowerCase().includes(query.toLowerCase())) 
+      nameMatchBool
       || 
-      (ecObj.number && ecObj.number.length && ecObj.number.toLowerCase().includes(query.toLowerCase()))
+      numberMatchBool
       || 
-      (ecObj.frNumber && ecObj.frNumber.length && ecObj.frNumber.toLowerCase().includes(query.toLowerCase()))
+      frMatchBool
       || 
-      (ecObj.plates && ecObj.plates.length && ecObj.plates.map(p => p.toLowerCase()).includes(query.toLowerCase()))
+      platesMatchBool
       || 
-      (ecObj.species && ecObj.species.length && ecObj.species.map(s => s.toLowerCase()).includes(query.toLowerCase()))
+      speciesMatchBool
     ;    
+
+    // findingMatchResults.push({
+    //   'queryToMatch': query.toLowerCase(),
+    //   'name': ecObj.name,
+    //   'nameMatch?': nameMatchBool,
+    //   'number': ecObj.number,
+    //   'numberMatchBool': numberMatchBool,
+    //   'fr': ecObj.frNumber,
+    //   'frMatch': frMatchBool,
+    //   'plates': ecObj.plates,
+    //   'platesAsAString': ecObj.plates.toString().toLowerCase(),
+    //   'platesMatchBool': platesMatchBool,
+    //   'species': ecObj.species,
+    //   'speciesAsAString': ecObj.species.toString().toLowerCase(),
+    //   'speciesMatchBool': speciesMatchBool,
+    //   'anyMatch': result
+    // })
 
     return result;
   }
@@ -972,9 +1010,10 @@ router.post('/search/ec', async (req, res) => {
 
   res.send({
     debugging: [
-      'masters', masters,
-      'duplicatedEcNumbersAndFrsFromPlates', duplicatedEcNumbersAndFrsFromPlates,
-      'uniqueEcNumbersAndFrsFromPlates', uniqueEcNumbersAndFrsFromPlates,
+      // 'masters', masters,
+      // 'duplicatedEcNumbersAndFrsFromPlates', duplicatedEcNumbersAndFrsFromPlates,
+      // 'uniqueEcNumbersAndFrsFromPlates', uniqueEcNumbersAndFrsFromPlates,
+      // findingMatchResults
     ],
     results: matchedUniqueEcObjects,
   })
