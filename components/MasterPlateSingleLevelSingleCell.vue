@@ -12,7 +12,7 @@
       <span class="small-cell-text">{{this.fr || 'n/a'}}</span>
       <span class="volume-text">
         {{
-          this.volumeString
+          this.volumeString + ' (' + this.slotNumber + ')'
           /*this.slotNumber*/
           /*this.slotNumber ? (this.slotNumber + ', ' + this.volumeString) : this.volumeString*/
         }}

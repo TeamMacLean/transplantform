@@ -126,8 +126,8 @@ export default {
       try {
         const res = await this.$axios.post(url, {query: this.query})
         const parsedData = JSON.parse(JSON.stringify(res.data))
-        console.log(parsedData)
-        if (parsedData.debugging) {console.log(parsedData.debugging)}
+        // console.log(parsedData)
+        // if (parsedData.debugging && parsedData.debugging.length) {console.log(parsedData.debugging)}
         this.results = parsedData.results;
 
       } catch (error) {
