@@ -8,6 +8,7 @@ export default {
     port: process.env.PORT || 3000, // default: 3000
     host: process.env.HOST || 'localhost', // default: localhost
   },
+  // DOES NOT WORK COS MODELS ISSUE watch: ['~/api/*.js'],
   /*
   ** Headers of the page
   */
