@@ -1,5 +1,12 @@
 <template><div>
 
+  <div v-if="this.debuggingEnabled">
+    <hr />
+    <div :key='index' v-for="(output, index) in debugging">
+      {{output}}
+    </div>
+    <hr />
+  </div>
   <div v-if="namedConstructs && namedConstructs.length">
     <hr/>
     <h1 class="title">Named constructs</h1>
@@ -60,6 +67,8 @@ export default {
           namedConstructs: isManyNamedConstructs ? res.data.namedConstructs : [],
           toBeDeletedConstructNumbers: [],
           newEntries: generatedArrayOfEmptyObjectsForNewEntries,
+          debugging: res.data.debugging,
+          debuggingEnabled: false,
         }
         return resultData;
       })

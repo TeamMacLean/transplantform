@@ -1,7 +1,7 @@
-//import MasterPlate from './not-need-master-plate.js';
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema;
 
+// TODO rename to StockPlate
 const Plate = mongoose.model('Plate', {
     a1: {
       fr: {type: String},
@@ -528,7 +528,7 @@ const Stock = mongoose.model('Stock', {
     type: String,
     required: false
   },
-  speciesDescription: {
+  receptorType: {
     type: String,
     required: false
   },
@@ -571,7 +571,7 @@ const Master = mongoose.model('Master', {
     ref: 'Plate',
     required: false
   }],
-  // TODO rename to Plate && make required
+  // TODO make required
   masterPlates: [{
     type: Schema.Types.ObjectId,
     ref: 'MasterPlate',

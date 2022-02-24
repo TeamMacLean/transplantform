@@ -878,7 +878,6 @@
                 }
               })
 
-
             } else {
               this.editMode = false;
               this.restoreOriginal();

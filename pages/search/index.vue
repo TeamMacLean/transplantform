@@ -11,6 +11,19 @@
     <b-button :disabled='isSearchButtonDisabled' type='is-primary' @click="handleSearch">Search</b-button>
   </div>
   <hr />
+
+  <div v-if="this.debuggingEnabled">
+    <hr />
+    <div :key='index' v-for="(value, key, index) in debugging">
+      <b>{{ key }}:</b>
+      <br />       
+      {{value}}
+      <br />
+      <br />    
+    </div>
+    <hr />
+  </div>
+
   <div v-if="!this.noSearchesYet">
     <div v-if='this.isSearching'>Loading results...</div>
     <div v-else-if="results.length">
@@ -43,7 +56,16 @@
               <td>{{construct.number}}</td>
               <td>{{construct.name || '-'}}</td>
               <td>{{construct.frNumber || '-'}}</td>
-              <td>{{getArrayFormatNames(construct.plates, ', ')}}</td>
+              <!-- <td>{{getArrayFormatNames(construct.plates, '\n')}}</td> -->
+              <!-- <td>{{getArrayFormatNames(mockMasterNames, ', ')}}</td> -->
+              <td>
+                <span 
+                  :key="anotherIndex" 
+                  v-for="(entry, anotherIndex) in getArrayFormatNames(construct.plates, ',').split(',')"
+                >
+                  {{entry}}                
+                </span>
+              </td>
               <td>{{getArrayFormatNames(construct.species, ', ')}}</td>            
             </tr>
           </tbody>
@@ -73,8 +95,16 @@ export default {
       error: null,
       noSearchesYet: true,
       lastPostedSearchQuery: '',
+      debugging: null,
+      debuggingEnabled: false,
     };
   },
+  /** GOOD FOR DEBUG
+  mounted: function () {
+    this.query = 'e';
+    this.handleSearch();
+  },
+   */
   computed: {
     isSearchButtonDisabled() {
       if (!this.query && !this.results.length){
@@ -119,16 +149,28 @@ export default {
     async handleSearch() {
       this.noSearchesYet = false;
       this.isSearching = true;
-      let url = "/api/search/ec";
+      let url = "/api/search";
 
       this.lastPostedSearchQuery = this.query;
 
       try {
         const res = await this.$axios.post(url, {query: this.query})
         const parsedData = JSON.parse(JSON.stringify(res.data))
-        // console.log(parsedData)
-        // if (parsedData.debugging && parsedData.debugging.length) {console.log(parsedData.debugging)}
         this.results = parsedData.results;
+
+        // filter debug on client side for faster debug; choose keys to display
+        const toFilter = ['clay']
+        const filteredDebug = Object.fromEntries(Object.entries(parsedData.debugging).filter(([key]) =>          
+          !toFilter.includes(key)
+        ));
+        const withAdditional = {}
+
+        const thisDebugging = {
+          ...filteredDebug,
+          ...withAdditional,
+        };
+        
+        this.debugging = thisDebugging;
 
       } catch (error) {
         this.error = error;
@@ -160,6 +202,12 @@ export default {
 .normal {
   width: 150px;
   margin: 10px;
+}
+
+/** Ensure newline for each table cell line entry in array */
+td span:after {
+  content:"\A";
+  white-space: pre;
 }
 
 </style>

@@ -160,7 +160,7 @@ router.post('/stock/check/name', (req, res) => {
   Stock.find({name})
     .then(stocks => {
       if (stocks && stocks.length) {
-        res.send({ok: false});
+        res.send({ok: false/*, debugger: [stocks, 'stocks with that name found']*/});
       } else {
         res.send({ok: true})
       }
@@ -247,7 +247,7 @@ router.post('/stock/new', async (req, res) => {
         optimisation: stock.optimisation,
         plate: savedPlate.id,
         species: stock.species,
-        speciesDescription: stock.speciesDescription,
+        receptorType: stock.receptorType,
         type: stock.type,
       }).save()
     })
@@ -471,8 +471,7 @@ router.get('/master', (req, res) => {
 });
 
 router.get('/master/:id', (req, res) => {
-  //console.log('REACHEY JACK JACK');
-  
+
   Master.findById(req.params.id)
     .populate('masterPlates')
     .then(master => {
@@ -588,8 +587,8 @@ router.get('/frec', (req, res) => {
 
 });
 
+/** NOT CURRENTLY USED */
 router.post('/frec/search', (req, res) => {
-
 
   const lookingFor = req.body.id;
   const results = [];
@@ -816,8 +815,8 @@ router.get('/ec-rc-names', async (req, res) => {
   namedConstructs = (namedConstructs && namedConstructs.length) ? namedConstructs : [];
   const listOfMongoNumbers = namedConstructs.map(c => c.number)
   
-  // find new EC names
-  var masters = await Master.find({}).populate('masterPlates');
+  // find new EC names from masters AND plates
+  var masters = await Master.find({deleted: false}).populate('masterPlates');
 
   var uniqueEcNumbers = []  
 
@@ -825,9 +824,9 @@ router.get('/ec-rc-names', async (req, res) => {
 
     master.masterPlates.forEach(plate => {
       labels.forEach(label => {
-        if (plate[label] && plate[label].higher && plate[label].higher.ec){
-          if (!uniqueEcNumbers.includes(plate[label].higher.ec)) {
-            uniqueEcNumbers.push(plate[label].higher.ec)
+        if (plate[label] && plate[label].upper && plate[label].upper.ec){
+          if (!uniqueEcNumbers.includes(plate[label].upper.ec)) {
+            uniqueEcNumbers.push(plate[label].upper.ec)
           }
         }
         if (plate[label] && plate[label].lower && plate[label].lower.ec){
@@ -837,12 +836,52 @@ router.get('/ec-rc-names', async (req, res) => {
         }
       })
     })
+  })
 
+  var stocks = await Stock.find({deleted: false}).populate('plate');
+
+  var reachedLabelLoop = 0;
+  var foundEc = 0;
+  var cannotFindEc = 0;
+  var mustPushEcNo = 0;
+  var noPushAlreadyEcNo = 0;
+
+  stocks.forEach(stock => {
+    // var plate = stock.plate;
+    labels.forEach((label, index) => {
+      reachedLabelLoop++;
+      if (stock.plate[label] && stock.plate[label] && stock.plate[label].ec){
+        foundEc++;
+        if (!uniqueEcNumbers.includes(stock.plate[label].ec)) {
+          mustPushEcNo++
+          uniqueEcNumbers.push(stock.plate[label].ec)
+        } else {
+          noPushAlreadyEcNo++
+        }
+      } else {
+        cannotFindEc++
+      }
+    })
   })
 
   // superfluous
-  const extraUniqueEcNumbers = [...new Set(uniqueEcNumbers.reduce((flat, val) => flat.concat(val), []))]
+  const extraUniqueEcNumbers = [...new Set(uniqueEcNumbers.reduce((flat, val) => flat.concat(val), []))];
 
+  // populate ACTIVE ec numbers with names from DB
+  const foundEcNumbersWithAttachedNames = extraUniqueEcNumbers.map(ecNo => {
+    // if name, provide it (safe javascript method)
+    const foundName = 
+      (namedConstructs.find(ecObj => ecObj.number === ecNo) && namedConstructs.find(ecObj => ecObj.number === ecNo).name)
+      ? namedConstructs.find(ecObj => ecObj.number === ecNo).name 
+      : null
+    ;
+    return {
+      name: foundName,
+      number: ecNo,
+    }
+  })
+
+  // update DB with new EC numbers found in ACTIVE
   await Promise.all(extraUniqueEcNumbers.map(async (number) => {
     if (!listOfMongoNumbers.includes(number)) {
       await (await new ECNames({number, name: ''})).save();
@@ -851,7 +890,28 @@ router.get('/ec-rc-names', async (req, res) => {
   
   const updatedNamedConstructs = await ECNames.find({})
   
-  res.send({namedConstructs: updatedNamedConstructs})
+  res.send({
+    namedConstructs: foundEcNumbersWithAttachedNames,
+    debugging: [
+      'stocks.length', stocks.length,
+      'masters.length', masters.length,
+      'first/only stock:', stocks[0].plate['a1'],
+      'uniqueEcNumbers', uniqueEcNumbers, 
+      'extraUniqueEcNumbers', extraUniqueEcNumbers,
+      'foundEcNumbersWithAttachedNames', foundEcNumbersWithAttachedNames,
+      'reachedLabelLoop', reachedLabelLoop,
+      'foundEc', foundEc,
+      'cannotFindEc', cannotFindEc,
+      'mustPushEcNo', mustPushEcNo,
+      'noPushAlreadyEcNo', noPushAlreadyEcNo,     
+      
+      //updatedNamedConstructs[0], 
+      // { "_id": "616d56ef8ebf69829ca236ca", "number": "EC76076", "name": "jio", "__v": 0 }
+      
+      //foundEcNumbersWithAttachedNames[0],
+      // { "name": { "_id": "616d56ef8ebf69829ca236ca", "number": "EC76076", "name": "jio", "__v": 0 }, "number": "EC76076" }
+    ],
+  })
 });
 
 router.post('/ec-rc-names/new', async (req, res) => {
@@ -879,55 +939,101 @@ router.post('/ec-rc-names/new', async (req, res) => {
   })
 });
 
-router.post('/search/ec', async (req, res) => {
+router.post('/search', async (req, res) => {
   const { query } = req.body; 
 
-  // find all EC and FR codes and plateNames
-  var masters = await Master.find({}).populate('masterPlates');
+  // we need to search both stocks and masters
+  
+  // find all EC and FR codes and plateNames in stocks
+  var stocks = await Stock.find({deleted: false}).populate('plate')
 
-  var duplicatedEcNumbersAndFrsFromPlates = []  
+  var stockTargetObjs = [];
 
-  //var tempMasters = masters.slice(40)
-  var allMasterPlates = masters.forEach(master => {
+  stocks.forEach(stock => {
+    labels.forEach(label => {
+      if (stock.plate[label] && stock.plate[label] && stock.plate[label].ec){
+        const currentEcNumbers = stockTargetObjs.map(obj => obj.ec)
+        if (!currentEcNumbers.includes(stock.plate[label].ec)) {
+          stockTargetObjs.push({
+            ec: stock.plate[label].ec,
+            fr: stock.plate[label].fr,
+          })}
+      }
+    })
+  })
+  
+  // find all EC and FR codes and plateNames in masters
+  var masters = await Master.find({deleted: false}).populate('masterPlates');
+  
+  var duplicatedEcNumbersAndFrsFromPlates = [];  
+
+  var plateCount = 0;
+  var labelCount = 0;
+  var ecInUpperCount = 0;
+  var ecNotInUpperOrLowerCount = 0;
+  var ecInLowerCount = 0;
+
+  masters.forEach(master => {
 
     master.masterPlates.forEach(plate => {
+
+      plateCount++
+
       labels.forEach(label => {
-        if (plate[label] && plate[label].higher && plate[label].higher.ec){
+        labelCount++
+      
+        const plateLabel = plate[label]
+      
+        const plateLabelUpper = plateLabel && plateLabel.upper
+        const plateLabelUpperEc = plateLabel && plateLabelUpper && plateLabelUpper.ec
+        const plateLabelUpperEcBool = !!(plate[label] && plate[label].upper && plate[label].upper.ec);
+      
+        const plateLabelLower = plateLabel && plateLabel.lower
+        const plateLabelLowerEc = plateLabel && plateLabelLower && plateLabelLower.ec
+        const plateLabelLowerEcBool = !!(plate[label] && plate[label].lower && plate[label].lower.ec);
+  
+        if (plateLabelUpperEcBool){
+          ecInUpperCount++
           duplicatedEcNumbersAndFrsFromPlates.push({
-            ec: plate[label].higher.ec, 
-            fr: plate[label].higher.fr, 
+            ec: plateLabelUpperEc, 
+            fr: plateLabelUpper.fr, 
             plateName: master.name,
-            higherOrLower: 'higher',
+            upperOrLower: 'upper',
             speciesName: master.species,
           })
-        }
-        if (plate[label] && plate[label].lower && plate[label].lower.ec){
+        } 
+        if (plateLabelLowerEcBool){
+          ecInLowerCount++
           duplicatedEcNumbersAndFrsFromPlates.push({
-            ec: plate[label].lower.ec, 
-            fr: plate[label].lower.fr, 
+            ec: plateLabelLowerEc, 
+            fr: plateLabelLower.fr, 
             plateName: master.name,
-            higherOrLower: 'lower',
+            upperOrLower: 'lower',
             speciesName: master.species,
           })
+        } 
+        if (!plateLabelUpperEcBool && !plateLabelLowerEcBool) {
+          ecNotInUpperOrLowerCount++;
         }
-      })
+      });
     })
   })
   
   // MAKE UNIQUE
-  let uniqueEcNumbersAndFrsFromPlates = [];
+  let uniqueEcNumbersAndFrsFromPlatesAndStocks = [];
+  // plates
   duplicatedEcNumbersAndFrsFromPlates.forEach(obj => {
-    const ecNumbersJustAdded = uniqueEcNumbersAndFrsFromPlates.map(uniqueObj => uniqueObj.ec)
+    const ecNumbersJustAdded = uniqueEcNumbersAndFrsFromPlatesAndStocks.map(uniqueObj => uniqueObj.ec)
     if (!ecNumbersJustAdded.includes(obj.ec)){
-      uniqueEcNumbersAndFrsFromPlates.push({
+      uniqueEcNumbersAndFrsFromPlatesAndStocks.push({
         ec: obj.ec,
         fr: obj.fr,
-        higherOrLower: obj.higherOrLower,
+        upperOrLower: obj.upperOrLower,
         plates: [obj.plateName],
         species: [obj.speciesName]
       })
     } else {
-      uniqueEcNumbersAndFrsFromPlates.forEach(plateObj => {
+      uniqueEcNumbersAndFrsFromPlatesAndStocks.forEach(plateObj => {
         if (plateObj.ec === obj.ec && !plateObj.plates.includes(obj.plateName)){
           plateObj.plates.push(obj.plateName)
           plateObj.species.push(obj.speciesName)
@@ -935,11 +1041,24 @@ router.post('/search/ec', async (req, res) => {
       })
     }
   })
+  // stocks
+  stockTargetObjs.forEach(obj => {
+    const ecNumbersJustAdded = uniqueEcNumbersAndFrsFromPlatesAndStocks.map(uniqueObj => uniqueObj.ec)
+    if (!ecNumbersJustAdded.includes(obj.ec)){
+      uniqueEcNumbersAndFrsFromPlatesAndStocks.push({
+        ec: obj.ec,
+        fr: obj.fr,
+        upperOrLower: null,
+        plates: [],
+        species: [],
+      })
+    }
+  })
   
   // ADD EC NAMES
   const mongoEcObjs = await ECNames.find({});
-  //const uniqueEcNumbersFromPlates2 = uniqueEcNumbersFromPlates.splice(90)
-  const allUniqueEcsWithNamesAsObjects = uniqueEcNumbersAndFrsFromPlates.map(ecAndFrObj => {
+
+  const allUniqueEcsWithNamesAsObjects = uniqueEcNumbersAndFrsFromPlatesAndStocks.map(ecAndFrObj => {
     // default is blank
     let targetName = '';
     
@@ -953,7 +1072,6 @@ router.post('/search/ec', async (req, res) => {
       targetName = targetMongoEcNames[0].name;
     }
 
-    // return object
     return {
       'name': targetName,
       'number': ecAndFrObj.ec,
@@ -963,61 +1081,37 @@ router.post('/search/ec', async (req, res) => {
     }
   })
 
-  let findingMatchResults = [];
-  
   // apply filter
   const matchedUniqueEcObjects = allUniqueEcsWithNamesAsObjects.filter(ecObj => {
-
     const nameMatchBool = !!(ecObj.name && ecObj.name.length && ecObj.name.toLowerCase().includes(query.toLowerCase()));
     const numberMatchBool = !!(ecObj.number && ecObj.number.length && ecObj.number.toLowerCase().includes(query.toLowerCase()));
     const frMatchBool = !!(ecObj.frNumber && ecObj.frNumber.length && ecObj.frNumber.toLowerCase().includes(query.toLowerCase()));
     
-    let platesMatchBool = !!(ecObj.plates.toString().toLowerCase().includes(query.toLowerCase()))
-    let speciesMatchBool = !!(ecObj.species.toString().toLowerCase().includes(query.toLowerCase()))
-
-    const result = 
-      nameMatchBool
-      || 
-      numberMatchBool
-      || 
-      frMatchBool
-      || 
-      platesMatchBool
-      || 
-      speciesMatchBool
-    ;    
-
-    // findingMatchResults.push({
-    //   'queryToMatch': query.toLowerCase(),
-    //   'name': ecObj.name,
-    //   'nameMatch?': nameMatchBool,
-    //   'number': ecObj.number,
-    //   'numberMatchBool': numberMatchBool,
-    //   'fr': ecObj.frNumber,
-    //   'frMatch': frMatchBool,
-    //   'plates': ecObj.plates,
-    //   'platesAsAString': ecObj.plates.toString().toLowerCase(),
-    //   'platesMatchBool': platesMatchBool,
-    //   'species': ecObj.species,
-    //   'speciesAsAString': ecObj.species.toString().toLowerCase(),
-    //   'speciesMatchBool': speciesMatchBool,
-    //   'anyMatch': result
-    // })
-
-    return result;
-  }
-  );
-
+    let platesMatchBool = !!(ecObj.plates && ecObj.plates.length && ecObj.plates.toString().toLowerCase().includes(query.toLowerCase()))
+    let speciesMatchBool = !!(ecObj.species && ecObj.species.length && ecObj.species.toString().toLowerCase().includes(query.toLowerCase()))
+    
+    return (nameMatchBool || numberMatchBool || frMatchBool || platesMatchBool || speciesMatchBool);      
+  });
+    
   res.send({
-    debugging: [
-      // 'masters', masters,
-      // 'duplicatedEcNumbersAndFrsFromPlates', duplicatedEcNumbersAndFrsFromPlates,
-      // 'uniqueEcNumbersAndFrsFromPlates', uniqueEcNumbersAndFrsFromPlates,
-      // findingMatchResults
-    ],
+    debugging: {
+      'mastersLength': masters.length,
+      'clay': 93,
+      'allUniqueEcsWithNamesAsObjects': allUniqueEcsWithNamesAsObjects,
+      'mongoEcObjs': mongoEcObjs,
+      'stockTargetObjs': stockTargetObjs,
+      'uniqueEcNumbersAndFrsFromPlatesAndStocks': uniqueEcNumbersAndFrsFromPlatesAndStocks,
+      'duplicatedEcNumbersAndFrsFromPlates': duplicatedEcNumbersAndFrsFromPlates,
+      'plateCount': plateCount,
+      'labelCount': labelCount,
+      'ecInUpperCount': ecInUpperCount,
+      'ecNotInUpperOrLowerCount': ecNotInUpperOrLowerCount,
+      'ecInLowerCount': ecInLowerCount,
+      'firstPlate': masters[0].masterPlates[0],
+    },
     results: matchedUniqueEcObjects,
   })
-})
+});
 
 // Export the server middleware
 export default {

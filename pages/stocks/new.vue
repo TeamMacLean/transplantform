@@ -6,15 +6,18 @@
       <div class="field">
         <label class="label">Name</label>
         <div class="control">
-          <input
-            class="input"
-            type="text"
-            placeholder="Stock plate name"
-            v-model="plateName"
-            minlength="5"
-            @input="checkName"
-            required
+          <b-field
+            :type="nameInputErrorMessage && 'is-danger'"
+            :message="nameInputErrorMessage"
           >
+            <b-input
+              placeholder="Stock plate name"
+              v-model="plateName"
+              minlength="5"
+              @blur="checkName"
+              required
+            ></b-input>
+          </b-field>
         </div>
         <p class="help is-success" v-if="nameIsOk">This plate name is available</p>
       </div>
@@ -23,12 +26,12 @@
         <b-input v-model="type" maxlength="20"></b-input>
       </b-field>
 
-      <b-field label="Species Description">
-        <b-input v-model="speciesDescription" maxlength="30"></b-input>
+      <b-field label="Receptor Type">
+        <b-input v-model="receptorType" maxlength="30"></b-input>
       </b-field>
 
       <b-field label="Optimisation for plate">
-          <b-select v-model="optimisation" placeholder="Select an optimisation">
+          <b-select required v-model="optimisation" placeholder="Select an optimisation">
               <option value="soybean">Soybean-optimised</option>
               <option value="corn">Corn-optimised</option>
           </b-select>
@@ -115,9 +118,10 @@
         frErrors: false,
         type: '',
         optimisation: '',
-        speciesDescription: '',
+        receptorType: '',
         isFileUploading: false,
         isCreatingPlate: false,
+        nameInputErrorMessage: '',
       }
     },
     methods: {
@@ -132,13 +136,33 @@
         this.frErrors = !!results;
       },
       checkName() {
-        return this.$axios.$post('/api/stock/check/name', {name: this.plateName})
+        // this.plateName && console.log('name to check', this.plateName)
+        let targetName = this.plateName;
+        this.nameIsOk = false;
+        this.nameInputErrorMessage = '';
+
+        if (targetName === ''){
+          this.nameIsOk = false;
+          this.nameInputErrorMessage = 'Name field is empty';  
+                  
+          return;
+        }
+
+        if (targetName.length < 6){
+          this.nameIsOk = false;
+          this.nameInputErrorMessage = 'Name field is must be at least 6 characters long';
+          return;
+        }
+        
+        return this.$axios.$post('/api/stock/check/name', {name: targetName})
           .then(res => {
-            this.nameIsOk = !!(this.plateName && this.plateName.length > 5 && res && res.ok);
+            this.nameIsOk = res.ok;
+            this.nameInputTypeAndMessage = res.ok ? null : 'Name field is already in database'
           })
           .catch(err => {
             console.error(err)
             this.nameIsOk = false;
+            this.nameInputErrorMessage = 'Issue with checking name in database. Try again later, or contact your system administrator';
           })
       },
       createPlate() {
@@ -224,7 +248,7 @@
           stock: {
             name: this.plateName,
             barcode: this.barcode,
-            speciesDescription: this.speciesDescription,
+            receptorType: this.receptorType,
             plate: this.plate,
             optimisation: this.optimisation,
             type: this.type,
@@ -242,12 +266,17 @@
       },
       reset() {
         this.file = null;
-        this.plate = null;
         this.plateName = '';
-        this.checkName();
+        this.nameIsOk = false;
       }
     },
     computed: {
+      getNameInputType() {
+        return 'is-danger';
+      },
+      getNameInputErrorMessage() {
+        return 'is-danger';
+      },  
       canSubmit() {
         return this.plate && this.nameIsOk && !this.frErrors
       },

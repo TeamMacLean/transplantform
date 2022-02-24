@@ -30,22 +30,22 @@
 
               <div class="control">
                 <div class="tags has-addons">
-                  <span class="tag">species description</span>
-                  <span class="tag is-outlined">{{!!stock.speciesDescription ? stock.speciesDescription : 'None registered.'}}</span>
+                  <span class="tag">receptor type</span>
+                  <span class="tag is-outlined">{{!!stock.receptorType ? stock.receptorType : 'n/a'}}</span>
                 </div>
               </div>
 
               <div class="control">
                 <div class="tags has-addons">
                   <span class="tag">type</span>
-                  <span class="tag is-outlined">{{!!stock.type ? stock.type : 'None registered.'}}</span>
+                  <span class="tag is-outlined">{{!!stock.type ? stock.type : 'n/a'}}</span>
                 </div>
               </div>
 
               <div class="control">
                 <div class="tags has-addons">
                   <span class="tag">optimisation</span>
-                  <span class="tag is-outlined">{{!!stock.optimisation ? stock.optimisation : 'None registered.'}}</span>
+                  <span class="tag is-outlined">{{!!stock.optimisation ? stock.optimisation : 'n/a'}}</span>
                 </div>
               </div>
 
