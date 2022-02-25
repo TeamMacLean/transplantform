@@ -17,35 +17,34 @@ import fortytwo_selectedWells_horizontal from './hardcodedTemplates/horizontal/f
 import fortyeight_selectedWells_horizontal from './hardcodedTemplates/horizontal/fortyeight_selectedWells_horizontal'
 
 const getSlots = (numberOfWellSelections, fillDirection) => {
-    //console.log('about to get slots with:', numberOfWellSelections, fillDirection);
-    
+
     // default
     if (fillDirection === 'vertically' || fillDirection === 'vertical'){
 
         switch (numberOfWellSelections) {
             case 12:
-                console.log('returning twelve_selectedWells_vertical slot!');
+                // console.log('returning twelve_selectedWells_vertical slot!');
                 return twelve_selectedWells_vertical;        
             case 18:
-                console.log('returning eighteen_selectedWells_vertical slot!');
+                // console.log('returning eighteen_selectedWells_vertical slot!');
                 return eighteen_selectedWells_vertical;
             case 24:
-                console.log('returning twentyfour_selectedWells_vertical slot!');
+                // console.log('returning twentyfour_selectedWells_vertical slot!');
                 return twentyfour_selectedWells_vertical;      
             case 30:
-                console.log('returning thirty_selectedWells_vertical slot!');
+                // console.log('returning thirty_selectedWells_vertical slot!');
                 return thirty_selectedWells_vertical;
             case 36:
-                console.log('returning thirtysix_selectedWells_vertical slot!');
+                // console.log('returning thirtysix_selectedWells_vertical slot!');
                 return thirtysix_selectedWells_vertical;
             case 42:
-                console.log('returning fortytwo_selectedWells_vertical slot!');
+                // console.log('returning fortytwo_selectedWells_vertical slot!');
                 return fortytwo_selectedWells_vertical;        
             case 48:
-                console.log('returning fortyeight_selectedWells_vertical slot!');
+                // console.log('returning fortyeight_selectedWells_vertical slot!');
                 return fortyeight_selectedWells_vertical;
             default:
-                console.log('returning no vertical slot!');
+                // console.log('returning no vertical slot!');
                 throw new Error;        
         }
 
@@ -55,28 +54,28 @@ const getSlots = (numberOfWellSelections, fillDirection) => {
 
         switch (numberOfWellSelections) {
             case 12:
-                console.log('returning twelve_selectedWells_horizontal slot!');
+                // console.log('returning twelve_selectedWells_horizontal slot!');
                 return twelve_selectedWells_horizontal;        
             case 18:
-                console.log('returning eighteen_selectedWells_horizontal slot!');
+                // console.log('returning eighteen_selectedWells_horizontal slot!');
                 return eighteen_selectedWells_horizontal;
             case 24:
-                console.log('returning twentyfour_selectedWells_horizontal slot!');
+                // console.log('returning twentyfour_selectedWells_horizontal slot!');
                 return twentyfour_selectedWells_horizontal;     
             case 30:
-                console.log('returning thirty_selectedWells_horizontal slot!');
+                // console.log('returning thirty_selectedWells_horizontal slot!');
                 return thirty_selectedWells_horizontal;
             case 36:
-                console.log('returning thirtysix_selectedWells_horizontal slot!');
+                // console.log('returning thirtysix_selectedWells_horizontal slot!');
                 return thirtysix_selectedWells_horizontal;
             case 42:
-                console.log('returning fortytwo_selectedWells_horizontal slot!');
+                // console.log('returning fortytwo_selectedWells_horizontal slot!');
                 return fortytwo_selectedWells_horizontal;        
             case 48:
-                console.log('returning fortyeight_selectedWells_horizontal slot!');
+                // console.log('returning fortyeight_selectedWells_horizontal slot!');
                 return fortyeight_selectedWells_horizontal;
             default:
-                console.log('returning no horizontal slot!');
+                // console.log('returning no horizontal slot!');
                 throw new Error('no slot found');        
         }
     }
@@ -85,16 +84,17 @@ const getSlots = (numberOfWellSelections, fillDirection) => {
 const calculateWithSlots = (orderedWellSelections, volumeToInsertPerWell, slots) => {
 
     // probably dont need to assign from args but safety
-    let slottedMasterPlateTemplate = Object.assign({}, emptyMasterPlateTemplate);
-    let wellSels = orderedWellSelections;
+    const slottedMasterPlateTemplate = Object.assign(new Object(), emptyMasterPlateTemplate());
+    const wellSels = Object.assign(new Object(), orderedWellSelections);
+    const theseSlots = Object.assign(new Object(), slots);
 
-    Object.keys(slots).forEach(slotNumber => {
+    Object.keys(theseSlots).forEach(slotNumber => {
         const indexOfArrayThatSlotNumberNeedsToAccess = (slotNumber - 1);
         
-        const {coordinates, level} = slots[slotNumber];
+        const {coordinates, level} = theseSlots[slotNumber];
 
         if (!wellSels[indexOfArrayThatSlotNumberNeedsToAccess]){
-            console.log('big issue with wellsels', wellSels, wellSels[indexOfArrayThatSlotNumberNeedsToAccess])
+            console.log('Issue with well selections', wellSels, wellSels[indexOfArrayThatSlotNumberNeedsToAccess])
         }
     
         coordinates.forEach(coordinate => {
@@ -112,25 +112,11 @@ const calculateWithSlots = (orderedWellSelections, volumeToInsertPerWell, slots)
 };
 
 const calculateWellsForMasterPlate = (orderedWellSelections, fillDirection, volumeToInsertPerWell) => {
-
-    //console.log('WEIL');
-    if (!orderedWellSelections){
-        console.error('no orederedWellSelections found!')
-    }
-    if (orderedWellSelections === {}){
-        console.error('orrderedwellselectison === {} discovered')
-    }
-    if (typeof(orderedWellSelections) !== 'object'){
-        console.error('object not found, type is', typeof(orderedWellSelections));
-    }
-
-    console.log('arrived at calculateWells with no errors. inputs are:', orderedWellSelections, fillDirection, volumeToInsertPerWell)
-
+    
     const theSlots = getSlots(Object.keys(orderedWellSelections).length, fillDirection);
-    console.log('gotSlots result', theSlots, theSlots.length);
     
     const masterPlateWells = calculateWithSlots(orderedWellSelections, volumeToInsertPerWell, theSlots);
-    console.log('gotsummintoreturn', masterPlateWells);
+
     return masterPlateWells;
 };
 

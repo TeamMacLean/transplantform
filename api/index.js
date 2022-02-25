@@ -338,18 +338,15 @@ router.post('/master/new', (req, res) => {
     stockPlateItems = stockPlateItems.sort((a, b) =>
       getInt(a.fr) - getInt(b.fr)
     )
-    console.log('sorted by asc fr', stockPlateItems.map(i => i.fr));
   } else if (masterLayout === 1){
     stockPlateItems = stockPlateItems.sort((a, b) =>
       getInt(b.fr) - getInt(a.fr)
     )
-    console.log('sorted by rev fr', stockPlateItems.map(i => i.fr));
 
   } else if (masterLayout === 2){
     stockPlateItems = stockPlateItems.sort((a, b) =>
       getInt(b.ec) - getInt(a.ec)
     )
-    console.log('sorted by rev ec', stockPlateItems.map(i => i.ec));
     
   } else if (masterLayout === 3){
     // no sort, as masterLayout option is to keep click order
@@ -376,22 +373,16 @@ router.post('/master/new', (req, res) => {
       stockFromDB = foundStocks[0];
 
       const volToTake = volumePerNewMasterPlateWell * replicates * noOfPlates;
-      console.log('volToTake', volToTake);
       
       const frsTaken = Object.keys(stockPlateItems).map(index => {
         return stockPlateItems[index].fr;
       });
-      // console.log('frsTaken', frsTaken);  
 
       labels.forEach(label => {
-        if (frsTaken.includes(stockFromDB.plate[label].fr)) {
-          // console.log('removing vol from', stockFromDB.plate[label]);
-          
+        if (frsTaken.includes(stockFromDB.plate[label].fr)) {          
           stockFromDB.plate[label].volume -= volToTake;
         }
       });
-
-      // sendError('EXITING TOO EARLY BY CHOICE', res);
 
       return stockFromDB.plate.save();
 
