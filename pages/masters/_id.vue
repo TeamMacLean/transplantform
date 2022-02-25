@@ -26,8 +26,9 @@
                 </div>
 
                 <div class="control" v-if="master.numberOfWells">
-                  <div>Wells count: {{master.numberOfWells}}</div>
-                  <div>Direction: {{master.arrangementDirection}}</div>
+                  <div>{{cellsRequiredString}}</div>
+                  <div>{{cellsProvidedString}}</div>
+                  <div>Direction selections fill up from {{master.arrangementDirection}} direction</div>
                   <div>Arrange by: {{master.arrangeByType}}</div>
                 </div>
 
@@ -70,7 +71,6 @@
           </ul>
         </div>
 
-
         <div v-for="(masterPlate, i) in masterPlates" :key="i">
           <div v-if="activeTab === i">
                 <MasterPlate 
@@ -112,6 +112,11 @@
       },
       "moment": function () {
         return moment;
+      },
+      cellsRequiredString() {
+        const masterReplicatesNumber = this.master.replicates || 3;
+        const halfCellSlots = masterReplicatesNumber * this.master.numberOfWells;
+        return `${this.master.numberOfWells} (Wells count) x ${masterReplicatesNumber} (Number of repetitions) = ${halfCellSlots} (Half cell slots required)`
       }
     },
     components: {
