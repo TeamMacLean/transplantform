@@ -432,6 +432,7 @@ router.post('/master/new', (req, res) => {
           numberOfWells: noOfSelectedWells,
           arrangementDirection: repsLayout,
           arrangeByType: arrangeByTypeStr,
+          replicates: replicates,
         };
         return new Master(masterInfo).save()
       })

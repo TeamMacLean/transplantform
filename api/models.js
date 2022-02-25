@@ -589,7 +589,11 @@ const Master = mongoose.model('Master', {
   volume: {
     type: Number,
     required: true
-  }
+  },
+  replicates: {
+    type: Number,
+    required: false // TODO make true and backdate all entries
+  },
 });
 
 const MasterPlate = mongoose.model('MasterPlate', {
