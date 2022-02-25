@@ -112,7 +112,7 @@ const calculateWithSlots = (orderedWellSelections, volumeToInsertPerWell, slots)
 };
 
 const calculateWellsForMasterPlate = (orderedWellSelections, fillDirection, volumeToInsertPerWell) => {
-    
+
     const theSlots = getSlots(Object.keys(orderedWellSelections).length, fillDirection);
     
     const masterPlateWells = calculateWithSlots(orderedWellSelections, volumeToInsertPerWell, theSlots);

@@ -9,19 +9,23 @@
       v-bind:data-tooltip="this.tooltip"
       v-bind:class="getClassForTd"
     >
-      <span class="small-cell-text">{{this.fr || 'n/a'}} {{this.volumeString}}</span>
-      <span class="small-cell-text"><b>{{this.level}}</b> {{this.ec}} <span class="volume-text">{{this.slotNumber}}</span></span>
+      <!-- ALL INFO IN SQUARE, DOESNT WORK FOR BIGGER DISPLAYS -->
+      <!-- <span class="small-cell-text">{{this.fr || 'n/a'}} {{this.volumeString}}</span>
+      <span class="small-cell-text"><b>{{this.level}}</b> {{this.ec}} <span class="volume-text">{{this.slotNumber}}</span></span> -->
 
-      <!-- TEMP REFORMAT TO MAKE MORE DEBUG FRIENDLY -->
+      <!-- QUICK AND DIRTY SLOT NUMBER ONLY -->
+      <!-- <span class="volume-text">{{this.slotNumber}}</span> -->
 
-      <!-- <span class="small-cell-text">{{this.fr || 'n/a'}}</span> -->
-      <!-- <span class="volume-text"> -->
+      <span class="small-cell-text">{{this.fr || 'n/a'}}</span>
+      <span class="volume-text">
         {{
-          //this.volumeString + ' (' + this.slotNumber + ')'
-          /*this.slotNumber*/
-          /*this.slotNumber ? (this.slotNumber + ', ' + this.volumeString) : this.volumeString*/
+          this.volumeString + ' (' + this.slotNumber + ')'
+          
+          /** VARIOUS alternate options, above is canon though */
+          /* this.slotNumber */
+          /* this.slotNumber ? (this.slotNumber + ', ' + this.volumeString) : this.volumeString */
         }}
-      <!-- </span>  -->
+      </span> 
     </div>
   </div>
 

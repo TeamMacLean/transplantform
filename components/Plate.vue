@@ -369,8 +369,22 @@
           Take Volume
         </button>
 
+        <!-- TODO tidy up saving of stock plates  -->
         <button type="button" class="button"
-                v-if="canSpawnMasters && onSelectMode && !editMode && !selectMode && !volumeMode"
+                v-if="!editVolumesMode" @click="onEditVolumesMode">
+          Edit Stock Plate
+        </button>
+        <div v-else >
+          <button type="button" class="button"
+                  @click="onSaveVolumes">
+            Save Edited Stock Plate
+          </button>
+          <div>(Note: final confirmation required.)</div>
+          <div>(Also note: this will not update existing created Master Plates.)</div>
+        </div>
+
+        <button type="button" class="button"
+                v-if="canSpawnMasters && onSelectMode && !editMode && !selectMode && !volumeMode && !editVolumesMode"
                 @click="onSelectMode">
           <font-awesome-icon :icon="['fas', 'fill-drip']" style="margin-right:8px;"/>
           Make Master
@@ -632,6 +646,8 @@
         volumeToTake: 0,
         selectedWells: [],
         validSelectedWellsCounts: [12, 18, 24, 30, 36, 42, 48],
+
+        editVolumesMode: false,
       }
     },
     created() {
@@ -775,6 +791,39 @@
       }
     },
     methods: {
+
+      onEditVolumesMode() {
+        this.editVolumesMode = true;
+        this.editMode = true;
+      },
+
+      onSaveVolumes() {
+        if (this.save) {
+              this.$swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, save changes!'
+              }).then((result) => {
+                if (result.value) {
+
+                  this.saving = true;
+                  this.save()
+                    .then(() => {
+                      this.editMode = false;
+                      this.saving = false;
+                    })
+                    .catch(err => {
+                      this.showError(err);
+                    })
+                }
+              }).finally(() => {
+                this.editVolumesMode = false;
+                this.editMode = false;
+              })
+        }
+      },
 
       checkFRs() {
         if (this.checkUniqueFRs) {
