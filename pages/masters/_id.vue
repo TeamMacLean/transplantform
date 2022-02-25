@@ -27,7 +27,6 @@
 
                 <div class="control" v-if="master.numberOfWells">
                   <div>{{cellsRequiredString}}</div>
-                  <div>{{cellsProvidedString}}</div>
                   <div>Direction selections fill up from {{master.arrangementDirection}} direction</div>
                   <div>Arrange by: {{master.arrangeByType}}</div>
                 </div>
