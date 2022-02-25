@@ -9,9 +9,8 @@ const labels = [
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12',
 ];
 
-
-const getEmptyMasterPlateTemplate = () => {
-    let grid = {};
+const emptyMasterPlateTemplate = () => {
+    const grid = new Object();
     
     labels.forEach(label => {
         grid[label] = {
@@ -30,7 +29,5 @@ const getEmptyMasterPlateTemplate = () => {
 
     return grid;
 }
-
-const emptyMasterPlateTemplate = getEmptyMasterPlateTemplate();
 
 export default emptyMasterPlateTemplate;
