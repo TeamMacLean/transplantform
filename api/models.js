@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema;
 
 // TODO rename to StockPlate
-const Plate = mongoose.model('Plate', {
+const Plate = mongoose.models.Plate || mongoose.model('Plate', {
     a1: {
       fr: {type: String},
       ec: {type: String},
@@ -493,7 +493,7 @@ const Plate = mongoose.model('Plate', {
   }
 );
 
-const Stock = mongoose.model('Stock', {
+const Stock = mongoose.models.Stock || mongoose.model('Stock', {
   created: {
     type: Date,
     default: Date.now
@@ -538,7 +538,7 @@ const Stock = mongoose.model('Stock', {
   }
 });
 
-const Master = mongoose.model('Master', {
+const Master = mongoose.models.Master || mongoose.model('Master', {
   created: {
     type: Date,
     default: Date.now
@@ -596,7 +596,7 @@ const Master = mongoose.model('Master', {
   },
 });
 
-const MasterPlate = mongoose.model('MasterPlate', {
+const MasterPlate = mongoose.models.MasterPlate || mongoose.model('MasterPlate', {
     a1: {
       upper: {
         slotNumber: {type: Number}, // for debug purposes
@@ -1951,7 +1951,7 @@ const MasterPlate = mongoose.model('MasterPlate', {
   }
 );
 
-const ECNames = mongoose.model('ECNames', {
+const ECNames = mongoose.models.ECNames || mongoose.model('ECNames', {
   name: {
     type: String,
   },
@@ -1962,3 +1962,4 @@ const ECNames = mongoose.model('ECNames', {
 })
 
 export {Plate, Stock, Master, MasterPlate, ECNames}
+

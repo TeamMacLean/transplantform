@@ -2,25 +2,35 @@
   <div class="container-index">
     <div>
       <div>
-        <img src="/fridge.png" alt="FRIDGE Logo">
+        <img src="/transplant.png" alt="FRIDGE Logo">
       </div>
       <h1 class="heading title title-index has-text-primary">
-        <b>fridge</b>
+        <b>TransPlant</b>
       </h1>
-      <h2 class="heading subtitle subtitle-index has-text-primary" style="font-size: 2rem;">
-        plate tracking
+      <h2 class="heading subtitle subtitle-index has-text-primary">
+        Welcome to the TSL Plant Transformation service
       </h2>
+      <NuxtLink to="/new">
+        <b-button>
+          New Request
+        </b-button>
+      </NuxtLink>
     </div>
   </div>
 </template>
 
-<style>
+
+
+<style scoped>
+  img {
+    width: 200px;
+  }
+
   .container-index {
     margin: 0 auto;
     min-height: calc(100vh - 55px);
     display: flex;
     justify-content: center;
-    align-items: center;
     text-align: center;
   }
 

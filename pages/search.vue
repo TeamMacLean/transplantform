@@ -1,6 +1,6 @@
 <template><div>
   <div class="title is-3">Search:</div>
-  <div class="title is-5">EC/RC codes, EC/RC names, FR codes, Masters names & Species names</div>
+  <div class="title is-5">(George to explain what/how to search here)</div>
   <div class="searchWrapper">
     <b-input
       type='text'
@@ -107,13 +107,14 @@ export default {
    */
   computed: {
     isSearchButtonDisabled() {
-      if (!this.query && !this.results.length){
-        return true
-      }
-      if (this.query === this.lastPostedSearchQuery){
-        return true
-      }
-      return false
+      return true;
+      // if (!this.query && !this.results.length){
+      //   return true
+      // }
+      // if (this.query === this.lastPostedSearchQuery){
+      //   return true
+      // }
+      // return false
     }
   },
   methods: {

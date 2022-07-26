@@ -2,8 +2,7 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <nuxt-link to="/" class="navbar-item">
-        <!--<img src="/fridge.png" width="16" height="28" style="margin-right:8px;">-->
-        <b class="has-text-primary">Fridge</b>
+        <b class="has-text-primary">TransPlant</b>
       </nuxt-link>
       <a 
         role="button" 
@@ -21,20 +20,11 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <nuxt-link to="/stocks" class="navbar-item">
-          Stocks
+        <nuxt-link to="/new" class="navbar-item">
+          New TRF Form
         </nuxt-link>
-        <nuxt-link to="/masters" class="navbar-item">
-          Masters
-        </nuxt-link>
-        <!-- <nuxt-link to="/frec" class="navbar-item">
-          Frec
-        </nuxt-link> -->
         <nuxt-link to="/search" class="navbar-item">
-          Search
-        </nuxt-link>
-        <nuxt-link to="/ec-rc-names" class="navbar-item">
-          EC/RC names
+          Search TRFs
         </nuxt-link>
       </div>
       <div class="navbar-end">

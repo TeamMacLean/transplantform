@@ -1,9 +1,9 @@
 {
-  "name": "fridge",
+  "name": "transplantform",
   "version": "1.0.0",
-  "description": "Plate tracking",
-  "author": "Martin Page",
-  "private": true,
+  "description": "TRF form submission",
+  "author": "George Deeks",
+  "private": false,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",

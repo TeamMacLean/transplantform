@@ -1,143 +1,32 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
+ preserveAspectRatio="xMidYMid meet">
 
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.91+devel+osxmenu r12922"
-   sodipodi:docname="drawing.svg">
-  <defs
-     id="defs4" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="169.15535"
-     inkscape:cy="520.59276"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:window-width="1103"
-     inkscape:window-height="856"
-     inkscape:window-x="1046"
-     inkscape:window-y="216"
-     inkscape:window-maximized="0">
-    <inkscape:grid
-       type="xygrid"
-       id="grid4141" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1">
-    <path
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#37495c;stroke-width:8.6929135;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 190 362.51953 C 173.38 362.51953 160 371.43953 160 382.51953 L 160 502.51953 L 160 512.51953 L 160 562.51953 C 160 568.05953 164.46001 572.51953 170 572.51953 L 270 572.51953 C 275.53999 572.51953 280 568.05953 280 562.51953 L 280 512.51953 L 280 502.51953 L 280 382.51953 C 280 371.43953 266.62 362.51953 250 362.51953 L 190 362.51953 z "
-       id="rect4143"
-       inkscape:export-xdpi="109.65641"
-       inkscape:export-ydpi="109.65641"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png"
-       transform="scale(0.26458333)" />
-    <rect
-       style="opacity:1;fill:#37495c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4151"
-       width="3.9687488"
-       height="2.6458282"
-       x="44.979168"
-       y="151.47917"
-       rx="0"
-       ry="0"
-       inkscape:export-xdpi="109.65641"
-       inkscape:export-ydpi="109.65641"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
-    <rect
-       style="opacity:1;fill:#37495c;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4151-9"
-       width="3.9687488"
-       height="2.6458282"
-       x="67.46875"
-       y="151.47917"
-       rx="0"
-       ry="0"
-       inkscape:export-xdpi="109.65641"
-       inkscape:export-ydpi="109.65641"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#37495c;stroke-width:2.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 42.333333,118.40625 31.749999,0"
-       id="path4168"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="109.65641"
-       inkscape:export-ydpi="109.65641"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#37495c;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 46.302083,106.5 10e-7,5.29167"
-       id="path4170"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-xdpi="109.65641"
-       inkscape:export-ydpi="109.65641"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#37495c;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 46.302083,125.02083 0,5.29167"
-       id="path4170-4"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-xdpi="109.65641"
-       inkscape:export-ydpi="109.65641"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/fridge.png" />
-    <flowRoot
-       xml:space="preserve"
-       id="flowRoot4194"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33333397px;line-height:125%;font-family:Stenc;-inkscape-font-specification:Stenc;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       transform="matrix(0.26458333,0,0,0.26458333,14.022917,-22.489583)"><flowRegion
-         id="flowRegion4196"
-         style="font-size:13.33333397px"><rect
-           id="rect4198"
-           width="70.5"
-           height="42.000008"
-           x="35"
-           y="342.51968"
-           style="font-size:13.33333397px" /></flowRegion><flowPara
-         id="flowPara4200">2a3639ff</flowPara><flowPara
-         id="flowPara4206">ecf0f1ff</flowPara><flowPara
-         id="flowPara4204" /></flowRoot>    <rect
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.15384614;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4159"
-       width="59.531246"
-       height="59.531246"
-       x="29.104166"
-       y="94.59375"
-       inkscape:export-filename="/Users/pagem/Documents/workspace/fridge/static/icon.png.png"
-       inkscape:export-xdpi="436.90668"
-       inkscape:export-ydpi="436.90668" />
-  </g>
+<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M830 5095 c-196 -37 -344 -112 -485 -246 -129 -123 -216 -265 -274
+-447 -46 -145 -61 -255 -61 -437 1 -351 87 -704 280 -1141 201 -455 382 -709
+588 -829 l82 -48 0 -61 c0 -181 160 -319 537 -467 l112 -44 7 -43 c9 -58 -1
+-110 -26 -145 l-21 -28 38 -50 c33 -43 144 -129 167 -129 13 0 -2 111 -40 290
+-108 505 -122 603 -104 744 25 199 107 319 208 302 l34 -5 -5 37 c-21 130 -29
+250 -24 361 9 202 50 314 155 419 57 57 62 66 62 106 0 123 59 317 149 491 51
+99 196 334 242 393 18 24 18 24 -69 134 -111 141 -318 357 -441 459 -232 194
+-478 323 -716 374 -102 23 -304 28 -395 10z"/>
+<path d="M3920 5095 c-435 -80 -882 -421 -1307 -1000 -108 -147 -236 -349
+-295 -464 -86 -169 -139 -385 -124 -502 l7 -48 -49 -25 c-84 -43 -136 -118
+-161 -234 -18 -84 -13 -278 11 -444 l21 -151 -24 -19 c-46 -36 -84 -51 -134
+-52 -47 -1 -51 -3 -68 -37 -58 -120 -47 -283 49 -706 103 -458 101 -627 -12
+-931 -43 -115 -83 -196 -135 -275 l-38 -57 22 -14 c58 -35 217 -126 221 -126
+3 0 6 6 6 13 0 26 70 155 128 236 33 46 96 123 140 170 177 192 254 231 822
+415 301 97 438 169 516 269 l37 47 -24 26 c-20 21 -24 38 -27 97 -1 40 1 77 5
+83 4 6 58 30 118 53 369 142 546 297 533 470 l-4 57 65 36 c127 70 240 179
+341 328 96 141 292 545 376 775 179 491 222 936 124 1285 -107 384 -389 656
+-751 725 -99 18 -286 18 -389 0z"/>
+<path d="M2972 676 l-224 -70 39 -30 c66 -51 219 -215 284 -305 34 -47 80
+-125 103 -173 l42 -86 114 65 c63 36 116 67 118 68 2 2 -21 44 -52 95 -62 103
+-122 248 -162 395 -15 55 -30 103 -33 106 -3 3 -107 -26 -229 -65z"/>
+</g>
 </svg>

@@ -4,11 +4,18 @@ import jwt from 'jsonwebtoken';
 import ldap from './ldap';
 import _ from 'lodash';
 
-import {Plate, Master, Stock, MasterPlate, ECNames} from './models'
 import calculateWellsForMasterPlate from './calculateWellsForMasterPlate';
 
+// TODO strip this back to original state as it does not impact the server's hot reloading
+import {Plate as ImportPlate, Master as ImportMaster, Stock as ImportStock, MasterPlate as ImportMasterPlate, ECNames as ImportECNames} from './models'
+const { Plate } = mongoose.models.Plate || mongoose.model('Plate', ImportPlate);
+const { Master } = mongoose.models.Master || mongoose.model('Master', ImportMaster);
+const { Stock } = mongoose.models.Stock || mongoose.model('Stock', ImportStock);
+const { MasterPlate } = mongoose.models.MasterPlate || mongoose.model('MasterPlate', ImportMasterPlate);
+const { ECNames } = mongoose.models.ECNames || mongoose.model('ECNames', ImportECNames); 
+
 try {
-  mongoose.connect('mongodb://localhost:27017/fridge', {
+  mongoose.connect('mongodb://localhost:27017/transplantform', {
     useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false,
   });
 } catch (err) {
