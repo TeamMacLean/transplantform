@@ -66,6 +66,8 @@
     methods: {
       async LogOut() {
         await this.$auth.logout()
+        this.$store.commit('setUser', null)
+        this.$store.commit('increment')
         this.$router.push({
           path: '/'
         })

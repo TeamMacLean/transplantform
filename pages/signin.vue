@@ -10,8 +10,11 @@
       </div>
 
       <div class="card-content">
-        <form @submit.prevent="onSubmit" v-if="!$store.state.user">
-
+        <!-- TODO George revert-->
+        <form 
+          @submit.prevent="onSubmit" 
+          v-if="true || !$store.state.user"
+        >
           <div class="field has-addons">
             <p class="control is-expanded">
               <input class="input" id="username" type="text" name="username" title="username"
@@ -80,8 +83,18 @@
             password: self.credentials.password
           }
         })
-          .then(() => {
+          .then(results => {
             self.submitting = false;
+
+            console.log(results.data.user)
+
+            this.$store.commit('increment')
+
+            this.$store.commit('setUser', {
+              username:'geffro',
+              //...results.data.user,
+              //isAdmin: process.env.ADMINS.split(', ').includes(results.data.user.username),              
+            })
 
             this.$router.push({
               path: '/'
@@ -92,6 +105,9 @@
             self.submitting = false;
             self.error = err;
             console.error(err);
+          })
+          .finally(() => {
+            self.submitting = false;
           })
       }
     }

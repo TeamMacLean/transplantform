@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema;
 
-// TODO rename to StockPlate
 const Plate = mongoose.models.Plate || mongoose.model('Plate', {
     a1: {
       fr: {type: String},
@@ -565,13 +564,12 @@ const Master = mongoose.models.Master || mongoose.model('Master', {
   arrangeByType: {
     type: String,
   },
-  // TODO remove
   plates: [{
     type: Schema.Types.ObjectId,
     ref: 'Plate',
     required: false
   }],
-  // TODO make required
+
   masterPlates: [{
     type: Schema.Types.ObjectId,
     ref: 'MasterPlate',
@@ -592,7 +590,7 @@ const Master = mongoose.models.Master || mongoose.model('Master', {
   },
   replicates: {
     type: Number,
-    required: false // TODO make true and backdate all entries
+    required: false
   },
 });
 

@@ -1,27 +1,31 @@
-
 export const state = () => ({
+  counter: 0,
   user: null,
-  stock: null
-});
+})
 
 export const getters = {
-  isAuthenticated: state => {
-    return !!state.user
+  getCounter(state) {
+    return state.counter
   },
-};
+  getUser(state) {
+    return state.user
+  }
+}
 
 export const mutations = {
-  setUser(state, user) {
-    state.user = user;
+  increment(state) {
+    state.counter++
   },
-  setStock(state, stock) {
-    state.stock = stock
+  setUser(state, payload){
+    state.user = payload;
   }
-
-
-};
+}
 
 export const actions = {
-  async nuxtServerInit(store, context) {
+  async fetchCounter(state) {
+    // make request
+    const res = { data: 10 };
+    state.counter = res.data;
+    return res.data;
   }
-};
+}
