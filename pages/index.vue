@@ -7,19 +7,20 @@
       <h1 class="heading title title-index has-text-primary">
         <b>TransPlant</b>
       </h1>
-      <h2 class="heading subtitle subtitle-index has-text-primary">
+      <p>
+        <!-- TODO revert -->
         <!-- Welcome to the TSL Plant Transformation service -->
         Auth User: {{this.$auth && this.$auth.user && this.$auth.user.name}}
-      </h2>
-      <h2 class="heading subtitle subtitle-index has-text-primary">
+      </p>
+      <p>
         Store User: {{this.$store.getters.getUser}}
-      </h2>
-      <h2 class="heading subtitle subtitle-index has-text-primary">
+      </p>
+      <p>
         Store Counter: {{this.$store.getters.getCounter}}
-      </h2>
-      <h2 class="heading subtitle subtitle-index has-text-primary">
+      </p>
+      <p>
         Auth: {{this.gary}}
-      </h2>
+      </p>
       <NuxtLink to="/new">
         <b-button>
           New Request
@@ -36,7 +37,6 @@
     data() {
       return {
         submitting: false,
-        gary: JSON.stringify(this.$auth.loggedIn)
       }
     }
   }
