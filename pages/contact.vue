@@ -1,21 +1,18 @@
 <template>
-  <div class="container-index">
-    <div>
-      <div>
-        <img src="/transplant.png" alt="FRIDGE Logo" />
-      </div>
-      <h1 class="heading title title-index has-text-primary">
-        <b>TransPlant</b>
-      </h1>
-      <p>Welcome to the TSL Plant Transformation service</p>
-      <br />
-      <NuxtLink to="/new">
-        <b-button> New Request </b-button>
-      </NuxtLink>
-      <div class="spaced">
-        Any problems? Please <NuxtLink to="/contact">contact us here</NuxtLink>.
-      </div>
-    </div>
+  <div>
+    <h1 class="title is-2">Contact Us</h1>
+
+    <p>
+      For technical issues with the website, please contact the Webmaster
+      <a href="mailto:george.deeks@tsl.ac.uk">here</a>.
+    </p>
+
+    <br />
+
+    <p>
+      For questions about orders, please contact the plant tissue culture
+      service <a href="mailto:SL-TC@nbi.ac.uk">here</a>.
+    </p>
   </div>
 </template>
 

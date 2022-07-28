@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@creativebulma/bulma-tooltip": "^1.2.0",
-    "nodemon": "^1.18.9"
+    "prettier": "2.7.1"
   },
   "comments": {
     "vue-template-compiler": "^2.6.12"

@@ -1,37 +1,43 @@
 <template>
   <div id="login">
     <div class="card">
-
-
       <div class="card-header" v-show="!!!$store.state.user">
-        <p class="card-header-title">
-          Please Sign In
-        </p>
+        <p class="card-header-title">Please Sign In</p>
       </div>
 
       <div class="card-content">
         <!-- TODO George revert-->
-        <form 
-          @submit.prevent="onSubmit" 
-          v-if="true || !$store.state.user"
-        >
+        <form @submit.prevent="onSubmit" v-if="true || !$store.state.user">
           <div class="field has-addons">
             <p class="control is-expanded">
-              <input class="input" id="username" type="text" name="username" title="username"
-                     placeholder="Username"
-                     v-model="credentials.username" required autofocus>
+              <input
+                class="input"
+                id="username"
+                type="text"
+                name="username"
+                title="username"
+                placeholder="Username"
+                v-model="credentials.username"
+                required
+                autofocus
+              />
             </p>
             <p class="control">
-              <a class="button is-static">
-                @nbi.ac.uk
-              </a>
+              <a class="button is-static"> @nbi.ac.uk </a>
             </p>
           </div>
           <div class="field">
             <div class="control">
-              <input class="input" id="password" type="password" name="password" title="password"
-                     placeholder="Password"
-                     v-model="credentials.password" required>
+              <input
+                class="input"
+                id="password"
+                type="password"
+                name="password"
+                title="password"
+                placeholder="Password"
+                v-model="credentials.password"
+                required
+              />
             </div>
           </div>
 
@@ -46,93 +52,81 @@
           <!--Password?</a>-->
           <!--</div>-->
           <div v-if="submitting">Submitting ....</div>
-          <button type="submit" class="button is-primary is-fullwidth is-outlined">Sign in</button>
+          <button
+            type="submit"
+            class="button is-primary is-fullwidth is-outlined"
+          >
+            Sign in
+          </button>
         </form>
-        <div v-else>
-          You are logged in!
-        </div>
-        <div style="color: red;" v-if="error">{{error}}</div>
+        <div v-else>You are logged in!</div>
+        <div style="color: red" v-if="error">{{ error }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+export default {
+  data() {
+    console.log(this.$nuxt.context.from);
+    return {
+      submitting: false,
+      error: null,
+      credentials: {
+        username: '',
+        password: '',
+      },
+    };
+  },
+  methods: {
+    async onSubmit() {
+      const self = this;
+      self.submitting = true;
 
-  export default {
-    data() {
-      return {
-        submitting: false,
-        error: null,
-        credentials: {
-          username: '',
-          password: ''
-        },
-      }
-    },
-    methods: {
-      async onSubmit() {
-        const self = this;
-        self.submitting = true;
-
-
-        console.log(this.$auth)
-        this.$auth.loginWith('local', {
+      this.$auth
+        .loginWith('local', {
           data: {
             username: self.credentials.username,
-            password: self.credentials.password
-          }
+            password: self.credentials.password,
+          },
         })
-          .then(results => {
-            self.submitting = false;
+        .then((results) => {
+          self.submitting = false;
 
-            console.log(results.data.user)
-
-            this.$store.commit('increment')
-
-            this.$store.commit('setUser', {
-              username:'geffro',
-              //...results.data.user,
-              //isAdmin: process.env.ADMINS.split(', ').includes(results.data.user.username),              
-            })
-
-            this.$router.push({
-              path: '/'
-            })
-
-          })
-          .catch(err => {
-            self.submitting = false;
-            self.error = err;
-            console.error(err);
-          })
-          .finally(() => {
-            self.submitting = false;
-          })
-      }
-    }
-  }
+          this.$router.push({
+            path: this.$nuxt.context.from.path,
+          });
+        })
+        .catch((err) => {
+          self.submitting = false;
+          self.error = err;
+          console.error(err);
+        })
+        .finally(() => {
+          self.submitting = false;
+        });
+    },
+  },
+};
 </script>
 
 <style>
+#login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 55px);
+  /*background: #F7F7F7;*/
+}
 
-  #login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(100vh - 55px);
-    /*background: #F7F7F7;*/
-  }
+#login .card {
+  width: 24rem;
+  border-radius: 4px;
+  margin-top: -100px;
+}
 
-  #login .card {
-    width: 24rem;
-    border-radius: 4px;
-    margin-top: -100px;
-  }
-
-  #login .regular-checkbox {
-    margin-right: 2px;
-  }
-
-
+#login .regular-checkbox {
+  margin-right: 2px;
+}
 </style>
