@@ -147,7 +147,7 @@ router.post('/form/new', async (req, res) => {
     } else {
       if (status === 'unapproved') {
         // send Email to group leader and CC research assistant
-        const emailResults = await sendEmail(newFormEntry);
+        // const emailResults = await sendEmail('approval', newFormEntry);
         // TODO handle email error result
       }
 
@@ -160,8 +160,102 @@ router.post('/form/new', async (req, res) => {
   }
 });
 
+router.post('/form/delete', async (req, res) => {
+  try {
+    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
+    //   $set: {
+    //     status: 'deleted',
+    //   },
+    // });
+
+    // send Email to group leader and user and admin
+    // const emailResults = await sendEmail('deletion', { ...req.body });
+
+    res.send({ status: 200 });
+  } catch (error) {
+    // TODO correct status code and test
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
+router.post('/form/approve', async (req, res) => {
+  try {
+    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
+    //   $set: {
+    //     status: 'approved',
+    //   },
+    // });
+
+    // probably should email admin to update them, but they didnt ask for this feature
+
+    res.send({ status: 200 });
+  } catch (error) {
+    // TODO correct status code and test
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
+router.post('/form/deny', async (req, res) => {
+  try {
+    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
+    //   $set: {
+    //     status: 'denied',
+    //   },
+    // });
+
+    res.send({ status: 200 });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
+router.post('/form/inprogress', async (req, res) => {
+  try {
+    const { id, constructs } = req.body;
+
+    // /**const result = */await Form.findByIdAndUpdate(id, {
+    //   $set: {
+    //     status: 'in progress',
+    //     constructs: constructs,
+    //   },
+    // });
+
+    // could email user but they didnt ask for this feature
+
+    // send Email to admin (though unnecessary it was requested)
+    // const emailResults = await sendEmail('in progress', { ...req.body });
+
+    res.send({ status: 200 });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
+router.post('/form/completed', async (req, res) => {
+  try {
+    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
+    //   $set: {
+    //     status: 'completed',
+    //   },
+    // });
+    // send Email to admin (though unnecessary it was requested)
+    // const emailResults = await sendEmail('in progress', { ...req.body });
+
+    res.send({ status: 200 });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
 router.post('/search', async (req, res) => {
   const { query } = req.body;
+
+  // George, just send them everything and get frontend to filter?
 
   //var stocks = await Stock.find({deleted: false}).populate('plate')
 

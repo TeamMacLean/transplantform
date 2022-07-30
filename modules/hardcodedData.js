@@ -58,17 +58,26 @@ export const getFormDataFromId = (id) => ({
   signatoryObj: {
     name: 'Jonathan Jones (TSL)',
     username: 'jjones',
-    researchAssistantUsername: 'jenny',
+    researchAssistants: ['jenny'],
   },
   species: 'mammal',
   genotype: 'Geo',
-  formConstructCards: [
+  constructs: [
     {
-      constructName: 'iojioj',
+      constructName: 'Daisy',
       binaryVectorBackbone: 'jiojoij',
       vectorSelection: 'Star Wars: The Force Awakens',
       tdnaSelection: 'Dawid Malan',
       agroStrain: 'Glen Maxwell',
+      shortName: '',
+    },
+    {
+      constructName: 'Gary',
+      binaryVectorBackbone: 'King',
+      vectorSelection: 'Star Trek',
+      tdnaSelection: 'Reece Topley',
+      agroStrain: 'Shane Warne',
+      shortName: '',
     },
   ],
   notes: 'joijioj',

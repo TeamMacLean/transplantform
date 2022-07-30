@@ -136,7 +136,7 @@
 
       <div class="form-construct-cards-wrapper">
         <FormConstructCard
-          v-for="(card, index) in formConstructCards"
+          v-for="(card, index) in constructs"
           :theIndex="index"
           :card="card"
           :mustDisableDelete="onlyOneFormConstructCard"
@@ -222,7 +222,7 @@ export default {
       autocompleteGenotypes: autocompleteGenotypes,
       typedGenotype: '',
       previousConstructNames: previousConstructNames,
-      formConstructCards: [
+      constructs: [
         {
           constructName: '',
           binaryVectorBackbone: '',
@@ -258,7 +258,7 @@ export default {
         signatoryObj: signatoryObj,
         species: this.selectedspecies,
         genotype: this.typedGenotype,
-        formConstructCards: this.formConstructCards,
+        constructs: this.constructs,
         notes: this.notes,
       };
 
@@ -282,8 +282,8 @@ export default {
         });
     },
     addConstruct() {
-      const newFormConstructCards = [
-        ...this.formConstructCards,
+      const newConstructs = [
+        ...this.constructs,
         {
           constructName: '',
           binaryVectorBackbone: '',
@@ -293,13 +293,13 @@ export default {
         },
       ];
 
-      this.formConstructCards = newFormConstructCards;
+      this.constructs = newConstructs;
     },
     removeConstruct(index) {
-      let newCards = this.formConstructCards.slice();
+      let newCards = this.constructs.slice();
       newCards.splice(index, 1);
 
-      this.formConstructCards = newCards;
+      this.constructs = newCards;
     },
     isConstructNameUnavailable: function (index) {
       const unavailableConstructNames =
@@ -308,12 +308,12 @@ export default {
         return false;
       }
 
-      const targetConstructName = this.formConstructCards[index].constructName;
+      const targetConstructName = this.constructs[index].constructName;
 
       return unavailableConstructNames.includes(targetConstructName);
     },
     getUnavailableConstructNames: function (index) {
-      const amended = this.formConstructCards.slice();
+      const amended = this.constructs.slice();
       amended.splice(index, 1);
       const currentOtherNames = amended.map((card) => card.constructName);
       return this.previousConstructNames.concat(currentOtherNames);
@@ -332,7 +332,7 @@ export default {
       }
 
       let cardsAreValid = true;
-      this.formConstructCards.forEach((card) => {
+      this.constructs.forEach((card) => {
         if (
           !card.constructName ||
           !card.binaryVectorBackbone ||
@@ -358,7 +358,7 @@ export default {
       });
     },
     onlyOneFormConstructCard: function () {
-      return this.formConstructCards.length === 1;
+      return this.constructs.length === 1;
     },
   },
 };

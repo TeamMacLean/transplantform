@@ -4,13 +4,13 @@ const ldapGroups = [
     name: 'Nick Talbot',
     username: 'talbotn',
     acceptableLdapGroupStrs: [],
-    researchAssistantUsername: 'melanie',
+    researchAssistants: ['melanie'],
   },
   {
     name: 'Jonathan Jones',
     username: 'jjones',
     acceptableLdapGroupStrs: [],
-    researchAssistantUsername: 'cassandra',
+    researchAssistants: ['cassandra', 'aragorn'],
   },
 ];
 
@@ -31,7 +31,7 @@ const getSignatories = (memberOf) => {
         signatories.push({
           name: ldapGroup.name,
           username: ldapGroup.username,
-          researchAssistantUsername: ldapGroup.researchAssistantUsername,
+          researchAssistants: ldapGroup.researchAssistants,
         });
       }
     });
@@ -45,10 +45,10 @@ const getIsGroupLeaderForObj = (username) => {
 };
 
 const getIsResearchAssistantFor = (username) => {
-  const foundGroup = ldapGroups.find(
-    (group) => group.researchAssistantUsername === username
-  );
-  return foundGroup ? foundGroup.researchAssistantUsername : null;
+  const foundGroup = ldapGroups.find((group) => {
+    return group.researchAssistants.includes(username);
+  });
+  return foundGroup ? foundGroup.username : null;
 };
 
 const getSignatoriesStrategy = (
