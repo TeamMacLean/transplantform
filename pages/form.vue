@@ -38,17 +38,55 @@
             >
             <hr />
           </div>
-          <div v-if="sessionIsAdmin && status === 'approved'">
-            <b-button @click="handleSetInProgress" type="is-success"
-              >Set In Progress</b-button
+          <div
+            v-if="
+              sessionIsAdmin &&
+              status === 'approved' &&
+              !completingInProgressSteps
+            "
+          >
+            <b-button @click="handleInitiateSetInProgress" type="is-success"
+              >Initiate 'Set In Progress'</b-button
             >
-            <hr />
+          </div>
+          <div
+            v-if="
+              sessionIsAdmin &&
+              status === 'approved' &&
+              completingInProgressSteps
+            "
+            class="shortNamesFormWrapper"
+          >
+            <h3 class="title is-5">Assign shortnames (Optional)</h3>
+
+            <div class="shortNamesWrapper">
+              <div
+                v-for="(card, index) in constructs"
+                :key="index"
+                class="shortNameInputWrapper"
+              >
+                <b>Shortname:</b>
+                <b-input
+                  class="padding"
+                  v-model="card.shortName"
+                  maxlength="10"
+                />
+                <div class="longNameWrapper">
+                  <b>Longname:</b> {{ card.constructName }}
+                </div>
+              </div>
+            </div>
+            <b-button @click="handleCompleteSetInProgress" type="is-success"
+              >Complete Set 'In Progress'</b-button
+            >
           </div>
           <div v-if="sessionIsAdmin && status === 'in progress'">
-            <b-button @click="handleComplete" type="is-success is-light"
+            <b-button @click="handlePrint" type="is-success is-light"
+              >Print request</b-button
+            >
+            <b-button @click="handleComplete" type="is-success"
               >Complete request</b-button
             >
-            <hr />
           </div>
         </div>
 
@@ -85,7 +123,7 @@
 
         <div class="display-construct-cards-wrapper">
           <DisplayConstructCard
-            v-for="(card, index) in formConstructCards"
+            v-for="(card, index) in constructs"
             :theIndex="index"
             :card="card"
             :key="index"
@@ -135,57 +173,77 @@ export default {
 
     return {
       ...theDataResults,
+      status: 'in progress', // TEMP
       error: '', // initialise regardless to avoid errors
+      completedMsg: '',
+      completingInProgressSteps: false,
     };
 
-    // return $axios
-    //   .get("/form", { params: { id: route.query.id } })
-    //   .then((res) => {
-    //     if (res.status === 200 && res.data.trfForm) {
-    //       const trfForm = res.data.trfForm;
-    //       return {
-    //         ...trfForm, // TODO remove
-    //         trfId: trfForm.id,
-    //       };
-    //     } else {
-    //       error({ statusCode: 501, message: "TRF form not found" });
-    //       this.$buefy.toast.open({
-    //         message: 'Unexpected error. Please contact system admin.',
-    //         type: "is-danger",
-    //       });
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //     error({ statusCode: 501, message: "TRF form not found" });
-    //     this.$buefy.toast.open({
-    //       message: 'Unexpected error. Please contact system admin.',
-    //       type: "is-danger",
-    //     });
-    //   });
+    return $axios
+      .get('/form', { params: { id: route.query.id } })
+      .then((res) => {
+        if (res.status === 200 && res.data.trfForm) {
+          const trfForm = res.data.trfForm;
+          return {
+            ...trfForm, // TODO remove
+            trfId: trfForm.id,
+          };
+        } else {
+          this.throwUnexpectedErrorForUser('Failed to fetch TRF');
+          this.error = 'No TRF found';
+        }
+      })
+      .catch((err) => {
+        this.throwUnexpectedErrorForUser('TRF form not found');
+        this.error = 'No TRF found';
+      });
   },
   methods: {
+    handlePrint() {
+      //this.$htmlToPaper('printSection');
+      window.print();
+    },
     handleDeleteRequest() {
       this.$buefy.dialog.confirm({
         title: 'Delete request',
         message: 'Are you sure you want to delete this request?',
         confirmText: 'Delete',
-        cancelText: 'Cancel',
+        cancelText: 'Cancel operation',
         type: 'is-danger',
         hasIcon: true,
         onConfirm: () => {
-          // TODO send approval to API and get a response
-          // ...
+          return this.$axios
+            .post('/api/form/delete', {
+              id: this.id,
+              signatoryObj: this.signatoryObj, // needed for email
+              username: this.username, // needed for email
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                this.status = 'deleted'; // got status from API
 
-          this.status = 'deleted'; // get status from API
-
-          this.$buefy.toast.open({
-            message: 'Request deleted',
-            type: 'is-success',
-          });
+                this.$buefy.toast.open({
+                  message: 'Request deleted',
+                  type: 'is-success',
+                });
+              } else {
+                this.throwUnexpectedErrorForUser('Status was not 200');
+              }
+            })
+            .catch((err) => {
+              this.throwUnexpectedErrorForUser(err);
+            });
         },
       });
     },
+    throwUnexpectedErrorForUser(errorMsg) {
+      this.$buefy.toast.open({
+        message: 'Unexpected error. Please contact system admin.',
+        type: 'is-danger',
+      });
+      console.error(errorMsg);
+    },
+
     handleApprove() {
       this.$buefy.dialog.confirm({
         title: 'Approve request',
@@ -195,57 +253,97 @@ export default {
         type: 'is-success',
         hasIcon: true,
         onConfirm: () => {
-          // TODO send approval to API and get a response
-          // ...
+          return this.$axios
+            .post('/api/form/approve', {
+              id: this.id,
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                this.status = 'approved'; // got status from API
 
-          this.status = 'approved'; // get status from API
-
-          this.$buefy.toast.open({
-            message: 'Request approved',
-            type: 'is-success',
-          });
+                this.$buefy.toast.open({
+                  message: 'Request approved',
+                  type: 'is-success',
+                });
+              } else {
+                this.throwUnexpectedErrorForUser('Status was not 200');
+              }
+            })
+            .catch((err) => {
+              this.throwUnexpectedErrorForUser(err);
+            });
         },
       });
     },
-    handleSetInProgress() {
+    handleInitiateSetInProgress() {
+      this.completingInProgressSteps = true;
+    },
+    handleCompleteSetInProgress() {
       this.$buefy.dialog.confirm({
         title: 'Set into progress',
-        message: 'Are you sure you want to set this request into progress?',
-        confirmText: 'Approve',
+        message:
+          // COULD DO: generate complex str'<p>This is your first shortname</p><br /><p>Are you sure ...',
+          '<p>Are you sure you want to set this request into progress with any shortnames you have assigned?</p>',
+        confirmText: 'Set In Progress',
         cancelText: 'Cancel',
         type: 'is-success',
         hasIcon: true,
         onConfirm: () => {
-          // TODO send into progress status to API and get a response
-          // ...
-
-          this.status = 'in progress'; // get status from API
-
-          this.$buefy.toast.open({
-            message: 'Request set in progress!',
-            type: 'is-success',
-          });
+          return this.$axios
+            .post('/api/form/inprogress', {
+              id: this.id,
+              constructs: this.constructs,
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                this.status = 'in progress'; // got status from API
+                this.$buefy.toast.open({
+                  message: 'Request set in progress!',
+                  type: 'is-success',
+                });
+              } else {
+                this.throwUnexpectedErrorForUser('Status was not 200');
+              }
+            })
+            .catch((err) => {
+              this.throwUnexpectedErrorForUser(err);
+            });
         },
       });
     },
     handleComplete() {
-      this.$buefy.dialog.confirm({
-        title: 'Complete',
-        message: 'Are you sure you want to set this request as completed?',
-        confirmText: 'Approve',
+      this.$buefy.dialog.prompt({
+        title: 'Complete request',
+        message: `Add short note to completed email sent to user?<br /><i>Click or press return to send</i>`,
+        inputAttrs: {
+          placeholder: 'Optional',
+          maxlength: 200,
+        },
+        trapFocus: true,
+        confirmText: 'Confirm Completion',
         cancelText: 'Cancel',
-        type: 'is-success',
-        hasIcon: true,
-        onConfirm: () => {
-          // TODO send completed status to API and get a response
-          // ...
+        onConfirm: (value) => {
+          return this.$axios
+            .post('/api/form/completed', {
+              id: this.id,
+              completedMsg: value,
+              username: this.username,
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                this.status = 'completed'; // got status from API
 
-          this.status = 'completed'; // get status from API
-
-          this.$buefy.toast.open({
-            message: 'Request set as complete!',
-            type: 'is-success',
-          });
+                this.$buefy.toast.open({
+                  message: 'Request set as complete!',
+                  type: 'is-success',
+                });
+              } else {
+                this.throwUnexpectedErrorForUser('Status was not 200');
+              }
+            })
+            .catch((err) => {
+              this.throwUnexpectedErrorForUser(err);
+            });
         },
       });
     },
@@ -258,14 +356,28 @@ export default {
         type: 'is-danger',
         hasIcon: true,
         onConfirm: () => {
+          return this.$axios
+            .post('/api/form/deny', {
+              id: this.id,
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                this.status = 'denied'; // get status from API
+
+                this.$buefy.toast.open({
+                  message: 'Request has been successfully updated as "Denied"',
+                  type: 'is-successful',
+                });
+              } else {
+                this.throwUnexpectedErrorForUser('Status was not 200');
+              }
+            })
+            .catch((err) => {
+              this.throwUnexpectedErrorForUser(err);
+            });
+
           // TODO send rejection to API and get a response
           // ...
-          this.status = 'denied'; // get status from API
-
-          this.$buefy.toast.open({
-            message: 'Request denied',
-            type: 'is-danger',
-          });
         },
       });
     },
@@ -317,8 +429,6 @@ export default {
     },
     sessionIsAdmin() {
       const result = this.$auth.$state.user.isAdmin;
-      console.log('this auth', this.$auth.$state);
-      console.log('sessionIsAdmin', result);
       return result;
     },
     sessionUsername() {
@@ -476,5 +586,24 @@ hr {
 .finished {
   color: green;
   font-weight: bold;
+}
+
+.shortNameInputWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.padding {
+  padding-left: 10px;
+  padding-right: 30px;
+}
+
+.shortNamesWrapper {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.shortNamesWrapper > * {
+  margin-bottom: 10px;
 }
 </style>
