@@ -39,6 +39,13 @@
           </a>
 
           <div class="navbar-dropdown">
+            <nuxt-link
+              v-if="this.$auth.user.isAdmin"
+              to="/admin"
+              class="navbar-item"
+            >
+              Admin section</nuxt-link
+            >
             <a class="navbar-item" v-on:click="LogOut"> Sign out </a>
           </div>
         </div>

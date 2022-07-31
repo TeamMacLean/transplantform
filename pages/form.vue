@@ -173,7 +173,7 @@ export default {
 
     return {
       ...theDataResults,
-      status: 'in progress', // TEMP
+      //status: 'in progress', // TEMP
       error: '', // initialise regardless to avoid errors
       completedMsg: '',
       completingInProgressSteps: false,

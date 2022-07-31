@@ -197,18 +197,22 @@ export default {
 
     const todaysDate = moment().format('DD-MM-YYYY');
 
+    const getActiveNamesFromObj = (arrOfObj) =>
+      arrOfObj
+        .filter((obj) => obj.archived)
+        .map((filteredObj) => filteredObj.name);
+
     // TODO async
-    const species = getSpecies();
-    // TODO async
-    const autocompleteGenotypes = getAutocompleteGenotypes();
+    const species = getActiveNamesFromObj(getSpecies());
+    const autocompleteGenotypes = getActiveNamesFromObj(
+      getAutocompleteGenotypes()
+    );
+    const vectorSelections = getActiveNamesFromObj(getVectorSelections());
+    const tdnaSelections = getActiveNamesFromObj(getTdnaSelections());
+    const agroStrains = getActiveNamesFromObj(getAgroStrains());
+
     // TODO async
     const previousConstructNames = getPreviousConstructNames();
-    // TODO async
-    const vectorSelections = getVectorSelections();
-    // TODO async
-    const tdnaSelections = getTdnaSelections();
-    // TODO async
-    const agroStrains = getAgroStrains();
 
     return {
       date: todaysDate,

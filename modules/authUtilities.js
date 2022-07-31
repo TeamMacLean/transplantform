@@ -1,5 +1,5 @@
 // TODO move to database (or hardcode until requested?)
-const ldapGroups = [
+export const getLdapGroups = () => [
   {
     name: 'Nick Talbot',
     username: 'talbotn',
@@ -15,12 +15,15 @@ const ldapGroups = [
 ];
 
 const getAllSignatories = () =>
-  ldapGroups.map((group) => ({ name: group.name, username: group.username }));
+  getLdapGroups().map((group) => ({
+    name: group.name,
+    username: group.username,
+  }));
 
 const getSignatories = (memberOf) => {
   const signatories = [];
   memberOf.forEach((ldapGroupStr) => {
-    ldapGroups.forEach((ldapGroup) => {
+    getLdapGroups().forEach((ldapGroup) => {
       const alreadySignatoryUsernames = signatories.map(
         (signatory) => signatory.username
       );
@@ -40,12 +43,14 @@ const getSignatories = (memberOf) => {
 };
 
 const getIsGroupLeaderForObj = (username) => {
-  const foundGroup = ldapGroups.find((group) => group.username === username);
+  const foundGroup = getLdapGroups().find(
+    (group) => group.username === username
+  );
   return foundGroup ? foundGroup : null;
 };
 
 const getIsResearchAssistantFor = (username) => {
-  const foundGroup = ldapGroups.find((group) => {
+  const foundGroup = getLdapGroups().find((group) => {
     return group.researchAssistants.includes(username);
   });
   return foundGroup ? foundGroup.username : null;
@@ -59,11 +64,11 @@ const getSignatoriesStrategy = (
   if (userObj.isAdmin) {
     return getAllSignatories();
   } else if (isResearchAssistantFor) {
-    return ldapGroups.find(
+    return getLdapGroups().find(
       (group) => isResearchAssistantFor === group.username
     );
   } else if (isGroupLeaderForObj) {
-    return ldapGroups.find(
+    return getLdapGroups().find(
       (group) => isGroupLeaderForObj.username === group.username
     );
   } else {

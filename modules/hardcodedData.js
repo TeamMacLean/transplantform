@@ -1,52 +1,53 @@
 // TODO get from database
 
 export const getSpecies = () => [
-  'bird',
-  'mammal',
-  'reptile',
-  'amphibian',
-  'insect',
-  'fish',
-  'crustacean',
-  'other',
+  { name: 'bird', archived: false },
+  { name: 'mammal', archived: false },
+  { name: 'reptile', archived: false },
+  { name: 'amphibian', archived: false },
+  { name: 'insect', archived: false },
+  { name: 'fish', archived: true },
+  { name: 'crustacean', archived: true },
 ];
 
 export const getAutocompleteGenotypes = () => [
-  'Angular',
-  'Angular 2',
-  'Aurelia',
-  'Backbone',
-  'Ember',
-  'jQuery',
-  'Meteor',
-  'Node.js',
-  'Polymer',
-  'React',
-  'RxJS',
-  'Vue.js',
+  { name: 'Angular', archived: false },
+  { name: 'Angular 2', archived: false },
+  { name: 'Aurelia', archived: false },
+  { name: 'Backbone', archived: false },
+  { name: 'Ember', archived: false },
+  { name: 'jQuery', archived: false },
+  { name: 'Meteor', archived: false },
+  { name: 'Node.js', archived: false },
+  { name: 'Polymer', archived: false },
+  { name: 'React', archived: true },
+  { name: 'RxJS', archived: true },
+  { name: 'Vue.js', archived: true },
 ];
 
-export const getPreviousConstructNames = () => ['Daisy', 'Gary'];
-
 export const getVectorSelections = () => [
-  'Star Trek',
-  'Star Wars: The Force Awakens',
-  'Star Wars: The Last Jedi',
+  { name: 'Star Trek', archived: false },
+  { name: 'Star Wars: The Force Awakens', archived: false },
+  { name: 'Star Wars: The Last Jedi', archived: false },
+  { name: 'Angel Heart', archived: true },
+  { name: 'Save the Last Dance', archived: true },
 ];
 
 export const getTdnaSelections = () => [
-  'Reece Topley',
-  'Dawid Malan',
-  'Adil Rashid',
-  'Moeen Ali',
-  'Jonny Bairstow',
+  { name: 'Reece Topley', archived: false },
+  { name: 'Dawid Malan', archived: false },
+  { name: 'Adil Rashid', archived: false },
+  { name: 'Moeen Ali', archived: true },
+  { name: 'Jonny Bairstow', archived: true },
 ];
 export const getAgroStrains = () => [
-  'Shane Warne',
-  'Glen Maxwell',
-  'Matthew Hayden',
-  'Justin Langer',
+  { name: 'Shane Warne', archived: true },
+  { name: 'Glen Maxwell', archived: true },
+  { name: 'Matthew Hayden', archived: false },
+  { name: 'Justin Langer', archived: false },
 ];
+
+export const getPreviousConstructNames = () => ['Daisy', 'Gary'];
 
 // TODO check authorization
 export const getFormDataFromId = (id) => ({
