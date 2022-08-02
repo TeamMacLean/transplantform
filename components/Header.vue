@@ -21,7 +21,7 @@
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         <nuxt-link to="/new" class="navbar-item"> New TRF Form </nuxt-link>
-        <nuxt-link to="/search" class="navbar-item"> Search TRFs </nuxt-link>
+        <nuxt-link to="/forms" class="navbar-item"> Search TRFs </nuxt-link>
         <nuxt-link to="/contact" class="navbar-item"> Contact Us </nuxt-link>
       </div>
       <div class="navbar-end">
@@ -44,7 +44,14 @@
               to="/admin"
               class="navbar-item"
             >
-              Admin section</nuxt-link
+              Edit database (<b>Admin </b>)</nuxt-link
+            >
+            <nuxt-link
+              v-if="this.$auth.user.isAdmin"
+              to="/constructs"
+              class="navbar-item"
+            >
+              Search constructs (<b>Admin </b>)</nuxt-link
             >
             <a class="navbar-item" v-on:click="LogOut"> Sign out </a>
           </div>
@@ -81,7 +88,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .navbar-menu > .navbar-item.is-active {
   background-color: #f7f7f7 !important;
 }

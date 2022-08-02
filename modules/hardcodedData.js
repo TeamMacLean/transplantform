@@ -10,19 +10,19 @@ export const getSpecies = () => [
   { name: 'crustacean', archived: true },
 ];
 
-export const getAutocompleteGenotypes = () => [
-  { name: 'Angular', archived: false },
-  { name: 'Angular 2', archived: false },
-  { name: 'Aurelia', archived: false },
-  { name: 'Backbone', archived: false },
-  { name: 'Ember', archived: false },
-  { name: 'jQuery', archived: false },
-  { name: 'Meteor', archived: false },
-  { name: 'Node.js', archived: false },
+export const getGenotypes = () => [
+  { name: 'Angular', archived: true },
+  { name: 'Angular 2', archived: true },
+  { name: 'Aurelia', archived: true },
+  { name: 'Backbone', archived: true },
+  { name: 'Ember', archived: true },
+  { name: 'jQuery', archived: true },
+  { name: 'Meteor', archived: true },
+  { name: 'Node.js', archived: true },
   { name: 'Polymer', archived: false },
-  { name: 'React', archived: true },
-  { name: 'RxJS', archived: true },
-  { name: 'Vue.js', archived: true },
+  { name: 'React', archived: false },
+  { name: 'RxJS', archived: false },
+  { name: 'Vue.js', archived: false },
 ];
 
 export const getVectorSelections = () => [
@@ -48,6 +48,25 @@ export const getAgroStrains = () => [
 ];
 
 export const getPreviousConstructNames = () => ['Daisy', 'Gary'];
+
+export const getConstructsFromAllForms = () => {
+  // TODO this gets from one form, not multiple
+  const form = getFormDataFromId('TRF10');
+
+  const { constructs, species, genotype, trfId } = form;
+
+  return constructs.map((c) => {
+    return {
+      longName: c.constructName,
+      shortName: c.shortName,
+      binaryVectorBackbone: c.binaryVectorBackbone,
+      tdnaSelection: c.tdnaSelection,
+      species,
+      genotype,
+      trfId,
+    };
+  });
+};
 
 // TODO check authorization
 export const getFormDataFromId = (id) => ({

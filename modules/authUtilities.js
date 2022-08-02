@@ -3,14 +3,17 @@ export const getLdapGroups = () => [
   {
     name: 'Nick Talbot',
     username: 'talbotn',
-    acceptableLdapGroupStrs: [],
-    researchAssistants: ['melanie'],
+    acceptableLdapGroupStrs: [
+      'CN=Nick Talbot,OU=Users,DC=tsl,DC=org',
+      'CN=Talbot SCG,OU=Users,DC=tsl,DC=org',
+    ],
+    researchAssistants: ['melanie', 'james'],
   },
   {
     name: 'Jonathan Jones',
     username: 'jjones',
-    acceptableLdapGroupStrs: [],
-    researchAssistants: ['cassandra', 'aragorn'],
+    acceptableLdapGroupStrs: ['CN=Jonathan Jones,OU=Users,DC=tsl,DC=org'],
+    researchAssistants: ['cassandra'],
   },
 ];
 

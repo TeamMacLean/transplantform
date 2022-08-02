@@ -252,6 +252,26 @@ router.post('/form/completed', async (req, res) => {
   }
 });
 
+router.post('/admin', async (req, res) => {
+  const { query } = req.body;
+  res.send({ status: 200 });
+});
+
+router.post('/group', async (req, res) => {
+  const { query } = req.body;
+  res.send({ status: 200 });
+});
+
+router.post('/additional', async (req, res) => {
+  const { query } = req.body;
+  res.send({ status: 200 });
+});
+
+router.post('/constructs', async (req, res) => {
+  const { query } = req.body;
+  res.send({ status: 200 });
+});
+
 router.post('/search', async (req, res) => {
   const { query } = req.body;
 

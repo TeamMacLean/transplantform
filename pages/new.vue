@@ -176,7 +176,7 @@
 import moment from 'moment';
 import FormConstructCard from '../components/FormConstructCard.vue';
 import {
-  getAutocompleteGenotypes,
+  getGenotypes,
   getSpecies,
   getPreviousConstructNames,
   getVectorSelections,
@@ -204,9 +204,7 @@ export default {
 
     // TODO async
     const species = getActiveNamesFromObj(getSpecies());
-    const autocompleteGenotypes = getActiveNamesFromObj(
-      getAutocompleteGenotypes()
-    );
+    const autocompleteGenotypes = getActiveNamesFromObj(getGenotypes());
     const vectorSelections = getActiveNamesFromObj(getVectorSelections());
     const tdnaSelections = getActiveNamesFromObj(getTdnaSelections());
     const agroStrains = getActiveNamesFromObj(getAgroStrains());

@@ -1,52 +1,48 @@
 <template>
-  <section>
-    <b-button
-      :label="getEditAccessionsLabel"
-      type="is-primary"
-      size="is-medium"
-      @click="isComponentModalActive = true"
-    />
+  <div id="app" class="container">
+    <div v-for="(item, index) in paginatedItems" :key="index">
+      {{ item }}
+    </div>
 
-    <b-modal v-model="isComponentModalActive">
-      <ModalForm></ModalForm>
-    </b-modal>
-  </section>
+    <b-pagination :total="total" :current.sync="current" :per-page="perPage">
+    </b-pagination>
+  </div>
 </template>
 
 <script>
-import moment from 'moment';
-const ModalForm = {
-  props: [
-    'canCancel',
-    'type',
-    'typeId',
-    'initialAccessions',
-    'initialReleaseDate',
-  ],
-  data() {
-    return {};
-  },
-  computed: {},
-  template: `
-<div>HELLO</div>
-  `,
-  methods: {},
-};
-
 export default {
-  components: {
-    ModalForm,
-  },
-  props: [],
   data() {
     return {
-      isComponentModalActive: false,
+      items: [],
+      current: 1,
+      perPage: 5,
     };
   },
-  computed: {},
+  created() {
+    // populate array
+    for (var i = 1; i <= 100; i++) {
+      this.items.push(i);
+    }
+  },
+  computed: {
+    total() {
+      return this.items.length;
+    },
+    /*
+        Filtered items that are shown in the table
+      */
+    paginatedItems() {
+      let page_number = this.current - 1;
+
+      return this.items.slice(
+        page_number * this.perPage,
+        (page_number + 1) * this.perPage
+      );
+    },
+  },
 };
 </script>
-<style>
+<style scoped>
 .rightPadding {
   padding-right: 10px;
 }

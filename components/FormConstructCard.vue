@@ -111,8 +111,6 @@
 </template>
 
 <script>
-import { resolveObjectURL } from 'buffer';
-
 export default {
   name: 'FormConstructCard',
   props: [
@@ -127,7 +125,7 @@ export default {
   ],
 };
 </script>
-<style>
+<style scoped>
 .navbar-menu > .navbar-item.is-active {
   background-color: #f7f7f7 !important;
 }
