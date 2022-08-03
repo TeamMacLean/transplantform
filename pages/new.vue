@@ -3,7 +3,7 @@
     <h1 class="title is-2">New Request</h1>
 
     <form>
-      <b-field grouped>
+      <div class="row-wrapper">
         <b-field class="field">
           <label class="label custom-label">Date</label>
           <b-input
@@ -49,7 +49,7 @@
         <b-field v-else-if="signatories.length === 1">
           <label class="label">Signatory</label>
           <b-input
-            v-model="selectedsignatory"
+            v-model="selectedSignatory"
             readonly
             required
             class="custom-b-input"
@@ -60,7 +60,7 @@
           <b-select
             placeholder="Required"
             class="custom-b-input"
-            v-model="selectedsignatory"
+            v-model="selectedSignatory"
             required
           >
             <option
@@ -72,11 +72,11 @@
             </option>
           </b-select>
         </b-field>
-      </b-field>
+      </div>
 
       <hr />
 
-      <b-field grouped>
+      <div class="row-wrapper">
         <b-field grouped>
           <div class="entire-field">
             <div class="label-and-input">
@@ -84,7 +84,7 @@
               <b-select
                 placeholder="Required"
                 class="custom-b-input"
-                v-model="selectedspecies"
+                v-model="selectedSpecies"
                 required
               >
                 <option v-for="option in species" :value="option" :key="option">
@@ -123,7 +123,7 @@
             </p>
           </div>
         </b-field>
-      </b-field>
+      </div>
 
       <hr />
 
@@ -214,12 +214,12 @@ export default {
       isAdmin: isAdmin,
       signatories: signatories,
       isGroupLeaderForObj: isGroupLeaderForObj,
-      selectedsignatory: signatories.length === 1 ? signatories[0].name : null,
+      selectedSignatory: signatories.length === 1 ? signatories[0].name : null,
       species: species,
-      selectedspecies: null,
+      selectedSpecies: null,
       autocompleteGenotypes: autocompleteGenotypes,
       typedGenotype: '',
-      previousConstructNames: previousConstructNames,
+      previousConstructNames: previousConstructNames.map((name) => name.trim()),
       constructs: [
         {
           constructName: '',
@@ -242,22 +242,28 @@ export default {
         ? this.isGroupLeaderForObj.username
         : null;
 
-      const signatoryObj = this.selectedsignatory
+      const signatoryObj = this.selectedSignatory
         ? this.signatories.find(
-            (signatory) => signatory.name === this.selectedsignatory
+            (signatory) => signatory.name === this.selectedSignatory
           )
         : null;
 
       const newFormObj = {
         date: this.date,
-        username: this.username,
+        username: this.username.trim(),
         creatorIsAdmin: this.isAdmin,
         creatorIsGroupLeaderFor: isGroupLeaderFor,
         signatoryObj: signatoryObj,
-        species: this.selectedspecies,
-        genotype: this.typedGenotype,
-        constructs: this.constructs,
-        notes: this.notes,
+        species: this.selectedSpecies.trim(),
+        genotype: this.typedGenotype.trim(),
+        constructs: this.constructs.map((construct) => ({
+          constructName: construct.constructName.trim(),
+          binaryVectorBackbone: construct.binaryVectorBackbone.trim(),
+          vectorSelection: construct.vectorSelection.trim(),
+          tdnaSelection: construct.tdnaSelection.trim(),
+          agroStrain: construct.agroStrain.trim(),
+        })),
+        notes: this.notes.trim(),
       };
 
       // console.log('newFormObj');
@@ -300,13 +306,18 @@ export default {
       this.constructs = newCards;
     },
     isConstructNameUnavailable: function (index) {
+      // no error message if no construct name
+      if (this.constructs[index].constructName === '') {
+        return false;
+      }
+
       const unavailableConstructNames =
         this.getUnavailableConstructNames(index);
       if (!unavailableConstructNames || !unavailableConstructNames.length) {
         return false;
       }
 
-      const targetConstructName = this.constructs[index].constructName;
+      const targetConstructName = this.constructs[index].constructName.trim();
 
       return unavailableConstructNames.includes(targetConstructName);
     },
@@ -322,8 +333,8 @@ export default {
       if (
         !this.date ||
         !this.username ||
-        !this.selectedsignatory ||
-        !this.selectedspecies ||
+        !this.selectedSignatory ||
+        !this.selectedSpecies ||
         !this.typedGenotype
       ) {
         return false;
@@ -402,6 +413,15 @@ export default {
 }
 
 .form-construct-cards-wrapper > div {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+}
+
+.row-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.row-wrapper > * {
+  flex: 1;
 }
 </style>

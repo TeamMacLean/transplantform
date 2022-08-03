@@ -18,7 +18,10 @@
       </div>
       <div v-else>
         <div class="status-wrapper">
-          <h1 class="title is-3">Status: {{ this.status }}</h1>
+          <h4 class="title is-4">
+            Status:
+            {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
+          </h4>
           <div
             v-if="
               (sessionIsAdmin || sessionIsSignatory) &&
@@ -31,7 +34,7 @@
             <b-button @click="handleDeny" type="is-danger is-light"
               >Deny</b-button
             >
-            <hr />
+            <!-- <hr /> -->
           </div>
           <div
             v-if="
@@ -85,7 +88,7 @@
           </div>
         </div>
 
-        <b-field grouped>
+        <div class="row-wrapper">
           <b-field label="Date">
             <div>{{ this.date }}</div>
           </b-field>
@@ -97,11 +100,6 @@
           <b-field label="Signatory">
             <div>{{ this.signatoryObj.name }}</div>
           </b-field>
-        </b-field>
-
-        <hr />
-
-        <b-field grouped>
           <b-field label="Species">
             <div>{{ this.species }}</div>
           </b-field>
@@ -109,11 +107,11 @@
           <b-field label="Genotype">
             <div>{{ this.genotype }}</div>
           </b-field>
-        </b-field>
+        </div>
 
         <hr />
 
-        <h3 class="title is-3">Constructs</h3>
+        <h3 class="title is-4">Constructs</h3>
         <h3 class="title is-6">In priority order</h3>
 
         <div class="display-construct-cards-wrapper">
@@ -125,8 +123,6 @@
             :status="status"
           />
         </div>
-
-        <hr />
 
         <b-field label="Notes">
           <div>{{ notes }}</div>
@@ -169,7 +165,6 @@ export default {
     return {
       // TODO make form.username, form.signatoryObj.name, etc. dynamic
       ...theDataResults,
-      //status: 'in progress', // TEMP
       error: '', // initialise regardless to avoid errors
       completedMsg: '',
       completingInProgressSteps: false,
@@ -314,6 +309,7 @@ export default {
         inputAttrs: {
           placeholder: 'Optional',
           maxlength: 200,
+          required: false,
         },
         trapFocus: true,
         confirmText: 'Confirm Completion',
@@ -322,7 +318,7 @@ export default {
           return this.$axios
             .post('/api/form/completed', {
               id: this.id,
-              completedMsg: value,
+              completedMsg: value.trim(),
               username: this.username,
             })
             .then((res) => {
@@ -537,11 +533,14 @@ export default {
 }
 
 .display-construct-cards-wrapper > div {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .status-wrapper {
-  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 .faded {
@@ -601,5 +600,19 @@ hr {
 }
 .shortNamesWrapper > * {
   margin-bottom: 10px;
+}
+
+.row-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.row-wrapper > * {
+  flex: 1;
+}
+
+.row-wrapper > *:not(:first-child) {
+  margin-left: 20px;
 }
 </style>

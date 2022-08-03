@@ -11,24 +11,21 @@
       </header>
       <div class="card-content">
         <div class="row-wrapper">
-          <b-field label="Short Name">
-            <div>{{ card.shortName || '[None set]' }}</div>
-          </b-field>
           <b-field label="Construct Name">
             <div>{{ card.constructName }}</div>
           </b-field>
-        </div>
-
-        <div class="row-wrapper">
+          <b-field label="Short Name">
+            <div>{{ card.shortName || '[None set]' }}</div>
+          </b-field>
           <b-field label="Binary Vector Backbone">
             <div>{{ card.binaryVectorBackbone }}</div>
           </b-field>
-          <b-field label="Vector Selection">
-            <div>{{ card.vectorSelection }}</div>
-          </b-field>
         </div>
 
         <div class="row-wrapper">
+          <b-field label="Vector Selection">
+            <div>{{ card.vectorSelection }}</div>
+          </b-field>
           <b-field label="T-DNA Selection">
             <div>{{ card.tdnaSelection }}</div>
           </b-field>
@@ -61,9 +58,14 @@ export default {
 .row-wrapper {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .row-wrapper > * {
   flex: 1;
+}
+
+.row-wrapper > *:not(:first-child) {
+  margin-left: 20px;
 }
 </style>

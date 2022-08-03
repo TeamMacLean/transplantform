@@ -9,31 +9,32 @@
       </button>
     </header>
     <div class="card-content">
-      <b-field
-        label="Construct Name"
-        :type="isConstructNameUnavailable ? 'is-danger' : null"
-        :message="isConstructNameUnavailable ? 'Name duplicated' : null"
-      >
-        <b-input
-          placeholder="Required"
-          v-model="card.constructName"
-          required
-          maxlength="30"
-          :value="card.constructName"
-        ></b-input>
-      </b-field>
+      <div class="row-wrapper">
+        <b-field
+          label="Construct Name"
+          :type="isConstructNameUnavailable ? 'is-danger' : null"
+          :message="isConstructNameUnavailable ? 'Name duplicated' : null"
+        >
+          <b-input
+            placeholder="Required"
+            v-model="card.constructName"
+            required
+            maxlength="30"
+            :value="card.constructName"
+          ></b-input>
+        </b-field>
 
-      <b-field label="Binary Vector Backbone">
-        <b-input
-          placeholder="Required"
-          v-model="card.binaryVectorBackbone"
-          maxlength="30"
-          required
-          :value="card.binaryVectorBackbone"
-        ></b-input>
-      </b-field>
+        <b-field label="Binary Vector Backbone">
+          <b-input
+            placeholder="Required"
+            v-model="card.binaryVectorBackbone"
+            required
+            :value="card.binaryVectorBackbone"
+          ></b-input>
+        </b-field>
+      </div>
 
-      <b-field grouped>
+      <div class="row-wrapper">
         <b-field grouped>
           <div class="entire-field">
             <div class="label-and-input">
@@ -99,7 +100,7 @@
             </div>
           </div>
         </b-field>
-      </b-field>
+      </div>
     </div>
 
     <footer class="card-footer" @click="removeConstruct(theIndex)">
@@ -126,7 +127,16 @@ export default {
 };
 </script>
 <style scoped>
-.navbar-menu > .navbar-item.is-active {
-  background-color: #f7f7f7 !important;
+.row-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.row-wrapper > * {
+  flex: 1;
+}
+
+.row-wrapper > *:not(:first-child) {
+  padding-left: 20px;
 }
 </style>

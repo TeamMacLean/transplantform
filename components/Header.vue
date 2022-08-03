@@ -75,25 +75,29 @@
     </nav>
     <!-- TEMP -->
     <div class="custom-admin-knowledge">
-      <p>My username is: '{{ user.username }}'</p>
-      <p>I am {{ user.isAdmin ? '' : ' not ' }} an admin</p>
-      <p>
-        I am
+      <p class="underline">My username is: '{{ sessionUser.username }}'</p>
+      <p :class="sessionUser.isAdmin ? 'is-green' : 'is-red'">
+        - I am {{ sessionUser.isAdmin ? '' : ' not ' }} an admin
+      </p>
+      <p :class="isGroupLeader ? 'is-green' : 'is-red'">
+        - I am
         {{
           isGroupLeader
             ? ' a group leader for ' + isGroupLeaderFor
             : ' not a group leader'
         }}
       </p>
-      <p>
-        I am
+      <p :class="isResearchAssistant ? 'is-green' : 'is-red'">
+        - I am
         {{
           isResearchAssistant
             ? ' a research assistant for ' + isResearchAssistantFor
             : ' not a research assistant'
         }}
       </p>
-      <p>I am {{ isNormalUser ? '' : ' not ' }} just a normal user</p>
+      <p :class="isNormalUser ? 'is-green' : 'is-red'">
+        - I am {{ isNormalUser ? '' : ' not ' }} just a normal user
+      </p>
     </div>
   </div>
 </template>
@@ -146,5 +150,18 @@ export default {
   margin-left: 20px;
   font-size: 1rem;
   font-weight: bold;
+}
+
+.is-green {
+  color: green;
+}
+
+.is-red {
+  color: red;
+}
+
+.underline {
+  text-decoration: underline;
+  color: purple;
 }
 </style>

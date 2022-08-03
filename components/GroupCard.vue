@@ -29,33 +29,34 @@
               v-model="group.username"
             ></b-input>
           </div>
+          <div>
+            <label class="label">Research Assistant usernames</label>
+            <b-taglist class="b-tags-wrapper">
+              <div v-if="!isEditing">
+                <b-tag
+                  v-for="(raUsername, index) in group.researchAssistants"
+                  :key="index"
+                  type="is-danger"
+                  attached
+                  :closable="isEditing"
+                  aria-close-label="Close tag"
+                  @close="handleRemoveRaUsername(index)"
+                >
+                  {{ raUsername }}
+                </b-tag>
+              </div>
+              <b-taginput
+                v-else
+                v-model="group.researchAssistants"
+                ellipsis
+                icon="label"
+                placeholder="Type a tag then hit enter to add it"
+                aria-close-label="Delete this tag"
+              ></b-taginput>
+            </b-taglist>
+          </div>
         </div>
-        <div>
-          <label class="label">Research Assistant usernames</label>
-          <b-taglist class="b-tags-wrapper">
-            <div v-if="!isEditing">
-              <b-tag
-                v-for="(raUsername, index) in group.researchAssistants"
-                :key="index"
-                type="is-danger"
-                attached
-                :closable="isEditing"
-                aria-close-label="Close tag"
-                @close="handleRemoveRaUsername(index)"
-              >
-                {{ raUsername }}
-              </b-tag>
-            </div>
-            <b-taginput
-              v-else
-              v-model="group.researchAssistants"
-              ellipsis
-              icon="label"
-              placeholder="Type a tag then hit enter to add it"
-              aria-close-label="Delete this tag"
-            ></b-taginput>
-          </b-taglist>
-        </div>
+
         <div class="marginTop">
           <label class="label">LDAP Groups</label>
           <b-taglist class="b-tags-wrapper">
@@ -117,9 +118,17 @@ export default {
     saveChanges() {
       // call parent function in order to update props
 
-      const editedGroup = JSON.parse(JSON.stringify(this.group));
-      editedGroup.researchAssistants.concat(this.additionalRaUsernames);
-      editedGroup.acceptableLdapGroupStrs.concat(this.additionalLdapStrs);
+      let editedGroup = JSON.parse(JSON.stringify(this.group));
+
+      // ensure no whitespace in group username
+      editedGroup.username = this.group.username.trim();
+
+      editedGroup.researchAssistants.concat(
+        this.additionalRaUsernames.map((str) => str.trim())
+      );
+      editedGroup.acceptableLdapGroupStrs.concat(
+        this.additionalLdapStrs.map((str) => str.trim())
+      );
 
       this.additionalRaUsernames = [];
       this.additionalLdapStrs = [];

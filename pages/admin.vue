@@ -7,104 +7,102 @@
     </div>
 
     <div class="crudWrapper">
-      <div class="section">
-        <div class="container">
-          <h3 class="title is-5">
-            Please click a link to see database editing options
-          </h3>
-          <hr />
-          <div class="my-nav-bar">
-            <a
-              v-for="(obj, index) in editItems"
-              :key="'j' + index"
-              :class="
-                editItems[index].mongoName === activeTab
-                  ? 'nav-bar-item is-active'
-                  : 'nav-bar-item'
-              "
-              @click="setActiveTab(editItems[index].mongoName)"
-            >
-              {{ obj.name }}
-            </a>
-            <a
-              @click="setActiveTab('ldapGroups')"
-              :class="
-                'ldapGroups' === activeTab
-                  ? 'nav-bar-item is-active'
-                  : 'nav-bar-item'
-              "
-            >
-              LDAP Groups
-            </a>
-          </div>
-          <div>
-            <div
-              v-for="(obj, index) in editItems"
-              :key="'jj' + index"
-              :label="obj.name"
-              ref="inputs"
-            >
-              <div class="normal-field" v-if="activeTab === obj.mongoName">
-                <label class="label">Active</label>
-                <div
-                  v-for="(activeItem, jIndex) in obj.active"
-                  :key="'jjj' + jIndex"
-                  class="margin-b-tag"
+      <div class="container">
+        <h3 class="title is-5">
+          Please click a link to see database editing options
+        </h3>
+        <hr />
+        <div class="my-nav-bar">
+          <a
+            v-for="(obj, index) in editItems"
+            :key="'j' + index"
+            :class="
+              editItems[index].mongoName === activeTab
+                ? 'nav-bar-item is-active'
+                : 'nav-bar-item'
+            "
+            @click="setActiveTab(editItems[index].mongoName)"
+          >
+            {{ obj.name }}
+          </a>
+          <a
+            @click="setActiveTab('ldapGroups')"
+            :class="
+              'ldapGroups' === activeTab
+                ? 'nav-bar-item is-active'
+                : 'nav-bar-item'
+            "
+          >
+            LDAP Groups
+          </a>
+        </div>
+        <div>
+          <div
+            v-for="(obj, index) in editItems"
+            :key="'jj' + index"
+            :label="obj.name"
+            ref="inputs"
+          >
+            <div class="normal-field" v-if="activeTab === obj.mongoName">
+              <label class="label">Active</label>
+              <div
+                v-for="(activeItem, jIndex) in obj.active"
+                :key="'jjj' + jIndex"
+                class="margin-b-tag"
+              >
+                <b-tag
+                  size="is-medium"
+                  :closable="getIsClosable(obj.active)"
+                  aria-close-label="Close tag"
+                  @close="promptToArchive(index, jIndex, activeItem._id)"
                 >
-                  <b-tag
-                    size="is-medium"
-                    :closable="getIsClosable(obj.active)"
-                    aria-close-label="Close tag"
-                    @close="promptToArchive(index, jIndex, activeItem._id)"
-                  >
-                    {{ activeItem.name }}
-                  </b-tag>
-                </div>
-                <div>
-                  <label>Add new:</label>
-                  <input v-model="obj.toAdd" />
-                  <b-button
-                    :disabled="getDisabledAddNew(index)"
-                    @click="submitAdditional(index)"
-                    >Submit</b-button
-                  >
-                </div>
-                <br />
-                <label class="label">Archived</label>
-                <div
-                  v-for="(archivedItem, kIndex) in obj.archived"
-                  :key="'jjjj' + kIndex"
-                  class="margin-b-tag"
+                  {{ activeItem.name }}
+                </b-tag>
+              </div>
+              <div>
+                <label>Add new:</label>
+                <input v-model="obj.toAdd" />
+                <b-button
+                  :disabled="getDisabledAddNew(index)"
+                  @click="submitAdditional(index)"
+                  >Submit</b-button
                 >
-                  <b-tag
-                    size="is-medium"
-                    closable
-                    attached
-                    close-icon="upload"
-                    aria-close-label="Close tag"
-                    @close="promptToReactivate(index, kIndex, archivedItem._id)"
-                  >
-                    {{ archivedItem.name }}
-                  </b-tag>
-                </div>
+              </div>
+              <br />
+              <label class="label">Archived</label>
+              <div
+                v-for="(archivedItem, kIndex) in obj.archived"
+                :key="'jjjj' + kIndex"
+                class="margin-b-tag"
+              >
+                <b-tag
+                  size="is-medium"
+                  closable
+                  attached
+                  close-icon="upload"
+                  aria-close-label="Close tag"
+                  @close="promptToReactivate(index, kIndex, archivedItem._id)"
+                >
+                  {{ archivedItem.name }}
+                </b-tag>
               </div>
             </div>
-            <div
-              label="LDAP groups"
-              class="group-field"
-              v-if="activeTab === 'ldapGroups'"
-            >
-              <h4 class="title is-6">
-                <i>Please edit and save groups one at a time.</i>
-              </h4>
-              <GroupCard
-                v-for="(group, lIndex) in ldapGroups"
-                :key="'jjjjjjjjj' + lIndex"
-                :theIndex="lIndex"
-                :group="group"
-                @saveChangesToGroup="updateLdapGroup"
-              />
-            </div>
+          </div>
+          <div
+            label="LDAP groups"
+            class="group-field"
+            v-if="activeTab === 'ldapGroups'"
+          >
+            <h4 class="title is-6">
+              <i>Please edit and save groups one at a time.</i>
+            </h4>
+            <GroupCard
+              v-for="(group, lIndex) in ldapGroups"
+              :key="'jjjjjjjjj' + lIndex"
+              :theIndex="lIndex"
+              :group="group"
+              @saveChangesToGroup="updateLdapGroup"
+            />
           </div>
         </div>
       </div>
@@ -245,7 +243,8 @@ export default {
     updateLdapGroup(groupIndex, newGroup) {
       this.$buefy.dialog.confirm({
         title: 'Confirm update',
-        message: 'Update LDAP group with changes made?',
+        message:
+          'Update LDAP group with changes made? If you have made no changes, please press "Cancel"',
         ...defaultDialogOptions,
         onConfirm: async () => {
           return this.$axios
