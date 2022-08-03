@@ -3,12 +3,9 @@
     <h1 class="title is-2">View constructs (Admin only)</h1>
 
     <div v-if="!isAdmin" class="title is-4">
-      <p>I am a regular user (SHOULDN'T BE HERE)</p>
       <p>You are not permitted to view this page.</p>
     </div>
     <div v-else>
-      <h3 v-if="isAdmin" class="title is-4">I am an admin user</h3>
-
       <div v-if="allResults.length">
         <b-field label="Filter results:" class="filterWrapper">
           <b-input

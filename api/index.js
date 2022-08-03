@@ -91,14 +91,25 @@ router.post('/login', (req, res) => {
           memberOf: user.memberOf,
         });
 
-        sign({
+        const signObj = {
           username: req.body.username,
           name: user.displayName,
           isAdmin: userIsAdmin,
           isGroupLeaderForObj: userInfo.isGroupLeaderForObj,
           isResearchAssistantFor: userInfo.isResearchAssistantFor,
           signatories: userInfo.signatories,
-        }) //cannot use entire user object as too big
+        };
+        // testing
+        // const signObj = {
+        //   username: 'test',
+        //   name: 'Peter Edgar',
+        //   isAdmin: false,
+        //   isGroupLeaderForObj: {},
+        //   isResearchAssistantFor: null,
+        //   signatories: [{ username: 'talbotn', name: 'Nick Talbot' }],
+        // };
+
+        sign(signObj) //cannot use entire user object as too big
           .then((token) => {
             res.status(200).json({ token: token });
           })
@@ -127,7 +138,7 @@ router.post('/logout', (req, res) => {
 router.post('/form/new', async (req, res) => {
   try {
     // discover status of form
-    let status = 'unapproved';
+    let status = 'pending approval';
     if (newFormEntry.isGroupLeaderFor || newFormEntry.isAdmin) {
       // update MongoDB with request approval
       status = 'approved';
@@ -145,7 +156,7 @@ router.post('/form/new', async (req, res) => {
       res.send({ status: 'error', error: newFormEntry.error });
       console.error(newFormEntry.error);
     } else {
-      if (status === 'unapproved') {
+      if (status === 'pending approval') {
         // send Email to group leader and CC research assistant
         // const emailResults = await sendEmail('approval', newFormEntry);
         // TODO handle email error result

@@ -2,10 +2,6 @@
   <div>
     <h1 class="title is-2">New Request</h1>
 
-    <h3 v-if="isAdmin" class="title is-4">I am an admin user</h3>
-    <h3 v-else-if="isGroupLeader" class="title is-4">I am a group leader</h3>
-    <h3 v-else class="title is-4">I am a regular user</h3>
-
     <form>
       <b-field grouped>
         <b-field class="field">

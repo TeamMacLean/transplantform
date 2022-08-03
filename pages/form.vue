@@ -5,12 +5,6 @@
         {{ getTitleText }}
       </h1>
 
-      <h3 v-if="sessionIsAdmin" class="title is-4">I am an admin user</h3>
-      <h3 v-else-if="sessionIsSignatory" class="title is-4">
-        I am a group leader
-      </h3>
-      <h3 v-else class="title is-4">I am a regular user</h3>
-
       <div v-if="error">
         <p>
           {{ error }}
@@ -27,7 +21,8 @@
           <h1 class="title is-3">Status: {{ this.status }}</h1>
           <div
             v-if="
-              (sessionIsAdmin || sessionIsSignatory) && status === 'unapproved'
+              (sessionIsAdmin || sessionIsSignatory) &&
+              status === 'pending approval'
             "
           >
             <b-button @click="handleApprove" type="is-success is-light"
@@ -172,6 +167,7 @@ export default {
     const theDataResults = theData ? theData : {};
 
     return {
+      // TODO make form.username, form.signatoryObj.name, etc. dynamic
       ...theDataResults,
       //status: 'in progress', // TEMP
       error: '', // initialise regardless to avoid errors

@@ -2,9 +2,7 @@
   <div>
     <h1 class="title is-2">Edit database (Admin)</h1>
 
-    <h3 v-if="isAdmin" class="title is-4">I am an admin user</h3>
-    <div v-else class="title is-4">
-      <p>I am a regular user (SHOULDN'T BE HERE)</p>
+    <div v-if="!isAdmin" class="title is-4">
       <p>You are not permitted to view this page.</p>
     </div>
 

@@ -101,5 +101,76 @@ export const getFormDataFromId = (id) => ({
     },
   ],
   notes: 'joijioj',
-  status: 'unapproved',
+  status: 'pending approval',
 });
+
+export const getForms = () => [
+  {
+    trfId: 'TRF10',
+    date: '28-07-2022',
+    username: 'test',
+    creatorIsAdmin: false,
+    creatorIsGroupLeaderFor: null,
+    signatoryObj: {
+      name: 'Nick Talbot (TSL)',
+      username: 'talbotn',
+      researchAssistants: ['agatha'],
+    },
+    species: 'mammal',
+    genotype: 'Geo',
+    constructs: [
+      {
+        constructName: 'Daisy',
+        binaryVectorBackbone: 'jiojoij',
+        vectorSelection: 'Star Wars: The Force Awakens',
+        tdnaSelection: 'Dawid Malan',
+        agroStrain: 'Glen Maxwell',
+        shortName: '',
+      },
+      {
+        constructName: 'Gary',
+        binaryVectorBackbone: 'King',
+        vectorSelection: 'Star Trek',
+        tdnaSelection: 'Reece Topley',
+        agroStrain: 'Shane Warne',
+        shortName: '',
+      },
+    ],
+    notes: 'joijioj',
+    status: 'in progress',
+  },
+  {
+    trfId: 'TRF11',
+    date: '28-07-2022',
+    username: 'deeks',
+    creatorIsAdmin: true,
+    creatorIsGroupLeaderFor: null,
+    signatoryObj: {
+      name: 'Jonathan Jones (TSL)',
+      username: 'jjones',
+      researchAssistants: ['jenny'],
+    },
+    species: 'mammal',
+    genotype: 'Geo',
+    constructs: [
+      {
+        constructName: 'Daisy',
+        binaryVectorBackbone: 'jiojoij',
+        vectorSelection: 'Star Wars: The Force Awakens',
+        tdnaSelection: 'Dawid Malan',
+        agroStrain: 'Glen Maxwell',
+        shortName: '',
+      },
+      {
+        constructName: 'Gary',
+        binaryVectorBackbone: 'King',
+        vectorSelection: 'Star Trek',
+        tdnaSelection: 'Reece Topley',
+        agroStrain: 'Shane Warne',
+        shortName: '',
+      },
+    ],
+    notes: 'joijioj',
+    status: 'pending approval',
+  },
+];

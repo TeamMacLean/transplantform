@@ -3,26 +3,43 @@
     <h1 class="title is-2">View TRF forms</h1>
 
     <div>
-      <h3 v-if="isAdmin" class="title is-4">I am an admin user</h3>
-      <h3 v-if="isGroupLeader" class="title is-4">I am a GL</h3>
-      <h3 v-if="isResearchAssistant" class="title is-4">I am an RA</h3>
-      <h3
-        v-if="!isAdmin && !isGroupLeader && !isResearchAssistant"
-        class="title is-4"
-      >
-        I am a normal user
-      </h3>
-
       <div v-if="allResults.length">
+        <b-field
+          v-if="sessionUser.signatories.length > 1"
+          label="Filter by group:"
+          class="filterWrapper"
+        >
+          <div class="block">
+            <b-checkbox
+              v-model="selectedGroupLeaderUsernames"
+              v-for="(username, index) in groupLeaderUsernames"
+              :key="index"
+              :native-value="username"
+            >
+              {{ username }}
+            </b-checkbox>
+          </div>
+        </b-field>
+        <b-field label="Filter by status:" class="filterWrapper">
+          <div class="block">
+            <b-checkbox
+              v-model="selectedStatuses"
+              v-for="(status, index) in statuses"
+              :key="index"
+              :native-value="status"
+            >
+              {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+            </b-checkbox>
+          </div>
+        </b-field>
         <b-field label="Filter results:" class="filterWrapper">
           <b-input
             type="text"
             v-model="query"
             placeholder="Enter any characters..."
-            class="paddingLeft"
-            @input="updateFilter"
           >
           </b-input>
+          <p><i>Filter options: ID #, Date, Submitter, Species #</i></p>
         </b-field>
         <div>
           <table class="table">
@@ -33,7 +50,7 @@
                 <th>Date</th>
                 <th>Submitter</th>
                 <th>Species</th>
-                <th>Signatory</th>
+                <th v-if="!isGroupLeader && !isResearchAssistant">Signatory</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -50,8 +67,14 @@
                 <td>{{ form.date }}</td>
                 <td>{{ form.username }}</td>
                 <td>{{ form.species || '-' }}</td>
-                <td>{{ form.signatoryObj.username }}</td>
-                <td>{{ form.status }}</td>
+                <td v-if="!isGroupLeader && !isResearchAssistant">
+                  {{ form.signatoryObj.username }}
+                </td>
+                <td>
+                  {{
+                    form.status.charAt(0).toUpperCase() + form.status.slice(1)
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -77,7 +100,11 @@
           >
           </b-pagination>
           <tbody v-if="!displayResults.length">
-            <td>No results from "{{ query }}"</td>
+            <td>
+              No results{{
+                this.query.length ? 'from "' + this.query + '"' : ''
+              }}.
+            </td>
           </tbody>
         </div>
 
@@ -96,29 +123,97 @@
 
 <script>
 import moment from 'moment';
-import { getFormDataFromId } from '../modules/hardcodedData';
+import { getForms } from '../modules/hardcodedData';
+import { getLdapGroups } from '../modules/authUtilities';
+import { getStatuses } from '../modules/getConstants';
+
 export default {
   data() {
     const { user } = this.$auth.$state;
     const { isAdmin } = user;
 
-    // TODO this block
-    const isGroupLeader = false;
-    const isResearchAssistant = false;
+    const ldapGroups = getLdapGroups();
+    const groupLeaderUsernames = ldapGroups.map((g) => g.username);
 
-    const results = [getFormDataFromId('TRF1232')];
+    const isGroupLeader = !!(
+      user.isGroupLeaderForObj && user.isGroupLeaderForObj.username
+    );
+    const isResearchAssistant = !!user.isResearchAssistantFor;
+
+    const results = getForms();
+
+    const statuses = getStatuses();
 
     return {
       isAdmin,
       isGroupLeader,
       isResearchAssistant,
-      allResults: results,
-      displayResults: results,
+      allResults: results || [],
       query: '',
       current: 1,
+      ldapGroups: ldapGroups,
+      groupLeaderUsernames: groupLeaderUsernames,
+      selectedGroupLeaderUsernames: groupLeaderUsernames,
+      statuses: statuses,
+      selectedStatuses: statuses,
     };
   },
   computed: {
+    sessionUser() {
+      return this.$auth.$state.user;
+    },
+    isNormalUser() {
+      return !this.isAdmin && !this.isGroupLeader && !this.isResearchAssistant;
+    },
+    displayResults() {
+      return this.allResults.filter((form) => {
+        if (this.isNormalUser && form.username !== this.sessionUser.username) {
+          return false;
+        }
+
+        const usernamesOfGroupLeadersSessionUserCanView =
+          this.sessionUser.signatories.map((s) => s.username);
+
+        const sessionUserCanViewThisGroup =
+          usernamesOfGroupLeadersSessionUserCanView.includes(
+            form.signatoryObj.username
+          );
+
+        if (!sessionUserCanViewThisGroup) {
+          return false;
+        }
+
+        const isInSelectedGroup = this.selectedGroupLeaderUsernames.includes(
+          form.signatoryObj.username
+        );
+        if (!isInSelectedGroup) {
+          return false;
+        }
+        const isInSelectedStatuses = this.selectedStatuses.includes(
+          form.status
+        );
+        if (!isInSelectedStatuses) {
+          return false;
+        }
+        if (this.query.length) {
+          const isInQuery =
+            form.date.toLowerCase().includes(this.query.toLowerCase()) ||
+            form.username.toLowerCase().includes(this.query.toLowerCase()) ||
+            form.species.toLowerCase().includes(this.query.toLowerCase()) ||
+            // form.signatoryObj.username
+            //   .toLowerCase()
+            //   .includes(this.query.toLowerCase()) ||
+            // form.status.toLowerCase().includes(this.query.toLowerCase()) ||
+            form.trfId.toLowerCase().includes(this.query.toLowerCase());
+          if (!isInQuery) {
+            return false;
+          }
+        }
+
+        // have exhausted all possible filters, so return true finally
+        return true;
+      });
+    },
     isFilterDisabled() {
       return this.query === this.previousQuery || this.query === '';
     },
@@ -144,23 +239,6 @@ export default {
     },
   },
   methods: {
-    updateFilter() {
-      if (this.query === '') {
-        this.displayResults = this.allResults;
-      } else {
-        this.displayResults = this.allResults.filter(
-          (form) =>
-            form.date.toLowerCase().includes(this.query.toLowerCase()) ||
-            form.username.toLowerCase().includes(this.query.toLowerCase()) ||
-            form.species.toLowerCase().includes(this.query.toLowerCase()) ||
-            form.signatoryObj.username
-              .toLowerCase()
-              .includes(this.query.toLowerCase()) ||
-            form.status.toLowerCase().includes(this.query.toLowerCase()) ||
-            form.trfId.toLowerCase().includes(this.query.toLowerCase())
-        );
-      }
-    },
     downloadCSVData() {
       let csv = 'TRF ID,Date,Submitter,Species,Genotype,Signatory,Status\n';
       this.displayResults.forEach((form) => {
@@ -196,12 +274,6 @@ export default {
 </script>
 
 <style scoped>
-.filterWrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-}
 .flex-container {
   display: flex;
   align-items: center;
@@ -230,7 +302,22 @@ td span:after {
   background: #e9ecec;
 }
 
-.paddingLeft {
-  padding-left: 10px;
+.filterWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.filterWrapper > div {
+  margin-left: 10px;
+}
+
+.filterWrapper > div > div > div {
+  margin-left: 10px;
+}
+
+.filterWrapper div > div > p {
+  margin-left: 10px;
 }
 </style>
