@@ -2,7 +2,7 @@
   <div class="container-index">
     <div>
       <div>
-        <img src="/transplant.png" alt="FRIDGE Logo" />
+        <img src="/transplant.png" alt="Transplant Logo" />
       </div>
       <h1 class="heading title title-index has-text-primary">
         <b>TransPlant</b>

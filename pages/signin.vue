@@ -69,7 +69,7 @@
 <script>
 export default {
   data() {
-    console.log(this.$nuxt.context.from);
+    // console.log(this.$nuxt.context.from);
     return {
       submitting: false,
       error: null,

@@ -1,15 +1,29 @@
-const adminEmailString = 'SL-TC@nbi.ac.uk';
+const { DIVERT_EMAILS_USERNAME, ADMIN_GROUP_EMAIL } = process.env;
+
+const adminEmailString = DIVERT_EMAILS_USERNAME
+  ? DIVERT_EMAILS_USERNAME + '+admingroup@nbi.ac.uk'
+  : ADMIN_GROUP_EMAIL;
+
+const getEmailFromUsername = (username) => {
+  if (DIVERT_EMAILS_USERNAME) {
+    return DIVERT_EMAILS_USERNAME + '+' + username + '@nbi.ac.uk';
+  } else {
+    return username + '@nbi.ac.uk';
+  }
+};
 
 const getApprovalOptions = (form) => {
   const { id, signatoryObj } = form;
 
+  const signatoryEmail = getEmailFromUsername(signatoryObj.username);
+
   // check this works
-  const researchAssistantsEmailArr = signatoryObj.researchAssistants.map(
-    (ra) => `${ra}@nbi.ac.uk`
+  const researchAssistantsEmailArr = signatoryObj.researchAssistants.map((ra) =>
+    getEmailFromUsername(ra)
   );
 
   return {
-    to: signatoryObj.username + '@nbi.ac.uk',
+    to: signatoryEmail,
     cc: researchAssistantsEmailArr,
     subject: `New Request #${id} for Plant Tissue Culture Service - Approval Required`,
     text: `
@@ -29,14 +43,9 @@ const getApprovalOptions = (form) => {
 const getInProgressOptions = (form) => {
   const { id } = form;
 
-  // check this works
-  const researchAssistantsEmailArr = form.signatoryObj.researchAssistants.map(
-    (ra) => `${ra}@nbi.ac.uk`
-  );
-
   return {
     to: adminEmailString,
-    subject: `Request #${form.id} in progress for Plant Tissue Culture Service - printout available`,
+    subject: `Request #${id} in progress for Plant Tissue Culture Service - printout available`,
     text: `
       Dear Plant Tissue Culture Service Team Member,\n
       \n
@@ -54,7 +63,10 @@ const getInProgressOptions = (form) => {
 const getDeletionOptions = (form) => {
   const { id, signatoryObj, username } = form;
 
-  const ccArray = [`${signatoryObj.username}@nbi.ac.uk`, adminEmailString];
+  const ccArray = [
+    getEmailFromUsername(signatoryObj.username),
+    adminEmailString,
+  ];
 
   return {
     to: username + '@nbi.ac.uk',
@@ -88,7 +100,7 @@ const getCompletedOptions = (form) => {
     : '';
 
   return {
-    to: username + '@nbi.ac.uk',
+    to: getEmailFromUsername(username),
     subject: `Request #${id} COMPLETED from Plant Tissue Culture Service`,
     text: `
       Dear User,\n

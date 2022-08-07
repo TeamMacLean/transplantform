@@ -124,13 +124,33 @@
 <script>
 import moment from 'moment';
 import { getForms } from '../modules/hardcodedData';
-import { getLdapGroups } from '../modules/authUtilities';
 import { getStatuses } from '../modules/getConstants';
 
 export default {
+  middleware: 'auth',
+
   data() {
     const { user } = this.$auth.$state;
     const { isAdmin } = user;
+
+    // TEMP
+    const getLdapGroups = () => [
+      {
+        name: 'Nick Talbot',
+        username: 'talbotn',
+        acceptableLdapGroupStrs: [
+          'CN=Nick Talbot,OU=Users,DC=tsl,DC=org',
+          'CN=Talbot SCG,OU=Users,DC=tsl,DC=org',
+        ],
+        researchAssistants: ['melanie', 'james'],
+      },
+      {
+        name: 'Jonathan Jones',
+        username: 'jjones',
+        acceptableLdapGroupStrs: ['CN=Jonathan Jones,OU=Users,DC=tsl,DC=org'],
+        researchAssistants: ['cassandra'],
+      },
+    ];
 
     const ldapGroups = getLdapGroups();
     const groupLeaderUsernames = ldapGroups.map((g) => g.username);

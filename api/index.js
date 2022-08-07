@@ -4,22 +4,33 @@ import jwt from 'jsonwebtoken';
 import ldap from './ldap';
 import _ from 'lodash';
 
-import { getUserInfo } from '../modules/authUtilities';
 import sendEmail from '../modules/sendEmail';
 
-// TODO strip this back to original state as it does not impact the server's hot reloading
-import { Plate as ImportPlate } from './models';
-const { Plate } = mongoose.models.Plate || mongoose.model('Plate', ImportPlate);
+import {
+  Form,
+  Group,
+  Specie,
+  Genotype,
+  VectorSelection,
+  TdnaSelection,
+  AgroStrain,
+  Admin,
+} from './models';
 
 try {
   mongoose.connect('mongodb://localhost:27017/transplantform', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
   });
 } catch (err) {
   console.error(err);
 }
+
+// Replace update() with updateOne(), updateMany(), or replaceOne()
+// Replace remove() with deleteOne() or deleteMany().
+// Replace count() with countDocuments(), unless you want to count how many documents are in the whole collection (no filter). In the latter case, use estimatedDocumentCount().
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -77,27 +88,84 @@ router.get('/user', (req, res) => {
 });
 
 // Add POST - /api/login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   if (req.body && req.body.username && req.body.password) {
     ldap
       .authenticate(req.body.username, req.body.password)
-      .then((user) => {
-        const userIsAdmin = !!process.env.ADMINS.includes(req.body.username);
+      .then(async (user) => {
+        //console.log('debug about to get admins');
+        const adminDocs = await Admin.find({});
+        //const admins = JSON.parse(JSON.stringify(adminsRes));
 
-        // TODO turn async
-        const userInfo = getUserInfo({
-          username: req.body.username,
-          isAdmin: userIsAdmin,
-          memberOf: user.memberOf,
-        });
+        const admins = adminDocs.map((admin) => admin.name);
+
+        const userIsAdmin = admins.includes(req.body.username);
+        //console.log('userIsAdmin', userIsAdmin);
+
+        const allLdapGroups = await Group.find({});
+        //console.log('debug find all groups', allLdapGroups);
+        const isGroupLeaderForObj =
+          allLdapGroups.find((group) => group.username === req.body.username) ||
+          null;
+        // console.log('debug just assigned group, now will assign RA');
+        const isResearchAssistantForObj =
+          allLdapGroups.find((group) => {
+            group.researchAssistants.includes(req.body.username);
+            const res = group.researchAssistants.includes(req.body.username);
+            return res;
+          }) || null;
+        const isResearchAssistantFor = isResearchAssistantForObj
+          ? isResearchAssistantForObj.name
+          : null;
+
+        var signatories = [];
+        // console.log('debug about to sign signatory');
+        if (userIsAdmin) {
+          signatories = allLdapGroups;
+          // console.log('userisadmin');
+        } else if (isGroupLeaderForObj) {
+          signatories = isGroupLeaderForObj;
+          // console.log('debug is group leader');
+        } else if (isResearchAssistantFor) {
+          signatories = isResearchAssistantForObj;
+          // console.log('debug is research assistant');
+        } else {
+          // console.log('about to loop through user.memberOf');
+
+          user.memberOf.forEach((ldapGroupStr) => {
+            allLdapGroups.forEach((ldapGroup) => {
+              const alreadySignatoryUsernames = signatories.map(
+                (signatory) => signatory.username
+              );
+              if (
+                ldapGroup.ldapGroups.includes(ldapGroupStr) &&
+                !alreadySignatoryUsernames.includes(ldapGroup.username)
+              ) {
+                signatories.push(ldapGroup);
+              }
+            });
+          });
+        }
+        const abridgedSignatories = signatories.map((signatory) => ({
+          name: signatory.name,
+          username: signatory.username,
+        }));
+        // console.log('about to assign signObj');
+
+        // console.log('username', req.body.username);
+        // console.log('suerdisplayname', user.displayName);
+        // console.log('isAdmin', userIsAdmin);
+        // console.log('isGL', isGroupLeaderForObj);
+        // console.log('isRA', isResearchAssistantFor);
+        // console.log('signos', abridgedSignatories);
 
         const signObj = {
           username: req.body.username,
           name: user.displayName,
           isAdmin: userIsAdmin,
-          isGroupLeaderForObj: userInfo.isGroupLeaderForObj,
-          isResearchAssistantFor: userInfo.isResearchAssistantFor,
-          signatories: userInfo.signatories,
+          isGroupLeaderForObj: isGroupLeaderForObj,
+          isResearchAssistantFor: isResearchAssistantFor,
+          signatories: abridgedSignatories,
         };
         // testing
         // const signObj = {
@@ -111,9 +179,11 @@ router.post('/login', (req, res) => {
 
         sign(signObj) //cannot use entire user object as too big
           .then((token) => {
+            // console.log('signObj was SUCCESS:', signObj);
             res.status(200).json({ token: token });
           })
           .catch((err) => {
+            // console.log(err, 'ERRORNEOUS');
             res.status(500).json({ error: err });
           });
       })
@@ -149,7 +219,7 @@ router.post('/form/new', async (req, res) => {
     //   ...req.body,
     //   status: status,
     // });
-    const newFormEntry = { ...req.body };
+    const newFormEntry = { ...req.body /** NB STATUS */ };
 
     if (!newFormEntry.id /* error */) {
       // TODO correct status code and mongo error message format / test
@@ -263,39 +333,82 @@ router.post('/form/completed', async (req, res) => {
   }
 });
 
-router.post('/admin', async (req, res) => {
+// get everything needed for admin page
+router.get('/admin/', async (req, res) => {
+  try {
+    const admins = await Admin.find({});
+    const species = await Specie.find({});
+    const genotypes = await Genotype.find({});
+    const vectorSelections = await VectorSelection.find({});
+    const tdnaSelections = await TdnaSelection.find({});
+    const agroStrains = await AgroStrain.find({});
+    const groups = await Group.find({});
+
+    // TODO ensure sorted by createdAt
+
+    res.send({
+      status: 200,
+      admins,
+      species,
+      genotypes,
+      vectorSelections,
+      tdnaSelections,
+      agroStrains,
+      groups,
+    });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
+router.post('/admin/active', async (req, res) => {
   const { query } = req.body;
   res.send({ status: 200 });
 });
 
-router.post('/group', async (req, res) => {
+router.post('/admin/group', async (req, res) => {
   const { query } = req.body;
   res.send({ status: 200 });
 });
 
-router.post('/additional', async (req, res) => {
+router.post('/admin/additional', async (req, res) => {
   const { query } = req.body;
   res.send({ status: 200 });
 });
 
-router.post('/constructs', async (req, res) => {
-  const { query } = req.body;
-  res.send({ status: 200 });
+// TODO still untested
+router.get('/constructs', async (req, res) => {
+  try {
+    const forms = await Form.find({});
+    const nestedConstructs = forms.map((form) => form.constructs);
+    const flatConstructs = nestedConstructs.flat();
+
+    // TODO ensure sorted by createdAt
+
+    res.send({
+      status: 200,
+      constructs: flatConstructs,
+    });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
 });
 
-router.post('/search', async (req, res) => {
-  const { query } = req.body;
+router.get('/forms', async (req, res) => {
+  try {
+    const forms = await Form.find({});
+    // TODO ensure sorted by createdAt
 
-  // George, just send them everything and get frontend to filter?
-
-  //var stocks = await Stock.find({deleted: false}).populate('plate')
-
-  res.send({
-    debugging: {
-      mastersLength: 2,
-    },
-    results: 'matchedUniqueEcObjects',
-  });
+    res.send({
+      status: 200,
+      forms,
+    });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
 });
 
 // Export the server middleware

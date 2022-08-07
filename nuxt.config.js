@@ -7,6 +7,11 @@ export default {
     port: process.env.PORT || 3000, // default: 3000
     host: process.env.HOST || 'localhost', // default: localhost
   },
+  env: {
+    WEBMASTERS: process.env.WEBMASTERS,
+    ADMIN_GROUP_EMAIL: process.env.ADMIN_GROUP_EMAIL,
+    DIVERT_EMAILS_USERNAME: process.env.DIVERT_EMAILS_USERNAME,
+  },
   // DOES NOT WORK COS MODELS ISSUE watch: ['~/api/*.js'],
   /*
    ** Headers of the page

@@ -22,12 +22,14 @@
           </div>
           <div>
             <label class="label">Group Leader username</label>
-            <div v-if="!isEditing">{{ group.username }}</div>
+            <div>{{ group.username }}</div>
+            <!-- dont want to edit username, otherwise groups could mutate beyond recognition -->
+            <!-- <div v-if="!isEditing">{{ group.username }}</div>
             <b-input
               class="limitInputWidth"
               v-else
               v-model="group.username"
-            ></b-input>
+            ></b-input> -->
           </div>
           <div>
             <label class="label">Research Assistant usernames</label>
@@ -62,7 +64,7 @@
           <b-taglist class="b-tags-wrapper">
             <div v-if="!isEditing">
               <b-tag
-                v-for="(raUsername, index) in group.acceptableLdapGroupStrs"
+                v-for="(raUsername, index) in group.ldapGroups"
                 :key="index"
                 type="is-danger"
                 class="full-width"
@@ -77,7 +79,7 @@
             <b-taginput
               v-else
               class="full-width"
-              v-model="group.acceptableLdapGroupStrs"
+              v-model="group.ldapGroups"
               ellipsis
               icon="label"
               placeholder="Type a tag then hit enter to add it"
@@ -126,7 +128,7 @@ export default {
       editedGroup.researchAssistants.concat(
         this.additionalRaUsernames.map((str) => str.trim())
       );
-      editedGroup.acceptableLdapGroupStrs.concat(
+      editedGroup.ldapGroups.concat(
         this.additionalLdapStrs.map((str) => str.trim())
       );
 
@@ -140,7 +142,7 @@ export default {
       this.group.researchAssistants.splice(index, 1);
     },
     handleRemoveLdapStr(index) {
-      this.group.acceptableLdapGroupStrs.splice(index, 1);
+      this.group.ldapGroups.splice(index, 1);
     },
   },
 };

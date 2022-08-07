@@ -4,24 +4,27 @@
 
     <p>
       For technical issues with the website, please contact the Webmaster
-      <a href="mailto:george.deeks@tsl.ac.uk">here</a>.
+      <a :href="webmasterEmail">here</a>.
     </p>
 
     <br />
 
     <p>
       For questions about orders, please contact the plant tissue culture
-      service <a href="mailto:SL-TC@nbi.ac.uk">here</a>.
+      service <a :href="adminGroupEmail">here</a>.
     </p>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      submitting: false,
-    };
+  computed: {
+    webmasterEmail() {
+      return `mailto:${process.env.WEBMASTER}.nbi.ac.uk`;
+    },
+    adminGroupEmail() {
+      return `mailto:${process.env.ADMIN_GROUP_EMAIL}`;
+    },
   },
 };
 </script>

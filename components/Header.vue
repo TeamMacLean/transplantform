@@ -1,5 +1,6 @@
 <template>
   <!-- THIS WRAPPER DIV IS ALSO TEMP whilst testing different user roles -->
+  <!-- Also check that 'George Deeks (TSL) populates when all this user data stuff is stripped back out' -->
   <div>
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
@@ -37,19 +38,19 @@
                 class="fa-2x"
                 style="margin-right: 8px"
               />
-              {{ this.sessionUser && this.sessionUser.name }}
+              {{ user && user.name ? user.name : 'Unknown User' }}
             </a>
 
             <div class="navbar-dropdown">
               <nuxt-link
-                v-if="this.sessionUser.isAdmin"
+                v-if="user && user.isAdmin"
                 to="/admin"
                 class="navbar-item"
               >
                 Edit database (<b>Admin </b>)</nuxt-link
               >
               <nuxt-link
-                v-if="this.sessionUser.isAdmin"
+                v-if="user && user.isAdmin"
                 to="/constructs"
                 class="navbar-item"
               >
@@ -58,7 +59,6 @@
               <a class="navbar-item" v-on:click="LogOut"> Sign out </a>
             </div>
           </div>
-
           <div v-show="!this.$auth.loggedIn" class="navbar-item">
             <div class="buttons">
               <nuxt-link
@@ -75,29 +75,36 @@
     </nav>
     <!-- TEMP -->
     <div class="custom-admin-knowledge">
-      <p class="underline">My username is: '{{ sessionUser.username }}'</p>
-      <p :class="sessionUser.isAdmin ? 'is-green' : 'is-red'">
-        - I am {{ sessionUser.isAdmin ? '' : ' not ' }} an admin
-      </p>
-      <p :class="isGroupLeader ? 'is-green' : 'is-red'">
-        - I am
-        {{
-          isGroupLeader
-            ? ' a group leader for ' + isGroupLeaderFor
-            : ' not a group leader'
-        }}
-      </p>
-      <p :class="isResearchAssistant ? 'is-green' : 'is-red'">
-        - I am
-        {{
-          isResearchAssistant
-            ? ' a research assistant for ' + isResearchAssistantFor
-            : ' not a research assistant'
-        }}
-      </p>
-      <p :class="isNormalUser ? 'is-green' : 'is-red'">
-        - I am {{ isNormalUser ? '' : ' not ' }} just a normal user
-      </p>
+      <div v-show="this.$auth.loggedIn">
+        <p class="underline">
+          My username is: '{{ (user && user.username) || '(Not logged in)' }}'
+        </p>
+        <p :class="user && user.isAdmin ? 'is-green' : 'is-red'">
+          - I am {{ user && user.isAdmin ? '' : ' not ' }} an admin
+        </p>
+        <p :class="isGroupLeader ? 'is-green' : 'is-red'">
+          - I am
+          {{
+            isGroupLeader
+              ? ' a group leader for ' + isGroupLeaderFor
+              : ' not a group leader'
+          }}
+        </p>
+        <p :class="isResearchAssistant ? 'is-green' : 'is-red'">
+          - I am
+          {{
+            isResearchAssistant
+              ? ' a research assistant for ' + isResearchAssistantFor
+              : ' not a research assistant'
+          }}
+        </p>
+        <p :class="isNormalLoggedInUser ? 'is-green' : 'is-red'">
+          - I am {{ isNormalLoggedInUser ? '' : ' not ' }} just a normal user
+        </p>
+      </div>
+      <div v-show="!this.$auth.loggedIn">
+        <p>No one is logged in.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -105,35 +112,35 @@
 <script>
 export default {
   name: 'HeaderAfterLogin',
-  // TEMP DATA
   data() {
-    const { user } = this.$auth.$state;
-    const isGroupLeader = !!(
-      user.isGroupLeaderForObj && user.isGroupLeaderForObj.username
-    );
+    const theUser =
+      this && this.$auth && this.$auth.$state && this.$auth.$state.user
+        ? this.$auth.$state.user
+        : null;
+
+    const isGroupLeader = !!(theUser && theUser.isGroupLeaderForObj);
     const isGroupLeaderFor = isGroupLeader
-      ? user.isGroupLeaderForObj.username
+      ? theUser.isGroupLeaderForObj.username
       : null;
-    const isResearchAssistant = !!user.isResearchAssistantFor;
+    const isResearchAssistant = !!(theUser && theUser.isResearchAssistantFor);
     const isResearchAssistantFor = isResearchAssistant
-      ? user.isResearchAssistantFor
+      ? theUser.isResearchAssistantFor
       : null;
-    const isNormalUser =
-      !user.isAdmin && !isGroupLeader && !isResearchAssistant;
+    const isNormalLoggedInUser =
+      !(theUser && theUser.isAdmin) && !isGroupLeader && !isResearchAssistant;
+
     return {
-      sessionUser: user,
-      isGroupLeader,
-      isGroupLeaderFor,
-      isResearchAssistant,
-      isResearchAssistantFor,
-      isNormalUser,
+      user: theUser,
+      isGroupLeader: isGroupLeader,
+      isGroupLeaderFor: isGroupLeaderFor,
+      isResearchAssistant: isResearchAssistant,
+      isResearchAssistantFor: isResearchAssistantFor,
+      isNormalLoggedInUser: isNormalLoggedInUser,
     };
   },
   methods: {
     async LogOut() {
-      await this.$auth.logout();
-      this.$store.commit('setUser', null);
-      this.$store.commit('increment');
+      const result = await this.$auth.logout();
       this.$router.push({
         path: '/',
       });

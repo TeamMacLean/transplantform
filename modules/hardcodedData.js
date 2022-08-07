@@ -1,5 +1,118 @@
 // TODO get from database
 
+const groups = [
+  {
+    name: 'Jonathan Jones',
+    username: 'jjones',
+    researchAssistants: ['alam'],
+    ldapGroups: [
+      'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+    ],
+  },
+  {
+    name: 'Matthew Moscou',
+    username: 'mmoscou',
+    researchAssistants: ['pinzon'],
+    ldapGroups: [
+      'CN=TSL-Data-Matthew-Moscou,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_MM_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+    ],
+  },
+  {
+    name: 'Peter van Esse',
+    username: 'vanessep',
+    researchAssistants: ['grootens', 'milnesl'],
+    ldapGroups: [
+      'CN=TSL-Data-2Blades,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_2BL1_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_2BL1_Modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_SL2Blades_Modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_2BL1_Modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_kw_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk],',
+    ],
+  },
+  {
+    name: 'Sophien Kamoun',
+    username: 'skamoun',
+    researchAssistants: ['winj'],
+    ldapGroups: [
+      'CN=TSL-Data-Sophien-Kamoun,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=slproj_SK_Modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+      'CN=RG-Sophien-Kamoun,OU=RGs,OU=NBIGroups,DC=nbi,DC=ac,DC=uk]',
+    ],
+  },
+  {
+    name: 'Wenbo Ma',
+    username: 'maw',
+    researchAssistants: ['natkinso'],
+    ldapGroups: [
+      'CN=slproj_wm_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+    ],
+  },
+  {
+    name: 'Cyril Zipfel',
+    username: 'zipfelc',
+    researchAssistants: ['rhodesj'],
+    ldapGroups: [
+      'CN=TSL-Data-Cyril-Zipfel,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+    ],
+  },
+  {
+    name: 'Nick Talbot',
+    username: 'ntalbot',
+    researchAssistants: ['ryderl'],
+    ldapGroups: [
+      'CN=slproj_NT_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+    ],
+  },
+];
+
+const admins = ['smokerm', 'deeks', 'pikej', 'wawryk'];
+
+const tdnaSelections = [
+  'Kanamycin',
+  'Hygromycin',
+  'Kanamycin/Hygromycin',
+  'Phosphinothricin',
+  'Fast-Red',
+  'Chlorsulfuron',
+];
+
+const vectorSelections = [
+  'Kanamycin',
+  'Spectinomycin',
+  'Kanamycin/Hygromycin',
+  'Tetracycline',
+  'Hygromycin',
+];
+
+const species = [
+  'Arabidopsis thaliana',
+  'Brachypodium distachyon',
+  'Brassica juncea',
+  'Brassica oleracea',
+  'Camelina sativa',
+  'Glycine max',
+  'Hordeum vulgare',
+  'Lotus japonicus',
+  'Medicago truncatula',
+  'Mirabilis jalapa',
+  'Nicotiana benthamiana',
+  'Nicotiana tabacum',
+  'Oryza sativa',
+  'Solanum lycopersicum',
+  'Solanum tuberosum',
+];
+
+const agroStrains = [
+  'AGL1',
+  'AGL1 + pSoup',
+  'GV3101 pMP90',
+  'LBA4404',
+  'EHA105',
+];
+
 export const getSpecies = () => [
   { name: 'bird', archived: false },
   { name: 'mammal', archived: false },
@@ -46,6 +159,9 @@ export const getAgroStrains = () => [
   { name: 'Matthew Hayden', archived: false },
   { name: 'Justin Langer', archived: false },
 ];
+
+export const getAdmins = () =>
+  admins.map((a) => ({ name: a, archived: false }));
 
 export const getPreviousConstructNames = () => ['Daisy', 'Gary'];
 

@@ -2,7 +2,7 @@
   <div>
     <h1 class="title is-2">Edit database (Admin)</h1>
 
-    <div v-if="!isAdmin" class="title is-4">
+    <div v-if="!this.$auth.$state.user.isAdmin" class="title is-4">
       <p>You are not permitted to view this page.</p>
     </div>
 
@@ -45,19 +45,26 @@
           >
             <div class="normal-field" v-if="activeTab === obj.mongoName">
               <label class="label">Active</label>
-              <div
-                v-for="(activeItem, jIndex) in obj.active"
-                :key="'jjj' + jIndex"
-                class="margin-b-tag"
-              >
-                <b-tag
-                  size="is-medium"
-                  :closable="getIsClosable(obj.active)"
-                  aria-close-label="Close tag"
-                  @close="promptToArchive(index, jIndex, activeItem._id)"
+              <div v-if="obj.active && obj.active.length">
+                <div
+                  v-for="(activeItem, jIndex) in obj.active"
+                  :key="'jjj' + jIndex"
+                  class="margin-b-tag"
                 >
-                  {{ activeItem.name }}
-                </b-tag>
+                  <b-tag
+                    size="is-medium"
+                    :closable="
+                      getIsClosable(obj.active, activeItem, obj.mongoName)
+                    "
+                    aria-close-label="Close tag"
+                    @close="promptToArchive(index, jIndex, activeItem._id)"
+                  >
+                    {{ activeItem.name }}
+                  </b-tag>
+                </div>
+              </div>
+              <div v-else>
+                <p class="pb-10">No active items.</p>
               </div>
               <div>
                 <label>Add new:</label>
@@ -70,21 +77,26 @@
               </div>
               <br />
               <label class="label">Archived</label>
-              <div
-                v-for="(archivedItem, kIndex) in obj.archived"
-                :key="'jjjj' + kIndex"
-                class="margin-b-tag"
-              >
-                <b-tag
-                  size="is-medium"
-                  closable
-                  attached
-                  close-icon="upload"
-                  aria-close-label="Close tag"
-                  @close="promptToReactivate(index, kIndex, archivedItem._id)"
+              <div v-if="obj.archived && obj.archived.length">
+                <div
+                  v-for="(archivedItem, kIndex) in obj.archived"
+                  :key="'jjjj' + kIndex"
+                  class="margin-b-tag"
                 >
-                  {{ archivedItem.name }}
-                </b-tag>
+                  <b-tag
+                    size="is-medium"
+                    closable
+                    attached
+                    close-icon="upload"
+                    aria-close-label="Close tag"
+                    @close="promptToReactivate(index, kIndex, archivedItem._id)"
+                  >
+                    {{ archivedItem.name }}
+                  </b-tag>
+                </div>
+              </div>
+              <div v-else>
+                <p>No archived items.</p>
               </div>
             </div>
           </div>
@@ -111,14 +123,6 @@
 </template>
 
 <script>
-import {
-  getGenotypes,
-  getSpecies,
-  getVectorSelections,
-  getTdnaSelections,
-  getAgroStrains,
-} from '../modules/hardcodedData.js';
-import { getLdapGroups } from '../modules/authUtilities.js';
 import GroupCard from '../components/GroupCard.vue';
 
 const defaultDialogOptions = {
@@ -137,71 +141,72 @@ export default {
     GroupCard,
   },
 
-  // TODO async data fetching
-  data() {
-    const { user } = this.$auth.$state;
-    const { username, isAdmin } = user;
+  asyncData({ $axios }) {
+    return $axios
+      .get('/api/admin')
+      .then((res) => {
+        const allSpecies = res.data.species;
+        const allGenotypes = res.data.genotypes;
+        const allVectorSelections = res.data.vectorSelections;
+        const allTdnaSelections = res.data.tdnaSelections;
+        const allAgroStrains = res.data.agroStrains;
+        const allAdmins = res.data.admins;
 
-    // TODO async
-    const allSpecies = getSpecies();
-    const allGenotypes = getGenotypes();
-    const allVectorSelections = getVectorSelections();
-    const allTdnaSelections = getTdnaSelections();
-    const allAgroStrains = getAgroStrains();
+        const allResults = [
+          allSpecies,
+          allGenotypes,
+          allVectorSelections,
+          allTdnaSelections,
+          allAgroStrains,
+          allAdmins,
+        ];
 
-    // TODO get _id field from hardcoded data, rather than spooned in here
-    const editItems = [
-      {
-        name: 'Species',
-        mongoName: 'species',
-        active: allSpecies.filter((specie) => !specie.archived),
-        archived: allSpecies.filter((specie) => specie.archived),
-        toAdd: '',
-        _id: 'joij;oij;oijo;i',
-      },
-      {
-        name: 'Genotypes',
-        mongoName: 'genotypes',
-        active: allGenotypes.filter((specie) => !specie.archived),
-        archived: allGenotypes.filter((specie) => specie.archived),
-        toAdd: '',
-        _id: 'h;iuh;oih;oih',
-      },
-      {
-        name: 'Vector selections',
-        mongoName: 'vectors',
-        active: allVectorSelections.filter((specie) => !specie.archived),
-        archived: allVectorSelections.filter((specie) => specie.archived),
-        toAdd: '',
-        _id: 'opafiewjofiejwfoi;wjefoi;j',
-      },
-      {
-        name: 'T-DNA selections',
-        mongoName: 'tdnaSelections',
-        active: allTdnaSelections.filter((specie) => !specie.archived),
-        archived: allTdnaSelections.filter((specie) => specie.archived),
-        toAdd: '',
-        _id: 'ewifjejw;oeifj;weoifjoiowifjeif',
-      },
-      {
-        name: 'Agro Strains',
-        mongoName: 'agroStrains',
-        active: allAgroStrains.filter((specie) => !specie.archived),
-        archived: allAgroStrains.filter((specie) => specie.archived),
-        toAdd: '',
-        _id: 'iiiiiiiooijo;ih',
-      },
-    ];
+        const mongoNames = [
+          'Specie',
+          'Genotype',
+          'VectorSelection',
+          'TdnaSelection',
+          'AgroStrain',
+          'Admin',
+        ];
 
-    const ldapGroups = getLdapGroups();
+        const displayNames = [
+          'Species',
+          'Genotypes',
+          'Vector selections',
+          'T-DNA selections',
+          'Agro Strains',
+          'Admins',
+        ];
 
-    return {
-      username: username,
-      isAdmin: isAdmin,
-      ldapGroups: ldapGroups,
-      editItems: editItems,
-      activeTab: 'species',
-    };
+        const editItems = mongoNames.map((mongoName, index) => ({
+          mongoName,
+          name: displayNames[index],
+          active:
+            allResults[index] &&
+            allResults[index].length &&
+            allResults[index].filter((item) => !item.archived),
+          archived:
+            allResults[index] &&
+            allResults[index].length &&
+            allResults[index].filter((item) => item.archived),
+          toAdd: '',
+        }));
+
+        const ldapGroups = res.data.groups;
+
+        return {
+          ldapGroups: ldapGroups,
+          editItems: editItems,
+          activeTab: 'species',
+        };
+      })
+      .catch((err) => {
+        console.error(err);
+        return {
+          namedConstructs: null,
+        };
+      });
   },
   methods: {
     displaySuccessfulChanges() {
@@ -220,7 +225,7 @@ export default {
     },
     databasePost(collectionName, documentId, fieldToChange, newFieldValue) {
       return this.$axios
-        .post(`/api/admin`, {
+        .post(`/api/admin/active`, {
           mongoName: collectionName,
           _id: documentId,
           fieldToChange: fieldToChange,
@@ -248,7 +253,7 @@ export default {
         ...defaultDialogOptions,
         onConfirm: async () => {
           return this.$axios
-            .post(`/api/group`, {
+            .post(`/api/admin/group`, {
               group: newGroup,
             })
             .then((res) => {
@@ -310,8 +315,16 @@ export default {
         },
       });
     },
-    getIsClosable: (activeArr) => {
-      return activeArr.length > 1;
+    getIsClosable: (activeArr, activeItem, objMongoName) => {
+      if (
+        // disable webmasters from being deleted in admin section
+        process.env.WEBMASTER === activeItem.name &&
+        objMongoName === 'Admin'
+      ) {
+        return false;
+      } else {
+        return activeArr.length > 1;
+      }
     },
     setActiveTab(tabName) {
       this.activeTab = tabName;
@@ -327,7 +340,7 @@ export default {
           const trimmedToAdd = toAdd.trim();
 
           return this.$axios
-            .post(`/api/additional`, {
+            .post(`/api/admin/additional`, {
               mongoName: mongoName,
               newFieldValue: trimmedToAdd,
             })
@@ -403,5 +416,8 @@ export default {
   font-weight: bold;
   text-decoration: underline;
   color: purple;
+}
+.pb-10 {
+  padding-bottom: 10px;
 }
 </style>
