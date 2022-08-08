@@ -13,7 +13,11 @@
         <b-field
           label="Construct Name"
           :type="isConstructNameUnavailable ? 'is-danger' : null"
-          :message="isConstructNameUnavailable ? 'Name duplicated' : null"
+          :message="
+            isConstructNameUnavailable
+              ? 'Name duplicated in database or on form'
+              : null
+          "
         >
           <b-input
             placeholder="Required"

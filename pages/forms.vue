@@ -2,10 +2,11 @@
   <div>
     <h1 class="title is-2">View TRF forms</h1>
 
-    <div>
+    <div v-if="!error">
       <div v-if="allResults.length">
+        <!-- <b-loading is-full-page v-model="loading"></b-loading> -->
         <b-field
-          v-if="sessionUser.signatories.length > 1"
+          v-if="sessionUser && sessionUser.signatories.length > 1"
           label="Filter by group:"
           class="filterWrapper"
         >
@@ -39,7 +40,7 @@
             placeholder="Enter any characters..."
           >
           </b-input>
-          <p><i>Filter options: ID #, Date, Submitter, Species #</i></p>
+          <p><i>Filter options: ID #, Date, Submitter, Species</i></p>
         </b-field>
         <div>
           <table class="table">
@@ -54,7 +55,7 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody v-if="displayResults.length">
+            <tbody v-show="displayResults.length">
               <tr :key="index" v-for="(form, index) in paginatedItems">
                 <td>{{ form.position }}</td>
                 <td>
@@ -99,7 +100,7 @@
             aria-current-label="Current page"
           >
           </b-pagination>
-          <tbody v-if="!displayResults.length">
+          <tbody v-show="!displayResults.length">
             <td>
               No results{{
                 this.query.length ? 'from "' + this.query + '"' : ''
@@ -118,74 +119,91 @@
       </div>
       <div v-else>No results found in database.</div>
     </div>
+    <div v-else>
+      <div class="notification is-danger">
+        <p><strong>Error:</strong> {{ error }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
-import { getForms } from '../modules/hardcodedData';
 import { getStatuses } from '../modules/getConstants';
 
 export default {
   middleware: 'auth',
 
-  data() {
+  asyncData({ $axios }) {
+    return $axios
+      .get('/api/forms')
+      .then((res) => {
+        if (res.status === 200) {
+          const { ldapGroups, forms } = res.data;
+
+          const statuses = getStatuses();
+          const groupLeaderUsernames = ldapGroups.map((g) => g.username);
+
+          return {
+            ldapGroups,
+            error: '',
+            statuses,
+            groupLeaderUsernames,
+            selectedGroupLeaderUsernames: groupLeaderUsernames,
+
+            allResults: forms && forms.length ? forms : [],
+            query: '',
+            current: 1,
+            // until mounted
+            isAdmin: false,
+            isGroupLeader: false,
+            isResearchAssistant: false,
+            selectedStatuses: statuses,
+            loading: true,
+            sessionUser: false,
+          };
+        } else {
+          const err = res.data.error || 'Unexpected issue retrieving forms.';
+          console.error(err);
+          return {
+            error: err,
+          };
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        return {
+          error: err,
+        };
+      });
+  },
+
+  mounted() {
     const { user } = this.$auth.$state;
     const { isAdmin } = user;
-
-    // TEMP
-    const getLdapGroups = () => [
-      {
-        name: 'Nick Talbot',
-        username: 'talbotn',
-        acceptableLdapGroupStrs: [
-          'CN=Nick Talbot,OU=Users,DC=tsl,DC=org',
-          'CN=Talbot SCG,OU=Users,DC=tsl,DC=org',
-        ],
-        researchAssistants: ['melanie', 'james'],
-      },
-      {
-        name: 'Jonathan Jones',
-        username: 'jjones',
-        acceptableLdapGroupStrs: ['CN=Jonathan Jones,OU=Users,DC=tsl,DC=org'],
-        researchAssistants: ['cassandra'],
-      },
-    ];
-
-    const ldapGroups = getLdapGroups();
-    const groupLeaderUsernames = ldapGroups.map((g) => g.username);
 
     const isGroupLeader = !!(
       user.isGroupLeaderForObj && user.isGroupLeaderForObj.username
     );
     const isResearchAssistant = !!user.isResearchAssistantFor;
 
-    const results = getForms();
-
-    const statuses = getStatuses();
-
-    return {
-      isAdmin,
-      isGroupLeader,
-      isResearchAssistant,
-      allResults: results || [],
-      query: '',
-      current: 1,
-      ldapGroups: ldapGroups,
-      groupLeaderUsernames: groupLeaderUsernames,
-      selectedGroupLeaderUsernames: groupLeaderUsernames,
-      statuses: statuses,
-      selectedStatuses: statuses,
-    };
+    this.isAdmin = isAdmin;
+    this.isGroupLeader = isGroupLeader;
+    this.isResearchAssistant = isResearchAssistant;
+    this.loading = false;
+    this.sessionUser = user;
   },
   computed: {
-    sessionUser() {
-      return this.$auth.$state.user;
-    },
     isNormalUser() {
+      if (!this && !this.sessionUser) {
+        return true;
+      }
       return !this.isAdmin && !this.isGroupLeader && !this.isResearchAssistant;
     },
     displayResults() {
+      if (!this || !this.sessionUser || !this.sessionUser.username) {
+        return [];
+      }
       return this.allResults.filter((form) => {
         if (this.isNormalUser && form.username !== this.sessionUser.username) {
           return false;
@@ -283,7 +301,7 @@ export default {
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
       hiddenElement.target = '_blank';
       const timestamp = moment().format('D MMM YYYY, h mm ss a');
-      const title = `Forms${
+      const title = `TRF Forms${
         this.query ? ' filtered for ' + this.query + ',' : ''
       } ${timestamp}.csv`;
       hiddenElement.download = title;

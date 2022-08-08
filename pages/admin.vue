@@ -198,7 +198,7 @@ export default {
         return {
           ldapGroups: ldapGroups,
           editItems: editItems,
-          activeTab: 'species',
+          activeTab: 'Specie',
         };
       })
       .catch((err) => {
@@ -285,7 +285,7 @@ export default {
             'archived',
             true
           );
-          if (res.status === 200) {
+          if (res) {
             const editItemsClone = this.editItems.slice();
             const move = editItemsClone[editItemsIndex].active[itemIndex];
             this.editItems[editItemsIndex].active.splice(itemIndex, 1);
@@ -306,7 +306,7 @@ export default {
             'archived',
             false
           );
-          if (res.status === 200) {
+          if (res) {
             const editItemsClone = this.editItems.slice();
             const move = editItemsClone[editItemsIndex].archived[itemIndex];
             this.editItems[editItemsIndex].archived.splice(itemIndex, 1);

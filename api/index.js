@@ -149,15 +149,9 @@ router.post('/login', async (req, res) => {
         const abridgedSignatories = signatories.map((signatory) => ({
           name: signatory.name,
           username: signatory.username,
+          _id: signatory._id.toString(),
+          researchAssistants: signatory.researchAssistants,
         }));
-        // console.log('about to assign signObj');
-
-        // console.log('username', req.body.username);
-        // console.log('suerdisplayname', user.displayName);
-        // console.log('isAdmin', userIsAdmin);
-        // console.log('isGL', isGroupLeaderForObj);
-        // console.log('isRA', isResearchAssistantFor);
-        // console.log('signos', abridgedSignatories);
 
         const signObj = {
           username: req.body.username,
@@ -205,34 +199,109 @@ router.post('/logout', (req, res) => {
   res.sendStatus(200);
 });
 
+router.get('/form/new', async (req, res) => {
+  try {
+    const species = await Specie.find({});
+    const genotypes = await Genotype.find({});
+    const vectorSelections = await VectorSelection.find({});
+    const tdnaSelections = await TdnaSelection.find({});
+    const agroStrains = await AgroStrain.find({});
+    const forms = await Form.find({});
+    const nestedConstructs = forms.map((form) => form.constructs);
+    const flatConstructs = nestedConstructs.flat();
+    const previousConstructNames = flatConstructs.map(
+      (construct) => construct.constructName
+    );
+
+    res.send({
+      status: 200,
+      species,
+      genotypes,
+      vectorSelections,
+      tdnaSelections,
+      agroStrains,
+      previousConstructNames,
+    });
+  } catch (error) {
+    res.send({ status: 500, error: error });
+    console.error(error);
+  }
+});
+
 router.post('/form/new', async (req, res) => {
   try {
-    // discover status of form
-    let status = 'pending approval';
-    if (newFormEntry.isGroupLeaderFor || newFormEntry.isAdmin) {
-      // update MongoDB with request approval
-      status = 'approved';
+    const {
+      date,
+      username,
+      creatorIsAdmin,
+      creatorIsGroupLeader,
+      signatoryObj,
+      species,
+      genotype,
+      constructs,
+      notes,
+    } = req.body;
+
+    let status =
+      creatorIsGroupLeader || creatorIsAdmin ? 'approved' : 'pending approval';
+
+    const signatoryId = signatoryObj._id;
+    const signatoryObjectId = mongoose.Types.ObjectId(signatoryId);
+
+    // calculate new TRF ID
+    const forms = await Form.find({});
+    const trfIds = forms.map((f) => f.trfId);
+    var counter = 1;
+    var newTrfIdStr = 'TRF' + counter;
+    function recurseCheck(trfIdToCheck, counter) {
+      if (trfIds.includes(trfIdToCheck)) {
+        counter++;
+        trfIdToCheck = 'TRF' + counter;
+        return recurseCheck(trfIdToCheck, counter);
+      } else {
+        return trfIdToCheck;
+      }
+    }
+    newTrfIdStr = recurseCheck(newTrfIdStr, counter);
+
+    const newFormEntry = await Form.create({
+      date: date,
+      username: username,
+      creatorIsAdmin: creatorIsAdmin,
+      creatorIsGroupLeader: creatorIsGroupLeader,
+      signatoryId: signatoryObjectId,
+      species: species,
+      genotype: genotype,
+      constructs: constructs,
+      notes: notes,
+      status: status,
+      trfId: newTrfIdStr,
+    });
+
+    const allGenotypes = await Genotype.find({});
+    const allGenotypeNames = allGenotypes.map((genotype) =>
+      genotype.name.toLowerCase()
+    );
+    if (!allGenotypeNames.includes(genotype.toLowerCase())) {
+      await Genotype.create({
+        name: genotype,
+        archived: false,
+      });
     }
 
-    // new form into MongoDB, get ID in response (frontend already validated)
-    // const newFormEntry = await Form.create({
-    //   ...req.body,
-    //   status: status,
-    // });
-    const newFormEntry = { ...req.body /** NB STATUS */ };
-
-    if (!newFormEntry.id /* error */) {
-      // TODO correct status code and mongo error message format / test
+    if (!newFormEntry._id /* error */) {
       res.send({ status: 'error', error: newFormEntry.error });
       console.error(newFormEntry.error);
     } else {
       if (status === 'pending approval') {
         // send Email to group leader and CC research assistant
-        // const emailResults = await sendEmail('approval', newFormEntry);
-        // TODO handle email error result
+        const emailResults = await sendEmail('approval', {
+          signatoryObj,
+          trfId: newTrfIdStr,
+        });
       }
 
-      res.send({ status: 200, id: 'TRF12' });
+      res.send({ status: 200, trfId: newTrfIdStr });
     }
   } catch (error) {
     // TODO correct status code and test
@@ -243,16 +312,24 @@ router.post('/form/new', async (req, res) => {
 
 router.post('/form/delete', async (req, res) => {
   try {
-    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
-    //   $set: {
-    //     status: 'deleted',
-    //   },
-    // });
+    const { trfId, signatoryObj, username } = req.body;
+    const result = await Form.updateOne(
+      { trfId: trfId },
+      {
+        $set: {
+          status: 'deleted',
+        },
+      }
+    );
 
-    // send Email to group leader and user and admin
-    // const emailResults = await sendEmail('deletion', { ...req.body });
+    if (result.ok) {
+      // send Email to group leader and user and admin
+      // const emailResults = await sendEmail('deletion', { trfId, signatoryObj, username });
 
-    res.send({ status: 200 });
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status');
+    }
   } catch (error) {
     // TODO correct status code and test
     res.send({ status: 'error', error: error });
@@ -262,15 +339,23 @@ router.post('/form/delete', async (req, res) => {
 
 router.post('/form/approve', async (req, res) => {
   try {
-    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
-    //   $set: {
-    //     status: 'approved',
-    //   },
-    // });
+    const { trfId } = req.body;
+    const result = await Form.updateOne(
+      { trfId: trfId },
+      {
+        $set: {
+          status: 'approved',
+        },
+      }
+    );
 
-    // probably should email admin to update them, but they didnt ask for this feature
+    if (result.ok) {
+      // probably should email admin to update them, but they didnt ask for this feature
 
-    res.send({ status: 200 });
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status');
+    }
   } catch (error) {
     // TODO correct status code and test
     res.send({ status: 'error', error: error });
@@ -280,14 +365,25 @@ router.post('/form/approve', async (req, res) => {
 
 router.post('/form/deny', async (req, res) => {
   try {
-    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
-    //   $set: {
-    //     status: 'denied',
-    //   },
-    // });
+    const { trfId } = req.body;
+    const result = await Form.updateOne(
+      { trfId: trfId },
+      {
+        $set: {
+          status: 'denied',
+        },
+      }
+    );
 
-    res.send({ status: 200 });
+    if (result.ok) {
+      // probably should email admin/user to update them, but they didnt ask for this feature
+
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status');
+    }
   } catch (error) {
+    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -295,22 +391,34 @@ router.post('/form/deny', async (req, res) => {
 
 router.post('/form/inprogress', async (req, res) => {
   try {
-    const { id, constructs } = req.body;
+    const { trfId, constructs } = req.body;
+    const newConstructs = constructs.map((construct) => ({
+      ...construct,
+      shortName: construct.shortName || null,
+    }));
+    const result = await Form.updateOne(
+      { trfId: trfId },
+      {
+        $set: {
+          status: 'in progress',
+          // overwrite previous constructs with new shortnames
+          constructs: newConstructs,
+        },
+      }
+    );
 
-    // /**const result = */await Form.findByIdAndUpdate(id, {
-    //   $set: {
-    //     status: 'in progress',
-    //     constructs: constructs,
-    //   },
-    // });
+    if (result.ok) {
+      // could email user but they didnt ask for this feature
 
-    // could email user but they didnt ask for this feature
+      // send Email to admin (though unnecessary it was requested)
+      // const emailResults = await sendEmail('in progress', { ...req.body });
 
-    // send Email to admin (though unnecessary it was requested)
-    // const emailResults = await sendEmail('in progress', { ...req.body });
-
-    res.send({ status: 200 });
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status');
+    }
   } catch (error) {
+    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -318,16 +426,26 @@ router.post('/form/inprogress', async (req, res) => {
 
 router.post('/form/completed', async (req, res) => {
   try {
-    // /**const result = */await Form.findByIdAndUpdate(req.body.id, {
-    //   $set: {
-    //     status: 'completed',
-    //   },
-    // });
-    // send Email to admin (though unnecessary it was requested)
-    // const emailResults = await sendEmail('in progress', { ...req.body });
+    const { trfId, completedMsg, username } = req.body;
+    const result = await Form.updateOne(
+      { trfId: trfId },
+      {
+        $set: {
+          status: 'completed',
+        },
+      }
+    );
 
-    res.send({ status: 200 });
+    if (result.ok) {
+      // send Email to admin (though unnecessary it was requested)
+      // const emailResults = await sendEmail('completed', { ...req.body });
+
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status');
+    }
   } catch (error) {
+    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -362,27 +480,118 @@ router.get('/admin/', async (req, res) => {
   }
 });
 
+// lazy way to do this
+const mongoNames = [
+  'Specie',
+  'Genotype',
+  'VectorSelection',
+  'TdnaSelection',
+  'AgroStrain',
+  'Admin',
+];
+const mongoCollections = [
+  Specie,
+  Genotype,
+  VectorSelection,
+  TdnaSelection,
+  AgroStrain,
+  Admin,
+];
+
 router.post('/admin/active', async (req, res) => {
-  const { query } = req.body;
-  res.send({ status: 200 });
+  const { mongoName, _id, fieldToChange, newFieldValue } = req.body;
+
+  let index = mongoNames.indexOf(mongoName);
+  const result = await mongoCollections[index].updateOne(
+    { _id: mongoose.Types.ObjectId(_id) },
+    {
+      $set: {
+        [fieldToChange]: newFieldValue,
+      },
+    }
+  );
+
+  if (result.ok) {
+    res.send({ status: 200 });
+  } else {
+    throw new Error('Error updating form status in DB');
+  }
 });
 
 router.post('/admin/group', async (req, res) => {
-  const { query } = req.body;
-  res.send({ status: 200 });
+  try {
+    const { group } = req.body;
+    const { _id, name, researchAssistants, ldapGroups } = group;
+
+    const result = await Group.updateOne(
+      { _id: mongoose.Types.ObjectId(_id) },
+      {
+        $set: {
+          // no username rewrite for now
+          name,
+          researchAssistants,
+          ldapGroups,
+        },
+      }
+    );
+
+    if (result.ok) {
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status in DB');
+    }
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
 });
 
 router.post('/admin/additional', async (req, res) => {
-  const { query } = req.body;
-  res.send({ status: 200 });
+  try {
+    const { mongoName, newFieldValue } = req.body;
+
+    let index = mongoNames.indexOf(mongoName);
+    const result = await mongoCollections[index].create({
+      name: newFieldValue,
+      archived: false,
+    });
+
+    if (result.ok) {
+      res.send({ status: 200 });
+    } else {
+      throw new Error('Error updating form status in DB');
+    }
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
 });
 
-// TODO still untested
 router.get('/constructs', async (req, res) => {
   try {
     const forms = await Form.find({});
-    const nestedConstructs = forms.map((form) => form.constructs);
-    const flatConstructs = nestedConstructs.flat();
+    const formsWithNestedConstructs = forms.map((form) => ({
+      constructs: form.constructs,
+      species: form.species,
+      genotype: form.genotype,
+      trfId: form.trfId,
+    }));
+
+    var flatConstructs = [];
+
+    formsWithNestedConstructs.forEach((form) => {
+      form.constructs.forEach((c) => {
+        flatConstructs.push({
+          longName: c.constructName,
+          shortName: c.shortName || null,
+          binaryVectorBackbone: c.binaryVectorBackbone,
+          tdnaSelection: c.tdnaSelection,
+          species: form.species,
+          genotype: form.genotype,
+          trfId: form.trfId,
+        });
+      });
+    });
 
     // TODO ensure sorted by createdAt
 
@@ -401,9 +610,66 @@ router.get('/forms', async (req, res) => {
     const forms = await Form.find({});
     // TODO ensure sorted by createdAt
 
+    const ldapGroups = await Group.find({});
+
+    const formsWithSignatories = forms.map((form) => {
+      const theSigObj = ldapGroups.find((group) => {
+        const result = group._id.toString() === form.signatoryId.toString();
+        return result;
+      });
+      return {
+        creatorIsGroupLeader: form.creatorIsGroupLeader,
+        notes: form.notes,
+        status: form.status,
+        _id: form._id,
+        date: form.date,
+        username: form.username,
+        creatorIsAdmin: form.creatorIsAdmin,
+        species: form.species,
+        genotype: form.genotype,
+        constructs: form.constructs,
+        trfId: form.trfId,
+        createdAt: form.createdAt,
+        updatedAt: form.updatedAt,
+        signatoryObj: theSigObj,
+      };
+    });
+
     res.send({
       status: 200,
-      forms,
+      forms: formsWithSignatories,
+      ldapGroups,
+    });
+  } catch (error) {
+    res.send({ status: 'error', error: error });
+    console.error(error);
+  }
+});
+
+router.get('/form', async (req, res) => {
+  try {
+    const trfId = req.originalUrl.split('=')[1];
+
+    const forms = await Form.find({});
+
+    const theForm = forms.find((form) => form.trfId === trfId);
+    const groupId = mongoose.Types.ObjectId(theForm.signatoryId);
+    const signObj = await Group.findById(groupId);
+
+    res.send({
+      status: 200,
+      creatorIsGroupLeader: theForm.creatorIsGroupLeader,
+      notes: theForm.notes,
+      status: theForm.status,
+      _id: theForm._id,
+      date: theForm.date,
+      username: theForm.username,
+      creatorIsAdmin: theForm.creatorIsAdmin,
+      signatoryObj: signObj,
+      species: theForm.species,
+      genotype: theForm.genotype,
+      constructs: theForm.constructs,
+      trfId: theForm.trfId,
     });
   } catch (error) {
     res.send({ status: 'error', error: error });

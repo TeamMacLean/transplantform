@@ -1,154 +1,257 @@
 <template>
-  <div :class="getWrapperClass">
-    <div class="component-wrapper">
-      <h1 :class="getTitleClass">
-        {{ getTitleText }}
-      </h1>
+  <div>
+    <div :class="getWrapperClass">
+      <div class="component-wrapper">
+        <h1 :class="getTitleClass">
+          {{ getTitleText }}
+        </h1>
 
-      <div v-if="error">
-        <p>
-          {{ error }}
-        </p>
-      </div>
-      <div v-else-if="!authorisedToView">
-        <p>
-          You are not authorised to view this TRF. Please contact us if you
-          think this is in error.
-        </p>
-      </div>
-      <div v-else>
-        <div class="status-wrapper">
-          <h4 class="title is-4">
-            Status:
-            {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
-          </h4>
-          <div
-            v-if="
-              (sessionIsAdmin || sessionIsSignatory) &&
-              status === 'pending approval'
-            "
-          >
-            <b-button @click="handleApprove" type="is-success is-light"
-              >Approve</b-button
+        <div v-if="loading">
+          <b-loading is-full-page v-model="loading"></b-loading>
+        </div>
+        <div v-else-if="error">
+          <p>
+            {{ error }}
+          </p>
+        </div>
+        <div v-else-if="!authorisedToView">
+          <p>
+            You are not authorised to view this TRF. Please contact us if you
+            think this is in error.
+          </p>
+        </div>
+        <div v-else>
+          <div class="status-wrapper">
+            <h4 class="title is-4">
+              Status:
+              {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
+            </h4>
+            <div
+              v-if="
+                (sessionIsAdmin || sessionIsSignatory) &&
+                status === 'pending approval'
+              "
             >
-            <b-button @click="handleDeny" type="is-danger is-light"
-              >Deny</b-button
-            >
-            <!-- <hr /> -->
-          </div>
-          <div
-            v-if="
-              sessionIsAdmin &&
-              status === 'approved' &&
-              !completingInProgressSteps
-            "
-          >
-            <b-button @click="handleInitiateSetInProgress" type="is-success"
-              >Initiate 'Set In Progress'</b-button
-            >
-          </div>
-          <div
-            v-if="
-              sessionIsAdmin &&
-              status === 'approved' &&
-              completingInProgressSteps
-            "
-            class="shortNamesFormWrapper"
-          >
-            <h3 class="title is-5">Assign shortnames (Optional)</h3>
-
-            <div class="shortNamesWrapper">
-              <div
-                v-for="(card, index) in constructs"
-                :key="index"
-                class="shortNameInputWrapper"
+              <b-button @click="handleApprove" type="is-success is-light"
+                >Approve</b-button
               >
-                <b>Shortname:</b>
-                <b-input
-                  class="padding"
-                  v-model="card.shortName"
-                  maxlength="10"
-                />
-                <div class="longNameWrapper">
-                  <b>Longname:</b> {{ card.constructName }}
+              <b-button @click="handleDeny" type="is-danger is-light"
+                >Deny</b-button
+              >
+              <!-- <hr /> -->
+            </div>
+            <div
+              v-if="
+                sessionIsAdmin &&
+                status === 'approved' &&
+                !completingInProgressSteps
+              "
+            >
+              <b-button @click="handleInitiateSetInProgress" type="is-success"
+                >Initiate 'Set In Progress'</b-button
+              >
+            </div>
+            <div
+              v-if="
+                sessionIsAdmin &&
+                status === 'approved' &&
+                completingInProgressSteps
+              "
+              class="shortNamesFormWrapper"
+            >
+              <h3 class="title is-5">Assign shortnames (Optional)</h3>
+
+              <div class="shortNamesWrapper">
+                <div
+                  v-for="(card, index) in constructs"
+                  :key="index"
+                  class="shortNameInputWrapper"
+                >
+                  <b>Shortname:</b>
+                  <b-input
+                    class="padding"
+                    v-model="card.shortName"
+                    maxlength="10"
+                  />
+                  <div class="longNameWrapper">
+                    <b>Longname:</b> {{ card.constructName }}
+                  </div>
                 </div>
               </div>
+              <b-button @click="handleCompleteSetInProgress" type="is-success"
+                >Complete Set 'In Progress'</b-button
+              >
             </div>
-            <b-button @click="handleCompleteSetInProgress" type="is-success"
-              >Complete Set 'In Progress'</b-button
-            >
+            <div v-if="sessionIsAdmin && status === 'in progress'">
+              <b-button @click="handlePrint" type="is-success is-light"
+                >Print request</b-button
+              >
+              <b-button @click="handleComplete" type="is-success"
+                >Complete request</b-button
+              >
+            </div>
           </div>
-          <div v-if="sessionIsAdmin && status === 'in progress'">
-            <b-button @click="handlePrint" type="is-success is-light"
-              >Print request</b-button
-            >
-            <b-button @click="handleComplete" type="is-success"
-              >Complete request</b-button
-            >
+
+          <div class="row-wrapper">
+            <b-field label="Date">
+              <div>{{ this.date }}</div>
+            </b-field>
+
+            <b-field label="Username">
+              <div>{{ this.username }}</div>
+            </b-field>
+
+            <b-field label="Signatory">
+              <div>{{ this.signatoryObj.name }}</div>
+            </b-field>
+            <b-field label="Species">
+              <div>{{ this.species }}</div>
+            </b-field>
+
+            <b-field label="Genotype">
+              <div>{{ this.genotype }}</div>
+            </b-field>
           </div>
+
+          <hr />
+
+          <h3 class="title is-4">Constructs</h3>
+          <h3 class="title is-6">In priority order</h3>
+
+          <div class="display-construct-cards-wrapper">
+            <DisplayConstructCard
+              v-for="(card, index) in constructs"
+              :theIndex="index"
+              :card="card"
+              :key="index"
+              :status="status"
+            />
+          </div>
+
+          <b-field label="Notes">
+            <div>{{ notes }}</div>
+          </b-field>
+
+          <hr />
         </div>
-
-        <div class="row-wrapper">
-          <b-field label="Date">
-            <div>{{ this.date }}</div>
-          </b-field>
-
-          <b-field label="Username">
-            <div>{{ this.username }}</div>
-          </b-field>
-
-          <b-field label="Signatory">
-            <div>{{ this.signatoryObj.name }}</div>
-          </b-field>
-          <b-field label="Species">
-            <div>{{ this.species }}</div>
-          </b-field>
-
-          <b-field label="Genotype">
-            <div>{{ this.genotype }}</div>
-          </b-field>
-        </div>
-
-        <hr />
-
-        <h3 class="title is-4">Constructs</h3>
-        <h3 class="title is-6">In priority order</h3>
-
-        <div class="display-construct-cards-wrapper">
-          <DisplayConstructCard
-            v-for="(card, index) in constructs"
-            :theIndex="index"
-            :card="card"
-            :key="index"
-            :status="status"
-          />
-        </div>
-
-        <b-field label="Notes">
-          <div>{{ notes }}</div>
-        </b-field>
-
-        <hr />
-
-        <b-button
-          type="is-danger"
-          v-if="status !== 'deleted'"
-          @click="handleDeleteRequest"
-          >Delete request</b-button
-        >
       </div>
     </div>
+    <b-button
+      type="is-danger"
+      v-if="status !== 'deleted'"
+      @click="handleDeleteRequest"
+      >Delete request</b-button
+    >
   </div>
 </template>
 
 <script>
 import DisplayConstructCard from '../components/DisplayConstructCard.vue';
-import { getFormDataFromId } from '../modules/hardcodedData.js';
 
 export default {
   middleware: 'auth',
   components: {
     DisplayConstructCard,
+  },
+  mounted() {
+    // these are from computed but asyncData hates them there
+    // TODO refactor this
+    function sessionIsAdmin(ctx) {
+      if (!ctx || !ctx.$auth) {
+        return false;
+      }
+      const result = ctx.$auth.$state.user.isAdmin;
+      return result;
+    }
+    function sessionUsername(ctx) {
+      if (!ctx || !ctx.$auth) {
+        return false;
+      }
+
+      return ctx.$auth.$state.user.username;
+    }
+    function sessionIsSignatory(ctx) {
+      if (!ctx || !ctx.$auth) {
+        return false;
+      }
+
+      return ctx.$auth.$state.user.username === ctx.signatoryObj.username;
+    }
+    function authorisedToApprove(ctx) {
+      // TODO get backend not to send data but error message if not authorised
+
+      if (!ctx || !ctx.$auth) {
+        return false;
+      }
+
+      const { user } = ctx.$auth.$state;
+      const { username, isAdmin } = user;
+
+      // move
+      const getAuthorisedToApprove = (
+        mongoSignatoryUsername,
+        sessionUsername,
+        sessionIsAdminBool
+      ) => {
+        if (sessionIsAdminBool) {
+          return true;
+        } else if (mongoSignatoryUsername === sessionUsername) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      // Authorisation logic/check
+      return getAuthorisedToApprove(
+        ctx.signatoryObj.username, // required signatory username
+        username, // session username
+        isAdmin // session is admin
+      );
+    }
+    function authorisedToView(ctx) {
+      // TODO get backend not to send data but error message if not authorised
+
+      if (!ctx || !ctx.$auth) {
+        return false;
+      }
+
+      const { user } = ctx.$auth.$state;
+      const { username, isAdmin } = user;
+
+      // move
+      const getAuthorisedToView = (
+        mongoSignatoryUsername,
+        mongoUsername,
+        sessionUsername,
+        sessionIsAdminBool
+      ) => {
+        if (sessionIsAdminBool) {
+          return true;
+        } else if (mongoSignatoryUsername === sessionUsername) {
+          return true;
+        } else if (mongoUsername === sessionUsername) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      // Authorisation logic/check
+      return getAuthorisedToView(
+        ctx.signatoryObj.username, // required signatory username
+        ctx.username, // form username
+        username, // session username
+        isAdmin // session is admin
+      );
+    }
+
+    this.sessionIsAdmin = sessionIsAdmin(this);
+    this.sessionUsername = sessionUsername(this);
+    this.sessionIsSignatory = sessionIsSignatory(this);
+    this.authorisedToApprove = authorisedToApprove(this);
+    this.authorisedToView = authorisedToView(this);
+    this.loading = false;
   },
   asyncData({ route, $axios, error }) {
     if (!route.query.id) {
@@ -156,37 +259,62 @@ export default {
         error: 'No TRF ID provided',
       };
     }
-
-    // TODO fetch error from server
-    const theData = getFormDataFromId(route.query.id);
-
-    const theDataResults = theData ? theData : {};
-
-    return {
-      // TODO make form.username, form.signatoryObj.name, etc. dynamic
-      ...theDataResults,
-      error: '', // initialise regardless to avoid errors
-      completedMsg: '',
-      completingInProgressSteps: false,
-    };
-
+    const routeQueryId = route.query.id;
     return $axios
-      .get('/form', { params: { id: route.query.id } })
+      .get('/api/form', { params: { trfId: routeQueryId } })
       .then((res) => {
-        if (res.status === 200 && res.data.trfForm) {
-          const trfForm = res.data.trfForm;
+        if (res.status === 200 && res.data.trfId === route.query.id) {
+          const {
+            creatorIsGroupLeader,
+            notes,
+            status,
+            _id,
+            date,
+            username,
+            creatorIsAdmin,
+            signatoryObj,
+            species,
+            genotype,
+            constructs,
+            trfId,
+          } = res.data;
           return {
-            ...trfForm, // TODO remove
-            trfId: trfForm.id,
+            creatorIsGroupLeader,
+            notes,
+            status,
+            _id,
+            date,
+            username,
+            creatorIsAdmin,
+            signatoryObj,
+            species,
+            genotype,
+            constructs,
+            trfId,
+            error: '', // initialise regardless to avoid errors
+            completedMsg: '',
+            completingInProgressSteps: false,
+            //
+            sessionIsAdmin: false,
+            sessionUsername: false,
+            sessionIsSignatory: false,
+            authorisedToApprove: false,
+            authorisedToView: false,
+            loading: true,
           };
         } else {
-          this.throwUnexpectedErrorForUser('Failed to fetch TRF');
-          this.error = 'No TRF found';
+          const err = res.data.error || 'Not getting form from TRF ID';
+          console.error(err);
+          return {
+            error: 'No TRF found from URL params',
+          };
         }
       })
       .catch((err) => {
-        this.throwUnexpectedErrorForUser('TRF form not found');
-        this.error = 'No TRF found';
+        console.error(err);
+        return {
+          error: 'No TRF found',
+        };
       });
   },
   methods: {
@@ -205,7 +333,7 @@ export default {
         onConfirm: () => {
           return this.$axios
             .post('/api/form/delete', {
-              id: this.id,
+              trfId: this.trfId,
               signatoryObj: this.signatoryObj, // needed for email
               username: this.username, // needed for email
             })
@@ -246,7 +374,7 @@ export default {
         onConfirm: () => {
           return this.$axios
             .post('/api/form/approve', {
-              id: this.id,
+              trfId: this.trfId,
             })
             .then((res) => {
               if (res.status === 200) {
@@ -282,7 +410,7 @@ export default {
         onConfirm: () => {
           return this.$axios
             .post('/api/form/inprogress', {
-              id: this.id,
+              trfId: this.trfId,
               constructs: this.constructs,
             })
             .then((res) => {
@@ -317,7 +445,7 @@ export default {
         onConfirm: (value) => {
           return this.$axios
             .post('/api/form/completed', {
-              id: this.id,
+              trfId: this.trfId,
               completedMsg: value.trim(),
               username: this.username,
             })
@@ -350,7 +478,7 @@ export default {
         onConfirm: () => {
           return this.$axios
             .post('/api/form/deny', {
-              id: this.id,
+              trfId: this.trfId,
             })
             .then((res) => {
               if (res.status === 200) {
@@ -382,6 +510,8 @@ export default {
             return 'faded';
           case 'deleted':
             return 'strikethrough faded';
+          case 'denied':
+            return 'faded';
           default:
             return '';
         }
@@ -396,6 +526,8 @@ export default {
             return ' finished';
           case 'deleted':
             return ' dangerous';
+          case 'denied':
+            return ' dangerous';
           default:
             return '';
         }
@@ -405,12 +537,17 @@ export default {
       return `title is-2${appendage}`;
     },
     getTitleText() {
+      if (!this.trfId) {
+        return 'No TRF ID';
+      }
       const getAppendage = (status) => {
         switch (status) {
           case 'completed':
             return ': COMPLETED';
           case 'deleted':
             return ': DELETED';
+          case 'denied':
+            return ': DENIED';
           default:
             return '';
         }
@@ -418,76 +555,6 @@ export default {
 
       const appendage = getAppendage(this.status);
       return `TRF Form #${this.trfId}${appendage}`;
-    },
-    sessionIsAdmin() {
-      const result = this.$auth.$state.user.isAdmin;
-      return result;
-    },
-    sessionUsername() {
-      return this.$auth.$state.user.username;
-    },
-    sessionIsSignatory() {
-      return this.$auth.$state.user.username === this.signatoryObj.username;
-    },
-    authorisedToApprove() {
-      // TODO get backend not to send data but error message if not authorised
-
-      const { user } = this.$auth.$state;
-      const { username, isAdmin } = user;
-
-      // move
-      const getAuthorisedToApprove = (
-        mongoSignatoryUsername,
-        sessionUsername,
-        sessionIsAdminBool
-      ) => {
-        if (sessionIsAdminBool) {
-          return true;
-        } else if (mongoSignatoryUsername === sessionUsername) {
-          return true;
-        } else {
-          return false;
-        }
-      };
-
-      // Authorisation logic/check
-      return getAuthorisedToApprove(
-        this.signatoryObj.username, // required signatory username
-        username, // session username
-        isAdmin // session is admin
-      );
-    },
-    authorisedToView() {
-      // TODO get backend not to send data but error message if not authorised
-
-      const { user } = this.$auth.$state;
-      const { username, isAdmin } = user;
-
-      // move
-      const getAuthorisedToView = (
-        mongoSignatoryUsername,
-        mongoUsername,
-        sessionUsername,
-        sessionIsAdminBool
-      ) => {
-        if (sessionIsAdminBool) {
-          return true;
-        } else if (mongoSignatoryUsername === sessionUsername) {
-          return true;
-        } else if (mongoUsername === sessionUsername) {
-          return true;
-        } else {
-          return false;
-        }
-      };
-
-      // Authorisation logic/check
-      return getAuthorisedToView(
-        this.signatoryObj.username, // required signatory username
-        this.username, // form username
-        username, // session username
-        isAdmin // session is admin
-      );
     },
   },
 };

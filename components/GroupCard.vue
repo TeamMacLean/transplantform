@@ -38,7 +38,7 @@
                 <b-tag
                   v-for="(raUsername, index) in group.researchAssistants"
                   :key="index"
-                  type="is-danger"
+                  type="is-success"
                   attached
                   :closable="isEditing"
                   aria-close-label="Close tag"
@@ -51,6 +51,7 @@
                 v-else
                 v-model="group.researchAssistants"
                 ellipsis
+                type="is-success"
                 icon="label"
                 placeholder="Type a tag then hit enter to add it"
                 aria-close-label="Delete this tag"
@@ -81,6 +82,9 @@
               class="full-width"
               v-model="group.ldapGroups"
               ellipsis
+              :confirm-keys="confirmKeys"
+              :on-paste-separators="onPasteSeparators"
+              type="is-danger"
               icon="label"
               placeholder="Type a tag then hit enter to add it"
               aria-close-label="Delete this tag"
@@ -112,6 +116,14 @@ export default {
       additionalLdapStrs: [],
       //editedGroup: JSON.parse(JSON.stringify(this.group)),
     };
+  },
+  computed: {
+    confirmKeys() {
+      return ['Enter'];
+    },
+    onPasteSeparators() {
+      return [];
+    },
   },
   methods: {
     enterEditMode() {

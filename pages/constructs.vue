@@ -2,8 +2,21 @@
   <div>
     <h1 class="title is-2">View constructs (Admin only)</h1>
 
-    <div v-if="!isAdmin" class="title is-4">
+    <div
+      v-if="
+        !(
+          this.$auth &&
+          $auth.$state &&
+          $auth.$state.user &&
+          $auth.$state.user.isAdmin
+        )
+      "
+      class="title is-4"
+    >
       <p>You are not permitted to view this page.</p>
+    </div>
+    <div v-else-if="error">
+      {{ error }}
     </div>
     <div v-else>
       <div v-if="allResults.length">
@@ -92,22 +105,37 @@
 
 <script>
 import moment from 'moment';
-import { getConstructsFromAllForms } from '../modules/hardcodedData';
 export default {
-  data() {
-    const { user } = this.$auth.$state;
-    const { isAdmin } = user;
+  asyncData({ $axios }) {
+    return $axios
+      .get('/api/constructs')
+      .then((res) => {
+        if (res.status === 200) {
+          const { constructs } = res.data;
 
-    const results = getConstructsFromAllForms();
-
-    return {
-      isAdmin,
-      allResults: results,
-      displayResults: results,
-      query: '',
-      current: 1,
-    };
+          return {
+            allResults: constructs,
+            displayResults: constructs,
+            query: '',
+            current: 1,
+            error: '',
+          };
+        } else {
+          const err = res.data.error || 'Unexpected issue retrieving forms.';
+          console.error(err);
+          return {
+            error: err,
+          };
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        return {
+          error: err,
+        };
+      });
   },
+
   computed: {
     isFilterDisabled() {
       return this.query === this.previousQuery || this.query === '';
@@ -143,9 +171,10 @@ export default {
             construct.longName
               .toLowerCase()
               .includes(this.query.toLowerCase()) ||
-            construct.shortName
-              .toLowerCase()
-              .includes(this.query.toLowerCase()) ||
+            (construct.shortName &&
+              construct.shortName
+                .toLowerCase()
+                .includes(this.query.toLowerCase())) ||
             construct.binaryVectorBackbone
               .toLowerCase()
               .includes(this.query.toLowerCase()) ||

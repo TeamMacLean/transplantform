@@ -13,7 +13,7 @@ const getEmailFromUsername = (username) => {
 };
 
 const getApprovalOptions = (form) => {
-  const { id, signatoryObj } = form;
+  const { trfId, signatoryObj } = form;
 
   const signatoryEmail = getEmailFromUsername(signatoryObj.username);
 
@@ -25,13 +25,13 @@ const getApprovalOptions = (form) => {
   return {
     to: signatoryEmail,
     cc: researchAssistantsEmailArr,
-    subject: `New Request #${id} for Plant Tissue Culture Service - Approval Required`,
+    subject: `New Request #${trfId} for Plant Tissue Culture Service - Approval Required`,
     text: `
       Dear Group Leader,\n
       \n
       A new form has been submitted by a member of your group. Please approve or deny by heading to this link:\n
       \n
-      https://transplant.tsl.ac.uk/form?id=${id}\n
+      https://transplant.tsl.ac.uk/form?id=${trfId}\n
       \n
       Regards,\n
       \n
@@ -41,17 +41,17 @@ const getApprovalOptions = (form) => {
 };
 
 const getInProgressOptions = (form) => {
-  const { id } = form;
+  const { trfId } = form;
 
   return {
     to: adminEmailString,
-    subject: `Request #${id} in progress for Plant Tissue Culture Service - printout available`,
+    subject: `Request #${trfId} in progress for Plant Tissue Culture Service - printout available`,
     text: `
       Dear Plant Tissue Culture Service Team Member,\n
       \n
       A form has been set in progress by a member of your team. Please find a printable version of the form by heading to this link:\n
       \n
-      https://transplant.tsl.ac.uk/form?id=${id}\n
+      https://transplant.tsl.ac.uk/form?id=${trfId}\n
       \n
       Regards,\n
       \n
@@ -61,7 +61,7 @@ const getInProgressOptions = (form) => {
 };
 
 const getDeletionOptions = (form) => {
-  const { id, signatoryObj, username } = form;
+  const { trfId, signatoryObj, username } = form;
 
   const ccArray = [
     getEmailFromUsername(signatoryObj.username),
@@ -71,13 +71,13 @@ const getDeletionOptions = (form) => {
   return {
     to: username + '@nbi.ac.uk',
     cc: ccArray,
-    subject: `Request #${id} DELETED from Plant Tissue Culture Service`,
+    subject: `Request #${trfId} DELETED from Plant Tissue Culture Service`,
     text: `
       Dear User,\n
       \n
       Your request has been deleted. You can still view the deleted request here:\n
       \n
-      https://transplant.tsl.ac.uk/form?id=${id}\n
+      https://transplant.tsl.ac.uk/form?id=${trfId}\n
       \n
       If you think this was in error, then please get in touch with us or start this process again.\n
       \n
@@ -88,7 +88,7 @@ const getDeletionOptions = (form) => {
   };
 };
 const getCompletedOptions = (form) => {
-  const { id, username, completedMsg } = form;
+  const { trfId, username, completedMsg } = form;
 
   const completedMsgEmailStr = completedMsg
     ? `
@@ -101,13 +101,13 @@ const getCompletedOptions = (form) => {
 
   return {
     to: getEmailFromUsername(username),
-    subject: `Request #${id} COMPLETED from Plant Tissue Culture Service`,
+    subject: `Request #${trfId} COMPLETED from Plant Tissue Culture Service`,
     text: `
       Dear User,\n
       \n
       Your request has been completed. You can still view the deleted request here:\n
       \n
-      https://transplant.tsl.ac.uk/form?id=${id}\n
+      https://transplant.tsl.ac.uk/form?id=${trfId}\n
       \n
       ${completedMsgEmailStr}
       If you have any questions or problems, then please get in touch with us.\n

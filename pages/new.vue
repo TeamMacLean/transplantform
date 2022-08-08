@@ -2,7 +2,7 @@
   <div>
     <h1 class="title is-2">New Request</h1>
 
-    <form>
+    <form v-if="!fetchingError">
       <div class="row-wrapper">
         <b-field class="field">
           <label class="label custom-label">Date</label>
@@ -35,7 +35,8 @@
             </div>
 
             <p class="username-message">
-              Ensure correct username if manual entry - typos unforgiven!
+              Ensure correct username & signatory if manual entry - typos
+              unforgiven! (<b>Admin</b> only)
             </p>
           </div>
         </b-field>
@@ -165,95 +166,114 @@
         >Submit</b-button
       >
     </form>
+    <div v-else>
+      <div class="error-message">
+        <div class="title is-3">Error</div>
+        <div class="message">{{ fetchingError }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
 import FormConstructCard from '../components/FormConstructCard.vue';
-import {
-  getGenotypes,
-  getSpecies,
-  getPreviousConstructNames,
-  getVectorSelections,
-  getTdnaSelections,
-  getAgroStrains,
-} from '../modules/hardcodedData.js';
 
 export default {
   middleware: 'auth',
   components: {
     FormConstructCard,
   },
-
-  // TODO async data fetching
-  data() {
+  mounted() {
     const { user } = this.$auth.$state;
     const { username, isAdmin, signatories, isGroupLeaderForObj } = user;
 
-    const todaysDate = moment().format('DD-MM-YYYY');
+    this.username = username;
+    this.isAdmin = isAdmin;
+    this.signatories = signatories;
+    this.selectedSignatory =
+      signatories.length === 1 ? signatories[0].name : null;
+    this.isGroupLeaderForObj = isGroupLeaderForObj;
+  },
+  asyncData({ $axios }) {
+    return $axios
+      .get('/api/form/new')
+      .then((res) => {
+        const todaysDate = moment().format('DD-MM-YYYY');
 
-    const getActiveNamesFromObj = (arrOfObj) =>
-      arrOfObj
-        .filter((obj) => obj.archived)
-        .map((filteredObj) => filteredObj.name);
+        const getActiveNamesFromObj = (arrOfObj) => {
+          if (!arrOfObj) {
+            return [];
+          }
+          if (!arrOfObj.length) {
+            return [];
+          }
+          return arrOfObj
+            .filter((obj) => !obj.archived)
+            .map((filteredObj) => filteredObj.name);
+        };
 
-    // TODO async
-    const species = getActiveNamesFromObj(getSpecies());
-    const autocompleteGenotypes = getActiveNamesFromObj(getGenotypes());
-    const vectorSelections = getActiveNamesFromObj(getVectorSelections());
-    const tdnaSelections = getActiveNamesFromObj(getTdnaSelections());
-    const agroStrains = getActiveNamesFromObj(getAgroStrains());
+        const species = getActiveNamesFromObj(res.data.species);
+        const autocompleteGenotypes = getActiveNamesFromObj(res.data.genotypes);
+        const vectorSelections = getActiveNamesFromObj(
+          res.data.vectorSelections
+        );
+        const tdnaSelections = getActiveNamesFromObj(res.data.tdnaSelections);
+        const agroStrains = getActiveNamesFromObj(res.data.agroStrains);
+        const previousConstructNames = res.data.previousConstructNames;
 
-    // TODO async
-    const previousConstructNames = getPreviousConstructNames();
+        return {
+          date: todaysDate,
+          fetchingError: '',
+          username: '',
+          isAdmin: false,
+          signatories: [],
+          isGroupLeaderForObj: null,
+          selectedSignatory: null,
 
-    return {
-      date: todaysDate,
-      username: username,
-      isAdmin: isAdmin,
-      signatories: signatories,
-      isGroupLeaderForObj: isGroupLeaderForObj,
-      selectedSignatory: signatories.length === 1 ? signatories[0].name : null,
-      species: species,
-      selectedSpecies: null,
-      autocompleteGenotypes: autocompleteGenotypes,
-      typedGenotype: '',
-      previousConstructNames: previousConstructNames.map((name) => name.trim()),
-      constructs: [
-        {
-          constructName: '',
-          binaryVectorBackbone: '',
-          vectorSelection: null,
-          tdnaSelection: null,
-          agroStrain: null,
-        },
-      ],
-      vectorSelections: vectorSelections,
-      tdnaSelections: tdnaSelections,
-      agroStrains: agroStrains,
-      notes: '',
-    };
+          species: species,
+          selectedSpecies: null,
+          autocompleteGenotypes: autocompleteGenotypes,
+          typedGenotype: '',
+          previousConstructNames: previousConstructNames.map((name) =>
+            name.trim()
+          ),
+          constructs: [
+            {
+              constructName: '',
+              binaryVectorBackbone: '',
+              vectorSelection: null,
+              tdnaSelection: null,
+              agroStrain: null,
+            },
+          ],
+          vectorSelections: vectorSelections,
+          tdnaSelections: tdnaSelections,
+          agroStrains: agroStrains,
+          notes: '',
+        };
+      })
+      .catch((err) => {
+        console.error(err);
+        return {
+          fetchingError:
+            'Error fetching data. Please try again later or contact system admin.',
+        };
+      });
   },
   methods: {
-    // TODO trim whitespace from admin username
     submitForm() {
-      const isGroupLeaderFor = this.isGroupLeaderForObj
-        ? this.isGroupLeaderForObj.username
-        : null;
-
-      const signatoryObj = this.selectedSignatory
-        ? this.signatories.find(
-            (signatory) => signatory.name === this.selectedSignatory
-          )
-        : null;
+      const selectedSignatoryObj = this.signatories.find(
+        (signatory) => signatory.username === this.selectedSignatory
+      );
+      const isGroupLeader = !!this.isGroupLeaderForObj;
 
       const newFormObj = {
         date: this.date,
         username: this.username.trim(),
         creatorIsAdmin: this.isAdmin,
-        creatorIsGroupLeaderFor: isGroupLeaderFor,
-        signatoryObj: signatoryObj,
+        creatorIsGroupLeader: isGroupLeader,
+        signatoryObj: selectedSignatoryObj, // backend will fetch obj
         species: this.selectedSpecies.trim(),
         genotype: this.typedGenotype.trim(),
         constructs: this.constructs.map((construct) => ({
@@ -266,15 +286,11 @@ export default {
         notes: this.notes.trim(),
       };
 
-      // console.log('newFormObj');
-      // console.log(newFormObj);
-      // return;
-
       return this.$axios
         .post('/api/form/new', newFormObj)
         .then((res) => {
           this.$router.push({
-            path: `/form?id=${res.data.id}`,
+            path: `/form?id=${res.data.trfId}`,
           });
         })
         .catch((err) => {

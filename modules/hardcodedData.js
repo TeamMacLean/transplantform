@@ -190,7 +190,7 @@ export const getFormDataFromId = (id) => ({
   date: '28-07-2022',
   username: 'deeks',
   creatorIsAdmin: true,
-  creatorIsGroupLeaderFor: null,
+  creatorIsGroupLeader: false,
   signatoryObj: {
     name: 'Jonathan Jones (TSL)',
     username: 'jjones',
@@ -226,7 +226,7 @@ export const getForms = () => [
     date: '28-07-2022',
     username: 'test',
     creatorIsAdmin: false,
-    creatorIsGroupLeaderFor: null,
+    creatorIsGroupLeader: false,
     signatoryObj: {
       name: 'Nick Talbot (TSL)',
       username: 'talbotn',
@@ -260,7 +260,7 @@ export const getForms = () => [
     date: '28-07-2022',
     username: 'deeks',
     creatorIsAdmin: true,
-    creatorIsGroupLeaderFor: null,
+    creatorIsGroupLeader: false,
     signatoryObj: {
       name: 'Jonathan Jones (TSL)',
       username: 'jjones',

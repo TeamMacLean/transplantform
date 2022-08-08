@@ -38,7 +38,13 @@
                 class="fa-2x"
                 style="margin-right: 8px"
               />
-              {{ user && user.name ? user.name : 'Unknown User' }}
+              {{
+                user && user.name
+                  ? user.name
+                  : loading
+                  ? 'Loading...'
+                  : 'Unknown User'
+              }}
             </a>
 
             <div class="navbar-dropdown">
@@ -75,9 +81,9 @@
     </nav>
     <!-- TEMP -->
     <div class="custom-admin-knowledge">
-      <div v-show="this.$auth.loggedIn">
+      <div v-show="this.$auth.loggedIn && !this.loading">
         <p class="underline">
-          My username is: '{{ (user && user.username) || '(Not logged in)' }}'
+          My username is: '{{ (user && user.username) || '(Please refresh)' }}'
         </p>
         <p :class="user && user.isAdmin ? 'is-green' : 'is-red'">
           - I am {{ user && user.isAdmin ? '' : ' not ' }} an admin
@@ -112,7 +118,7 @@
 <script>
 export default {
   name: 'HeaderAfterLogin',
-  data() {
+  mounted() {
     const theUser =
       this && this.$auth && this.$auth.$state && this.$auth.$state.user
         ? this.$auth.$state.user
@@ -129,13 +135,23 @@ export default {
     const isNormalLoggedInUser =
       !(theUser && theUser.isAdmin) && !isGroupLeader && !isResearchAssistant;
 
+    this.user = theUser;
+    this.isGroupLeader = isGroupLeader;
+    this.isGroupLeaderFor = isGroupLeaderFor;
+    this.isResearchAssistant = isResearchAssistant;
+    this.isResearchAssistantFor = isResearchAssistantFor;
+    this.isNormalLoggedInUser = isNormalLoggedInUser;
+    this.loading = false;
+  },
+  data() {
     return {
-      user: theUser,
-      isGroupLeader: isGroupLeader,
-      isGroupLeaderFor: isGroupLeaderFor,
-      isResearchAssistant: isResearchAssistant,
-      isResearchAssistantFor: isResearchAssistantFor,
-      isNormalLoggedInUser: isNormalLoggedInUser,
+      user: null,
+      isGroupLeader: null,
+      isGroupLeaderFor: null,
+      isResearchAssistant: null,
+      isResearchAssistantFor: null,
+      isNormalLoggedInUser: null,
+      loading: true,
     };
   },
   methods: {

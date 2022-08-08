@@ -1,16 +1,9 @@
 import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
-
-// changes
-// creatorIsGroupLeaderFor AND signatory are object IDs for pre-existing group
-// CRUD admins on admin.vue
-//      WEBMASTERS=["deeks"]
-//      cannot delete webmasters OR yourself
-// update .env and .env.example local & remote
+const { Schema, models, model } = mongoose;
 
 const Group =
-  mongoose.models.Group ||
-  mongoose.model(
+  models.Group ||
+  model(
     'Group',
     new Schema(
       {
@@ -38,8 +31,8 @@ const Group =
   );
 
 const Admin =
-  mongoose.models.Admin ||
-  mongoose.model(
+  models.Admin ||
+  model(
     'Admin',
     new Schema(
       {
@@ -63,8 +56,8 @@ const Admin =
   );
 
 const Specie =
-  mongoose.models.Specie ||
-  mongoose.model(
+  models.Specie ||
+  model(
     'Specie',
     new Schema(
       {
@@ -85,8 +78,8 @@ const Specie =
     )
   );
 const Genotype =
-  mongoose.models.Genotype ||
-  mongoose.model(
+  models.Genotype ||
+  model(
     'Genotype',
     new Schema(
       {
@@ -107,8 +100,8 @@ const Genotype =
     )
   );
 const VectorSelection =
-  mongoose.models.VectorSelection ||
-  mongoose.model(
+  models.VectorSelection ||
+  model(
     'VectorSelection',
     new Schema(
       {
@@ -129,8 +122,8 @@ const VectorSelection =
     )
   );
 const TdnaSelection =
-  mongoose.models.TdnaSelection ||
-  mongoose.model(
+  models.TdnaSelection ||
+  model(
     'TdnaSelection',
     new Schema(
       {
@@ -151,8 +144,8 @@ const TdnaSelection =
     )
   );
 const AgroStrain =
-  mongoose.models.AgroStrain ||
-  mongoose.model(
+  models.AgroStrain ||
+  model(
     'AgroStrain',
     new Schema(
       {
@@ -174,11 +167,16 @@ const AgroStrain =
   );
 
 const Form =
-  mongoose.models.Form ||
-  mongoose.model(
+  models.Form ||
+  model(
     'Form',
     new Schema(
       {
+        trfId: {
+          type: String,
+          required: true,
+          unique: true,
+        },
         date: {
           type: String,
           required: true,
@@ -191,12 +189,12 @@ const Form =
           type: Boolean,
           required: true,
         },
-        creatorIsGroupLeaderFor: {
-          type: mongoose.Schema.Types.ObjectId,
+        creatorIsGroupLeader: {
+          type: Boolean,
           required: false,
-          default: null,
+          default: false,
         },
-        signatory: {
+        signatoryId: {
           type: Schema.Types.ObjectId,
           required: true,
         },
