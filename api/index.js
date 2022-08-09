@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import ldap from './ldap';
 import _ from 'lodash';
 
+import getEmailOptions from '../modules/getEmailOptions';
 import sendEmail from '../modules/sendEmail';
 
 import {
@@ -37,12 +38,6 @@ const ObjectId = mongoose.Types.ObjectId;
 String.prototype.toObjectId = function () {
   return new ObjectId(this.toString());
 };
-
-// TODO: remove or update all sendErrors
-function sendError(error, res, code) {
-  console.error(error);
-  res.status(code || 500).json({ error: error });
-}
 
 // Create express router
 const router = express.Router();
@@ -93,21 +88,14 @@ router.post('/login', async (req, res) => {
     ldap
       .authenticate(req.body.username, req.body.password)
       .then(async (user) => {
-        //console.log('debug about to get admins');
-        const adminDocs = await Admin.find({});
-        //const admins = JSON.parse(JSON.stringify(adminsRes));
-
+        const adminDocs = await Admin.find({}).sort({ date: 'descending' });
         const admins = adminDocs.map((admin) => admin.name);
-
         const userIsAdmin = admins.includes(req.body.username);
-        //console.log('userIsAdmin', userIsAdmin);
 
-        const allLdapGroups = await Group.find({});
-        //console.log('debug find all groups', allLdapGroups);
+        const allLdapGroups = await Group.find({}).sort({ date: 'descending' });
         const isGroupLeaderForObj =
           allLdapGroups.find((group) => group.username === req.body.username) ||
           null;
-        // console.log('debug just assigned group, now will assign RA');
         const isResearchAssistantForObj =
           allLdapGroups.find((group) => {
             group.researchAssistants.includes(req.body.username);
@@ -119,19 +107,13 @@ router.post('/login', async (req, res) => {
           : null;
 
         var signatories = [];
-        // console.log('debug about to sign signatory');
         if (userIsAdmin) {
           signatories = allLdapGroups;
-          // console.log('userisadmin');
         } else if (isGroupLeaderForObj) {
           signatories = isGroupLeaderForObj;
-          // console.log('debug is group leader');
         } else if (isResearchAssistantFor) {
           signatories = isResearchAssistantForObj;
-          // console.log('debug is research assistant');
         } else {
-          // console.log('about to loop through user.memberOf');
-
           user.memberOf.forEach((ldapGroupStr) => {
             allLdapGroups.forEach((ldapGroup) => {
               const alreadySignatoryUsernames = signatories.map(
@@ -153,6 +135,7 @@ router.post('/login', async (req, res) => {
           researchAssistants: signatory.researchAssistants,
         }));
 
+        // signObj cannot be too big
         const signObj = {
           username: req.body.username,
           name: user.displayName,
@@ -171,13 +154,11 @@ router.post('/login', async (req, res) => {
         //   signatories: [{ username: 'talbotn', name: 'Nick Talbot' }],
         // };
 
-        sign(signObj) //cannot use entire user object as too big
+        sign(signObj)
           .then((token) => {
-            // console.log('signObj was SUCCESS:', signObj);
             res.status(200).json({ token: token });
           })
           .catch((err) => {
-            // console.log(err, 'ERRORNEOUS');
             res.status(500).json({ error: err });
           });
       })
@@ -190,23 +171,24 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  //this.$store.dispatch('setUser', null);
-
   res.sendStatus(200);
 });
 router.post('/logout', (req, res) => {
-  //this.$store.dispatch('setUser', null);
   res.sendStatus(200);
 });
 
 router.get('/form/new', async (req, res) => {
   try {
-    const species = await Specie.find({});
-    const genotypes = await Genotype.find({});
-    const vectorSelections = await VectorSelection.find({});
-    const tdnaSelections = await TdnaSelection.find({});
-    const agroStrains = await AgroStrain.find({});
-    const forms = await Form.find({});
+    const species = await Specie.find({}).sort({ date: 'descending' });
+    const genotypes = await Genotype.find({}).sort({ date: 'descending' });
+    const vectorSelections = await VectorSelection.find({}).sort({
+      date: 'descending',
+    });
+    const tdnaSelections = await TdnaSelection.find({}).sort({
+      date: 'descending',
+    });
+    const agroStrains = await AgroStrain.find({}).sort({ date: 'descending' });
+    const forms = await Form.find({}).sort({ date: 'descending' });
     const nestedConstructs = forms.map((form) => form.constructs);
     const flatConstructs = nestedConstructs.flat();
     const previousConstructNames = flatConstructs.map(
@@ -229,85 +211,85 @@ router.get('/form/new', async (req, res) => {
 });
 
 router.post('/form/new', async (req, res) => {
-  try {
-    const {
-      date,
-      username,
-      creatorIsAdmin,
-      creatorIsGroupLeader,
-      signatoryObj,
-      species,
-      genotype,
-      constructs,
-      notes,
-    } = req.body;
+  const {
+    date,
+    username,
+    creatorIsAdmin,
+    creatorIsGroupLeader,
+    signatoryObj,
+    species,
+    genotype,
+    constructs,
+    notes,
+  } = req.body;
 
-    let status =
-      creatorIsGroupLeader || creatorIsAdmin ? 'approved' : 'pending approval';
+  let theStatus =
+    creatorIsGroupLeader || creatorIsAdmin ? 'approved' : 'pending approval';
 
-    const signatoryId = signatoryObj._id;
-    const signatoryObjectId = mongoose.Types.ObjectId(signatoryId);
+  const signatoryId = signatoryObj._id;
+  const signatoryObjectId = mongoose.Types.ObjectId(signatoryId);
 
-    // calculate new TRF ID
-    const forms = await Form.find({});
-    const trfIds = forms.map((f) => f.trfId);
-    var counter = 1;
-    var newTrfIdStr = 'TRF' + counter;
-    function recurseCheck(trfIdToCheck, counter) {
-      if (trfIds.includes(trfIdToCheck)) {
-        counter++;
-        trfIdToCheck = 'TRF' + counter;
-        return recurseCheck(trfIdToCheck, counter);
-      } else {
-        return trfIdToCheck;
-      }
+  // calculate new TRF ID
+  const forms = await Form.find({}).sort({ date: 'descending' });
+  const trfIds = forms.map((f) => f.trfId);
+  var counter = 1;
+  var newTrfIdStr = 'TRF' + counter;
+  function recurseCheck(trfIdToCheck, counter) {
+    if (trfIds.includes(trfIdToCheck)) {
+      counter++;
+      trfIdToCheck = 'TRF' + counter;
+      return recurseCheck(trfIdToCheck, counter);
+    } else {
+      return trfIdToCheck;
     }
-    newTrfIdStr = recurseCheck(newTrfIdStr, counter);
+  }
+  newTrfIdStr = recurseCheck(newTrfIdStr, counter);
 
-    const newFormEntry = await Form.create({
-      date: date,
-      username: username,
-      creatorIsAdmin: creatorIsAdmin,
-      creatorIsGroupLeader: creatorIsGroupLeader,
-      signatoryId: signatoryObjectId,
-      species: species,
-      genotype: genotype,
-      constructs: constructs,
-      notes: notes,
-      status: status,
+  // console.log('about to create form', newTrfIdStr);
+  //const newFormEntry =
+  await Form.create({
+    date: date,
+    username: username,
+    creatorIsAdmin: creatorIsAdmin,
+    creatorIsGroupLeader: creatorIsGroupLeader,
+    signatoryId: signatoryObjectId,
+    species: species,
+    genotype: genotype,
+    constructs: constructs,
+    notes: notes,
+    status: theStatus,
+    trfId: newTrfIdStr,
+  }).catch((err) => {
+    res.send({ status: 500, error: err });
+    console.err(error);
+  });
+  // console.log('form created', newFormEntry);
+
+  const allGenotypes = await Genotype.find({}).sort({ date: 'descending' });
+  const allGenotypeNames = allGenotypes.length
+    ? allGenotypes.map((genotype) => genotype.name.toLowerCase())
+    : [];
+  if (!allGenotypeNames.includes(genotype.toLowerCase())) {
+    const res = await Genotype.create({
+      name: genotype,
+      archived: false,
+    });
+  }
+
+  if (theStatus === 'pending approval') {
+    // send Email to group leader and CC research assistant
+    const emailOptions = getEmailOptions('approval', {
+      signatoryObj,
       trfId: newTrfIdStr,
     });
-
-    const allGenotypes = await Genotype.find({});
-    const allGenotypeNames = allGenotypes.map((genotype) =>
-      genotype.name.toLowerCase()
-    );
-    if (!allGenotypeNames.includes(genotype.toLowerCase())) {
-      await Genotype.create({
-        name: genotype,
-        archived: false,
-      });
-    }
-
-    if (!newFormEntry._id /* error */) {
-      res.send({ status: 'error', error: newFormEntry.error });
-      console.error(newFormEntry.error);
-    } else {
-      if (status === 'pending approval') {
-        // send Email to group leader and CC research assistant
-        const emailResults = await sendEmail('approval', {
-          signatoryObj,
-          trfId: newTrfIdStr,
-        });
-      }
-
-      res.send({ status: 200, trfId: newTrfIdStr });
-    }
-  } catch (error) {
-    // TODO correct status code and test
-    res.send({ status: 'error', error: error });
-    console.error(error);
+    const emailResults = await sendEmail(emailOptions).catch((err) => {
+      console.error('email failed', err);
+      res.send({ status: 200, error: err });
+    });
+    // console.log('email sent', emailResults);
   }
+
+  res.send({ status: 200, trfId: newTrfIdStr });
 });
 
 router.post('/form/delete', async (req, res) => {
@@ -324,14 +306,23 @@ router.post('/form/delete', async (req, res) => {
 
     if (result.ok) {
       // send Email to group leader and user and admin
-      // const emailResults = await sendEmail('deletion', { trfId, signatoryObj, username });
+
+      const emailOptions = getEmailOptions('deletion', {
+        signatoryObj,
+        trfId,
+        username,
+      });
+      const emailResults = await sendEmail(emailOptions).catch((err) => {
+        console.error('email failed', err);
+        res.send({ status: 200, error: err });
+      });
+      // console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
       throw new Error('Error updating form status');
     }
   } catch (error) {
-    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -357,7 +348,6 @@ router.post('/form/approve', async (req, res) => {
       throw new Error('Error updating form status');
     }
   } catch (error) {
-    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -383,7 +373,6 @@ router.post('/form/deny', async (req, res) => {
       throw new Error('Error updating form status');
     }
   } catch (error) {
-    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -401,7 +390,7 @@ router.post('/form/inprogress', async (req, res) => {
       {
         $set: {
           status: 'in progress',
-          // overwrite previous constructs with new shortnames
+          // overwrite previous constructs with new shortNames
           constructs: newConstructs,
         },
       }
@@ -411,14 +400,20 @@ router.post('/form/inprogress', async (req, res) => {
       // could email user but they didnt ask for this feature
 
       // send Email to admin (though unnecessary it was requested)
-      // const emailResults = await sendEmail('in progress', { ...req.body });
+      const emailOptions = getEmailOptions('in progress', {
+        trfId,
+      });
+      const emailResults = await sendEmail(emailOptions).catch((err) => {
+        console.error('email failed', err);
+        res.send({ status: 200, error: err });
+      });
+      // console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
       throw new Error('Error updating form status');
     }
   } catch (error) {
-    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -438,14 +433,23 @@ router.post('/form/completed', async (req, res) => {
 
     if (result.ok) {
       // send Email to admin (though unnecessary it was requested)
-      // const emailResults = await sendEmail('completed', { ...req.body });
+
+      const emailOptions = getEmailOptions('completed', {
+        trfId,
+        username,
+        completedMsg,
+      });
+      const emailResults = await sendEmail(emailOptions).catch((err) => {
+        console.error('email failed', err);
+        res.send({ status: 200, error: err });
+      });
+      // console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
       throw new Error('Error updating form status');
     }
   } catch (error) {
-    // TODO correct status code and test
     res.send({ status: 'error', error: error });
     console.error(error);
   }
@@ -454,15 +458,17 @@ router.post('/form/completed', async (req, res) => {
 // get everything needed for admin page
 router.get('/admin/', async (req, res) => {
   try {
-    const admins = await Admin.find({});
-    const species = await Specie.find({});
-    const genotypes = await Genotype.find({});
-    const vectorSelections = await VectorSelection.find({});
-    const tdnaSelections = await TdnaSelection.find({});
-    const agroStrains = await AgroStrain.find({});
-    const groups = await Group.find({});
-
-    // TODO ensure sorted by createdAt
+    const admins = await Admin.find({}).sort({ date: 'descending' });
+    const species = await Specie.find({}).sort({ date: 'descending' });
+    const genotypes = await Genotype.find({}).sort({ date: 'descending' });
+    const vectorSelections = await VectorSelection.find({}).sort({
+      date: 'descending',
+    });
+    const tdnaSelections = await TdnaSelection.find({}).sort({
+      date: 'descending',
+    });
+    const agroStrains = await AgroStrain.find({}).sort({ date: 'descending' });
+    const groups = await Group.find({}).sort({ date: 'descending' });
 
     res.send({
       status: 200,
@@ -546,6 +552,19 @@ router.post('/admin/group', async (req, res) => {
   }
 });
 
+// router.post('/email', async (req, res) => {
+//   try {
+//     const emailObj = getEmailOptions('test', {});
+//     const emailResults = await sendEmail(emailObj);
+//     console.log('emailRes', emailResults);
+
+//     res.send({ status: 200, emailResults });
+//   } catch (error) {
+//     res.send({ status: 'error', error: error });
+//     console.error(error);
+//   }
+// });
+
 router.post('/admin/additional', async (req, res) => {
   try {
     const { mongoName, newFieldValue } = req.body;
@@ -556,11 +575,7 @@ router.post('/admin/additional', async (req, res) => {
       archived: false,
     });
 
-    if (result.ok) {
-      res.send({ status: 200 });
-    } else {
-      throw new Error('Error updating form status in DB');
-    }
+    res.send({ status: 200 });
   } catch (error) {
     res.send({ status: 'error', error: error });
     console.error(error);
@@ -569,7 +584,7 @@ router.post('/admin/additional', async (req, res) => {
 
 router.get('/constructs', async (req, res) => {
   try {
-    const forms = await Form.find({});
+    const forms = await Form.find({}).sort({ date: 'descending' });
     const formsWithNestedConstructs = forms.map((form) => ({
       constructs: form.constructs,
       species: form.species,
@@ -593,8 +608,6 @@ router.get('/constructs', async (req, res) => {
       });
     });
 
-    // TODO ensure sorted by createdAt
-
     res.send({
       status: 200,
       constructs: flatConstructs,
@@ -607,10 +620,9 @@ router.get('/constructs', async (req, res) => {
 
 router.get('/forms', async (req, res) => {
   try {
-    const forms = await Form.find({});
-    // TODO ensure sorted by createdAt
+    const forms = await Form.find({}).sort({ date: 'descending' });
 
-    const ldapGroups = await Group.find({});
+    const ldapGroups = await Group.find({}).sort({ date: 'descending' });
 
     const formsWithSignatories = forms.map((form) => {
       const theSigObj = ldapGroups.find((group) => {
@@ -650,9 +662,7 @@ router.get('/form', async (req, res) => {
   try {
     const trfId = req.originalUrl.split('=')[1];
 
-    const forms = await Form.find({});
-
-    const theForm = forms.find((form) => form.trfId === trfId);
+    const theForm = await Form.findOne({ trfId: trfId });
     const groupId = mongoose.Types.ObjectId(theForm.signatoryId);
     const signObj = await Group.findById(groupId);
 

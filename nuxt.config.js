@@ -11,6 +11,8 @@ export default {
     WEBMASTERS: process.env.WEBMASTERS,
     ADMIN_GROUP_EMAIL: process.env.ADMIN_GROUP_EMAIL,
     DIVERT_EMAILS_USERNAME: process.env.DIVERT_EMAILS_USERNAME,
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
   },
   // DOES NOT WORK COS MODELS ISSUE watch: ['~/api/*.js'],
   /*

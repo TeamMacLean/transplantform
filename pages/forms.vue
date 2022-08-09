@@ -103,7 +103,7 @@
           <tbody v-show="!displayResults.length">
             <td>
               No results{{
-                this.query.length ? 'from "' + this.query + '"' : ''
+                this.query.length ? ' from "' + this.query + '"' : ''
               }}.
             </td>
           </tbody>
@@ -158,7 +158,7 @@ export default {
             isAdmin: false,
             isGroupLeader: false,
             isResearchAssistant: false,
-            selectedStatuses: statuses,
+            selectedStatuses: statuses.filter((s) => s !== 'deleted'),
             loading: true,
             sessionUser: false,
           };
@@ -261,7 +261,20 @@ export default {
     paginatedItems() {
       let page_number = this.current - 1;
 
-      const displayResultsWithPosition = this.displayResults.map(
+      const unsortedDisplayResults = this.displayResults.slice();
+      const sortedDisplayResults = unsortedDisplayResults.sort((a, b) => {
+        const aTrfNumber = parseInt(a.trfId.match(/\d+/g)[0]);
+        const bTrfNumber = parseInt(b.trfId.match(/\d+/g)[0]);
+        if (aTrfNumber < bTrfNumber) {
+          return 1;
+        }
+        if (aTrfNumber > bTrfNumber) {
+          return -1;
+        }
+        return 0;
+      });
+
+      const displayResultsWithPosition = sortedDisplayResults.map(
         (construct, index) => {
           return {
             ...construct,

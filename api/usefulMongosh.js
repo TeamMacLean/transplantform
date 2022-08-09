@@ -23,3 +23,5 @@ db.groups.update(
   { _id: ObjectId('5e0b6b3f25ddae1f53b62228') },
   { $push: { researchAssistants: 'pagem' } }
 );
+
+const admins = await Admin.find({}).sort({ date: 'descending' });

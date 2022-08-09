@@ -6,11 +6,9 @@
           {{ getTitleText }}
         </h1>
 
-        <div v-if="loading">
-          <b-loading is-full-page v-model="loading"></b-loading>
-        </div>
+        <b-loading v-if="loading" is-full-page></b-loading>
         <div v-else-if="error">
-          <p>
+          <p class="pb10">
             {{ error }}
           </p>
         </div>
@@ -21,7 +19,7 @@
           </p>
         </div>
         <div v-else>
-          <div class="status-wrapper">
+          <div v-show="!printable" class="status-wrapper">
             <h4 class="title is-4">
               Status:
               {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
@@ -78,21 +76,29 @@
                   </div>
                 </div>
               </div>
+              <b-button @click="cancelSetInProgress" type="is-danger"
+                >Cancel</b-button
+              >
               <b-button @click="handleCompleteSetInProgress" type="is-success"
                 >Complete Set 'In Progress'</b-button
               >
             </div>
-            <div v-if="sessionIsAdmin && status === 'in progress'">
-              <b-button @click="handlePrint" type="is-success is-light"
-                >Print request</b-button
-              >
-              <b-button @click="handleComplete" type="is-success"
+            <div
+              class="printAndCompleteWrapper"
+              v-if="sessionIsAdmin && status === 'in progress'"
+            >
+              <div class="printWrapper">
+                <b-button @click="handlePrint" type="is-success is-light"
+                  >Print request</b-button
+                >
+              </div>
+              <b-button class="ml10" @click="handleComplete" type="is-success"
                 >Complete request</b-button
               >
             </div>
           </div>
 
-          <div class="row-wrapper">
+          <div class="row-wrapper mb20">
             <b-field label="Date">
               <div>{{ this.date }}</div>
             </b-field>
@@ -113,8 +119,6 @@
             </b-field>
           </div>
 
-          <hr />
-
           <h3 class="title is-4">Constructs</h3>
           <h3 class="title is-6">In priority order</h3>
 
@@ -129,7 +133,7 @@
           </div>
 
           <b-field label="Notes">
-            <div>{{ notes }}</div>
+            <div>{{ notes || '[No notes]' }}</div>
           </b-field>
 
           <hr />
@@ -138,7 +142,7 @@
     </div>
     <b-button
       type="is-danger"
-      v-if="status !== 'deleted'"
+      v-if="status !== 'deleted' && !printable && !error"
       @click="handleDeleteRequest"
       >Delete request</b-button
     >
@@ -155,7 +159,7 @@ export default {
   },
   mounted() {
     // these are from computed but asyncData hates them there
-    // TODO refactor this
+    // TODO refactor these functions dropped into this mounted hook
     function sessionIsAdmin(ctx) {
       if (!ctx || !ctx.$auth) {
         return false;
@@ -171,16 +175,28 @@ export default {
       return ctx.$auth.$state.user.username;
     }
     function sessionIsSignatory(ctx) {
-      if (!ctx || !ctx.$auth) {
+      if (
+        !ctx ||
+        !ctx.$auth ||
+        !ctx.$auth.$state ||
+        !ctx.$auth.$state.user ||
+        !ctx.$auth.$state.user.username ||
+        !ctx.signatoryObj ||
+        !ctx.signatoryObj.username
+      ) {
         return false;
       }
 
       return ctx.$auth.$state.user.username === ctx.signatoryObj.username;
     }
     function authorisedToApprove(ctx) {
-      // TODO get backend not to send data but error message if not authorised
-
-      if (!ctx || !ctx.$auth) {
+      if (
+        !ctx ||
+        !ctx.$auth ||
+        !ctx.$auth.$state ||
+        !ctx.$auth.$state.user ||
+        !ctx.signatoryObj
+      ) {
         return false;
       }
 
@@ -210,9 +226,7 @@ export default {
       );
     }
     function authorisedToView(ctx) {
-      // TODO get backend not to send data but error message if not authorised
-
-      if (!ctx || !ctx.$auth) {
+      if (!ctx || !ctx.$auth || !ctx.signatoryObj) {
         return false;
       }
 
@@ -294,6 +308,7 @@ export default {
             error: '', // initialise regardless to avoid errors
             completedMsg: '',
             completingInProgressSteps: false,
+            printable: false,
             //
             sessionIsAdmin: false,
             sessionUsername: false,
@@ -307,6 +322,28 @@ export default {
           console.error(err);
           return {
             error: 'No TRF found from URL params',
+            //
+            creatorIsGroupLeader: false,
+            notes: null,
+            status: null,
+            _id: null,
+            date: null,
+            username: null,
+            creatorIsAdmin: null,
+            signatoryObj: null,
+            species: null,
+            genotype: null,
+            constructs: null,
+            trfId: null,
+            completedMsg: '',
+            completingInProgressSteps: false,
+            printable: false,
+            sessionIsAdmin: false,
+            sessionUsername: false,
+            sessionIsSignatory: false,
+            authorisedToApprove: false,
+            authorisedToView: false,
+            loading: false,
           };
         }
       })
@@ -319,8 +356,11 @@ export default {
   },
   methods: {
     handlePrint() {
-      //this.$htmlToPaper('printSection');
-      window.print();
+      this.printable = true;
+      setTimeout(window.print, 300);
+      window.onafterprint = () => {
+        this.printable = false;
+      };
     },
     handleDeleteRequest() {
       this.$buefy.dialog.confirm({
@@ -396,6 +436,9 @@ export default {
     },
     handleInitiateSetInProgress() {
       this.completingInProgressSteps = true;
+    },
+    cancelSetInProgress() {
+      this.completingInProgressSteps = false;
     },
     handleCompleteSetInProgress() {
       this.$buefy.dialog.confirm({
@@ -495,9 +538,6 @@ export default {
             .catch((err) => {
               this.throwUnexpectedErrorForUser(err);
             });
-
-          // TODO send rejection to API and get a response
-          // ...
         },
       });
     },
@@ -681,5 +721,27 @@ hr {
 
 .row-wrapper > *:not(:first-child) {
   margin-left: 20px;
+}
+
+.printAndCompleteWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.pl10 {
+  padding-left: 10px;
+}
+
+.pb10 {
+  padding-bottom: 10px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
+}
+
+.ml10 {
+  margin-left: 10px;
 }
 </style>

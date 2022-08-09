@@ -27,6 +27,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.6.10",
     "node-sass": "^4.14.1",
+    "nodemailer": "^6.7.7",
     "nuxt": "^2.15.0",
     "nuxt-buefy": "^0.4.4",
     "nuxt-fontawesome": "^0.4.0",

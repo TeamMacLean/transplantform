@@ -1,174 +1,60 @@
-const { DIVERT_EMAILS_USERNAME, ADMIN_GROUP_EMAIL } = process.env;
+'use strict';
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+import getEmailOptions from './getEmailOptions';
+dotenv.config();
 
-const adminEmailString = DIVERT_EMAILS_USERNAME
-  ? DIVERT_EMAILS_USERNAME + '+admingroup@nbi.ac.uk'
-  : ADMIN_GROUP_EMAIL;
+const { SMTP_HOST, SMTP_PORT, ADMIN_GROUP_EMAIL } = process.env;
 
-const getEmailFromUsername = (username) => {
-  if (DIVERT_EMAILS_USERNAME) {
-    return DIVERT_EMAILS_USERNAME + '+' + username + '@nbi.ac.uk';
-  } else {
-    return username + '@nbi.ac.uk';
+/**
+ * actualSending
+ * @param {Object} mailObj - Email meta data and body
+ * @param {String} from - Email address of the sender
+ * @param {Array} recipients - Array of recipients email address
+ * @param {String} subject - Subject of the email
+ * @param {String} message - message
+ */
+const sendEmail = async (mailObj) => {
+  const { to, cc, subject, html } = mailObj;
+
+  if (!to || !subject || !html) {
+    throw new Error('Missing required fields in the mailObj');
   }
-};
 
-const getApprovalOptions = (form) => {
-  const { trfId, signatoryObj } = form;
-
-  const signatoryEmail = getEmailFromUsername(signatoryObj.username);
-
-  // check this works
-  const researchAssistantsEmailArr = signatoryObj.researchAssistants.map((ra) =>
-    getEmailFromUsername(ra)
-  );
-
-  return {
-    to: signatoryEmail,
-    cc: researchAssistantsEmailArr,
-    subject: `New Request #${trfId} for Plant Tissue Culture Service - Approval Required`,
-    text: `
-      Dear Group Leader,\n
-      \n
-      A new form has been submitted by a member of your group. Please approve or deny by heading to this link:\n
-      \n
-      https://transplant.tsl.ac.uk/form?id=${trfId}\n
-      \n
-      Regards,\n
-      \n
-      The Plant Tissue Culture Service Team
-    `,
-  };
-};
-
-const getInProgressOptions = (form) => {
-  const { trfId } = form;
-
-  return {
-    to: adminEmailString,
-    subject: `Request #${trfId} in progress for Plant Tissue Culture Service - printout available`,
-    text: `
-      Dear Plant Tissue Culture Service Team Member,\n
-      \n
-      A form has been set in progress by a member of your team. Please find a printable version of the form by heading to this link:\n
-      \n
-      https://transplant.tsl.ac.uk/form?id=${trfId}\n
-      \n
-      Regards,\n
-      \n
-      The Plant Tissue Culture Service Team
-    `,
-  };
-};
-
-const getDeletionOptions = (form) => {
-  const { trfId, signatoryObj, username } = form;
-
-  const ccArray = [
-    getEmailFromUsername(signatoryObj.username),
-    adminEmailString,
-  ];
-
-  return {
-    to: username + '@nbi.ac.uk',
-    cc: ccArray,
-    subject: `Request #${trfId} DELETED from Plant Tissue Culture Service`,
-    text: `
-      Dear User,\n
-      \n
-      Your request has been deleted. You can still view the deleted request here:\n
-      \n
-      https://transplant.tsl.ac.uk/form?id=${trfId}\n
-      \n
-      If you think this was in error, then please get in touch with us or start this process again.\n
-      \n
-      Regards,\n
-      \n
-      The Plant Tissue Culture Service Team
-    `,
-  };
-};
-const getCompletedOptions = (form) => {
-  const { trfId, username, completedMsg } = form;
-
-  const completedMsgEmailStr = completedMsg
-    ? `
-    The Plant Tissue Culture Service Team adds the following note to your completed request:\n
-    \n
-    "${completedMsg}"\n
-    \n
-  `
-    : '';
-
-  return {
-    to: getEmailFromUsername(username),
-    subject: `Request #${trfId} COMPLETED from Plant Tissue Culture Service`,
-    text: `
-      Dear User,\n
-      \n
-      Your request has been completed. You can still view the deleted request here:\n
-      \n
-      https://transplant.tsl.ac.uk/form?id=${trfId}\n
-      \n
-      ${completedMsgEmailStr}
-      If you have any questions or problems, then please get in touch with us.\n
-      \n
-      Regards,\n
-      \n
-      The Plant Tissue Culture Service Team
-    `,
-  };
-};
-
-const getMutatableOptions = (strategy, form) => {
-  switch (strategy) {
-    case 'approval':
-      return getApprovalOptions(form);
-    case 'deletion':
-      return getDeletionOptions(form);
-    case 'in progress':
-      return getInProgressOptions(form);
-    case 'completed':
-      return getCompletedOptions(form);
-    default:
-      return {};
-  }
-};
-
-// TODO
-const trueSendEmail = (strategy, form) => {
-  return new Promise((resolve, reject) => {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: '',
-        pass: '',
-      },
+  try {
+    // Create a transporter
+    let transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      // auth: {
+      //   user: "hello@schadokar.dev",
+      //   pass: "SMTP-KEY",
+      // },
+      //connectionTimeout: 10000,
     });
-    const mutatableOptions = getMutatableOptions(strategy, form);
-    const mailOptions = {
-      from: adminEmailString,
-      ...mutatableOptions,
+    // console.log('about to send message', mailObj);
+    // send mail with defined transport object
+    let mailStatus = await transporter.sendMail({
+      from: 'TSL Transplant Website transplant@nbi.ac.uk', // sender address
+      replyTo: ADMIN_GROUP_EMAIL,
+      to: to, // list of recipients
+      cc: cc, // list of additional recipients
+      subject: subject, // Subject line
+      html: html, // plain text
+    });
+    const betterMailStatus = {
+      accepted: mailStatus.accepted,
+      rejected: mailStatus.rejected,
+      ...mailStatus.envelope,
     };
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(info);
-      }
-    });
-  });
-};
-
-const sendEmail = (strategy, form) => {
-  return new Promise((resolve, reject) => {
-    trueSendEmail(strategy, form)
-      .then((info) => {
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+    // console.log('Message sent:', betterMailStatus);
+    return `Message sent: ${mailStatus.messageId}`;
+  } catch (error) {
+    console.error(error);
+    throw new Error(
+      `Something went wrong in the sendMail method. Error: ${error.message}`
+    );
+  }
 };
 
 export default sendEmail;

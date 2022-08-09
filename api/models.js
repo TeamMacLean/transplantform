@@ -235,6 +235,10 @@ const Form =
               type: String,
               required: true,
             },
+            shortName: {
+              type: String,
+              required: false,
+            },
           },
         ],
         notes: {

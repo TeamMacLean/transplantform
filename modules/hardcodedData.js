@@ -1,5 +1,3 @@
-// TODO get from database
-
 const groups = [
   {
     name: 'Jonathan Jones',
@@ -166,7 +164,6 @@ export const getAdmins = () =>
 export const getPreviousConstructNames = () => ['Daisy', 'Gary'];
 
 export const getConstructsFromAllForms = () => {
-  // TODO this gets from one form, not multiple
   const form = getFormDataFromId('TRF10');
 
   const { constructs, species, genotype, trfId } = form;
@@ -184,7 +181,6 @@ export const getConstructsFromAllForms = () => {
   });
 };
 
-// TODO check authorization
 export const getFormDataFromId = (id) => ({
   trfId: id,
   date: '28-07-2022',

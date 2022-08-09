@@ -6,8 +6,7 @@
       </div>
 
       <div class="card-content">
-        <!-- TODO George revert-->
-        <form @submit.prevent="onSubmit" v-if="true || !$store.state.user">
+        <form @submit.prevent="onSubmit" v-if="!$store.state.user">
           <div class="field has-addons">
             <p class="control is-expanded">
               <input

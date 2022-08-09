@@ -289,14 +289,46 @@ export default {
       return this.$axios
         .post('/api/form/new', newFormObj)
         .then((res) => {
-          this.$router.push({
-            path: `/form?id=${res.data.trfId}`,
-          });
+          if (res.status === 200) {
+            console.log('created form, trfId:', res.data.trfId, res.trfId);
+            if (res.data.error) {
+              this.$buefy.toast.open({
+                message:
+                  'Form added to database but another error occurred: ' +
+                  res.data.error,
+                type: 'is-danger',
+              });
+              this.$router.push('/new');
+            } else {
+              this.$buefy.toast.open({
+                message: 'Added to database!',
+                type: 'is-success',
+              });
+              if (!!res.data.trfId) {
+                this.$router.push(`/form?id=${res.data.trfId}`);
+              } else {
+                this.$router.push('/new');
+              }
+            }
+          } else if (res.status === 500 && res.data.error) {
+            this.$buefy.toast.open({
+              message: 'Unexpected error. Please contact system admin.',
+              type: 'is-danger',
+            });
+            this.$router.push('/new');
+          } else {
+            this.$buefy.toast.open({
+              message: 'Unexpected error. Please contact system admin.',
+              type: 'is-danger',
+            });
+            this.$router.push('/new');
+          }
         })
         .catch((err) => {
           console.error(err);
           this.$buefy.toast.open({
-            message: 'Unexpected error. Please contact system admin.',
+            message:
+              err.message || 'Unexpected error. Please contact system admin.',
             type: 'is-danger',
           });
         });
