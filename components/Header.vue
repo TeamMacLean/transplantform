@@ -84,9 +84,7 @@
     </nav>
     <!-- TEMP -->
     <div class="custom-admin-knowledge">
-      <div
-        v-show="this.$auth.loggedIn && !this.loading && this.webmasterTesting"
-      >
+      <div v-show="this.$auth.loggedIn && this.webmasterTesting">
         <div v-if="!user || !user.username">Please refresh for user info</div>
         <div v-else>
           <p class="underline">
@@ -128,48 +126,37 @@
 <script>
 export default {
   name: 'HeaderAfterLogin',
-  mounted() {
-    if (this.user === null) {
-      const theUser =
-        this && this.$auth && this.$auth.$state && this.$auth.$state.user
-          ? this.$auth.$state.user
-          : null;
-
-      const isGroupLeader = !!(theUser && theUser.isGroupLeaderForObj);
-      const isGroupLeaderFor = isGroupLeader
-        ? theUser.isGroupLeaderForObj.username
-        : null;
-      const isResearchAssistant = !!(theUser && theUser.isResearchAssistantFor);
-      const isResearchAssistantFor = isResearchAssistant
-        ? theUser.isResearchAssistantFor
-        : null;
-      const isNormalLoggedInUser =
-        !(theUser && theUser.isAdmin) && !isGroupLeader && !isResearchAssistant;
-
-      this.user = theUser;
-      this.isGroupLeader = isGroupLeader;
-      this.isGroupLeaderFor = isGroupLeaderFor;
-      this.isResearchAssistant = isResearchAssistant;
-      this.isResearchAssistantFor = isResearchAssistantFor;
-      this.isNormalLoggedInUser = isNormalLoggedInUser;
-      this.loading = false;
-
-      this.$nuxt.refresh();
-    }
-  },
   data() {
     const { WEBMASTER_TESTING } = process.env;
     const webmasterTesting = WEBMASTER_TESTING === 'true';
     return {
-      user: null,
-      isGroupLeader: null,
-      isGroupLeaderFor: null,
-      isResearchAssistant: null,
-      isResearchAssistantFor: null,
-      isNormalLoggedInUser: null,
-      loading: true,
       webmasterTesting,
     };
+  },
+  computed: {
+    user() {
+      return this.$auth.$state.user;
+    },
+    isGroupLeader() {
+      return this.user && this.user.isGroupLeaderForObj;
+    },
+    isGroupLeaderFor() {
+      return this.isGroupLeader ? this.user.isGroupLeaderForObj.username : null;
+    },
+    isResearchAssistant() {
+      return this.user && this.user.isResearchAssistantFor;
+    },
+    isResearchAssistantFor() {
+      return this.isResearchAssistant ? this.user.isResearchAssistantFor : null;
+    },
+    isNormalLoggedInUser() {
+      return (
+        !this.user ||
+        !this.user.isAdmin ||
+        !this.isGroupLeader ||
+        !this.isResearchAssistant
+      );
+    },
   },
   methods: {
     async LogOut() {
