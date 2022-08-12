@@ -65,7 +65,16 @@
               <a class="navbar-item" v-on:click="LogOut"> Sign out </a>
             </div>
           </div>
-          <div v-show="!this.$auth.loggedIn" class="navbar-item">
+          <div
+            v-show="
+              !this.$auth.loggedIn
+              /**
+               * DOES NOT WORK ON REFRESH PAGE
+               * && this.$router.history.current.name !== 'signin'
+               * */
+            "
+            class="navbar-item"
+          >
             <div class="buttons">
               <nuxt-link
                 to="/signin"
@@ -84,34 +93,39 @@
       <div
         v-show="this.$auth.loggedIn && !this.loading && this.webmasterTesting"
       >
-        <p class="underline">
-          My username is: '{{ (user && user.username) || '(Please refresh)' }}'
-        </p>
-        <p :class="user && user.isAdmin ? 'is-green' : 'is-red'">
-          - I am {{ user && user.isAdmin ? '' : ' not ' }} an admin
-        </p>
-        <p :class="isGroupLeader ? 'is-green' : 'is-red'">
-          - I am
-          {{
-            isGroupLeader
-              ? ' a group leader for ' + isGroupLeaderFor
-              : ' not a group leader'
-          }}
-        </p>
-        <p :class="isResearchAssistant ? 'is-green' : 'is-red'">
-          - I am
-          {{
-            isResearchAssistant
-              ? ' a research assistant for ' + isResearchAssistantFor
-              : ' not a research assistant'
-          }}
-        </p>
-        <p :class="isNormalLoggedInUser ? 'is-green' : 'is-red'">
-          - I am {{ isNormalLoggedInUser ? '' : ' not ' }} just a normal user
-        </p>
-      </div>
-      <div v-show="!this.$auth.loggedIn">
-        <p>No one is logged in.</p>
+        <div v-if="!user || !user.username">Please refresh for user info</div>
+        <div v-else>
+          <p class="underline">
+            My username is: '{{
+              (user && user.username) || '(Please refresh)'
+            }}'
+          </p>
+          <p :class="user && user.isAdmin ? 'is-green' : 'is-red'">
+            - I am {{ user && user.isAdmin ? '' : ' not ' }} an admin
+          </p>
+          <p :class="isGroupLeader ? 'is-green' : 'is-red'">
+            - I am
+            {{
+              isGroupLeader
+                ? ' a group leader for ' + isGroupLeaderFor
+                : ' not a group leader'
+            }}
+          </p>
+          <p :class="isResearchAssistant ? 'is-green' : 'is-red'">
+            - I am
+            {{
+              isResearchAssistant
+                ? ' a research assistant for ' + isResearchAssistantFor
+                : ' not a research assistant'
+            }}
+          </p>
+          <p :class="isNormalLoggedInUser ? 'is-green' : 'is-red'">
+            - I am {{ isNormalLoggedInUser ? '' : ' not ' }} just a normal user
+          </p>
+        </div>
+        <div v-show="!this.$auth.loggedIn">
+          <p>No one is logged in.</p>
+        </div>
       </div>
     </div>
   </div>

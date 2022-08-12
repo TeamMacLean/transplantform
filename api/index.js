@@ -101,13 +101,15 @@ router.post('/login', async (req, res) => {
     ldap
       .authenticate(req.body.username, req.body.password)
       .then(async (user) => {
+        // This is where you alter the roles for testing
         let reqBodyUsername = req.body.username;
-        //reqBodyUsername = 'jjones';
+        // reqBodyUsername = 'jjones';
         let userMemberOf = user.memberOf;
         // userMemberOf = [
-        //   'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
-        //   'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+        // 'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+        // 'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
         // ];
+        // userMemberOf = [];
 
         const adminDocs = await Admin.find({}).sort({ date: 'descending' });
         const admins = adminDocs
@@ -130,12 +132,10 @@ router.post('/login', async (req, res) => {
           : null;
 
         let signatories = [];
-        console.log('sig 1', signatories, typeof signatories);
         if (userIsAdmin) {
           signatories = allLdapGroups;
         } else if (isGroupLeaderForObj) {
           signatories = [isGroupLeaderForObj];
-          console.log('sig isgroupleader', signatories, typeof signatories);
         } else if (isResearchAssistantFor) {
           signatories = [isResearchAssistantForObj];
         } else {
@@ -168,58 +168,6 @@ router.post('/login', async (req, res) => {
           isGroupLeaderForObj: isGroupLeaderForObj,
           isResearchAssistantFor: isResearchAssistantFor,
           signatories: abridgedSignatories,
-        };
-        // testing
-        const tempTestSignObj = {
-          username: 'samuel',
-          name: 'No longer Admin',
-          isAdmin: true,
-          isGroupLeaderForObj: null,
-          isResearchAssistantFor: null,
-          signatories: [
-            {
-              name: 'ActiveSpeciesTest',
-              username: 'jjones',
-              _id: '62ec094bfd82b4faed12135e',
-              researchAssistants: ['alam', 'jeff', 'ActiveSpeciesTest'],
-            },
-            {
-              name: 'Matthew Moscou',
-              username: 'mmoscou',
-              _id: '62ec094bfd82b4faed12135f',
-              researchAssistants: ['pinzon'],
-            },
-            {
-              name: 'Peter van Esse',
-              username: 'vanessep',
-              _id: '62ec094bfd82b4faed121360',
-              researchAssistants: ['grootens', 'milnesl'],
-            },
-            {
-              name: 'Sophien Kamoun',
-              username: 'skamoun',
-              _id: '62ec094bfd82b4faed121361',
-              researchAssistants: ['winj'],
-            },
-            {
-              name: 'Wenbo Ma',
-              username: 'maw',
-              _id: '62ec094bfd82b4faed121362',
-              researchAssistants: ['natkinso'],
-            },
-            {
-              name: 'Cyril Zipfel',
-              username: 'zipfelc',
-              _id: '62ec094bfd82b4faed121363',
-              researchAssistants: ['rhodesj'],
-            },
-            {
-              name: 'Nick Talbot',
-              username: 'ntalbot',
-              _id: '62ec094bfd82b4faed121364',
-              researchAssistants: ['ryderl'],
-            },
-          ],
         };
 
         sign(signObj)

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <b-loading is-full-page v-model="loading"></b-loading>
     <div :class="getWrapperClass">
       <div class="component-wrapper">
         <h1 :class="getTitleClass">
@@ -141,7 +142,7 @@
     </div>
     <b-button
       type="is-danger"
-      v-if="status !== 'deleted' && !printable && !error"
+      v-if="canDeleteRequest"
       @click="handleDeleteRequest"
       >Delete request</b-button
     >
@@ -201,12 +202,14 @@ export default {
             completedMsg: '',
             completingInProgressSteps: false,
             printable: false,
+            loading: false,
           };
         } else {
           const err = res.data.error || 'Not getting form from TRF ID';
           console.error(err);
           return {
             error: 'No TRF found from URL params',
+            loading: false,
           };
         }
       })
@@ -214,6 +217,7 @@ export default {
         console.error(err);
         return {
           error: 'No TRF found',
+          loading: false,
         };
       });
   },
@@ -234,6 +238,7 @@ export default {
         type: 'is-danger',
         hasIcon: true,
         onConfirm: () => {
+          this.loading = true;
           return this.$axios
             .post('/api/form/delete', {
               trfId: this.trfId,
@@ -243,17 +248,20 @@ export default {
             .then((res) => {
               if (res.status === 200) {
                 this.status = 'deleted'; // got status from API
+                this.loading = false;
 
                 this.$buefy.toast.open({
                   message: 'Request deleted',
                   type: 'is-success',
                 });
               } else {
+                this.loading = false;
                 this.throwUnexpectedErrorForUser('Status was not 200');
               }
             })
             .catch((err) => {
               this.throwUnexpectedErrorForUser(err);
+              this.loading = false;
             });
         },
       });
@@ -275,6 +283,8 @@ export default {
         type: 'is-success',
         hasIcon: true,
         onConfirm: () => {
+          this.loading = true;
+
           return this.$axios
             .post('/api/form/approve', {
               trfId: this.trfId,
@@ -282,16 +292,19 @@ export default {
             .then((res) => {
               if (res.status === 200) {
                 this.status = 'approved'; // got status from API
+                this.loading = false;
 
                 this.$buefy.toast.open({
                   message: 'Request approved',
                   type: 'is-success',
                 });
               } else {
+                this.loading = false;
                 this.throwUnexpectedErrorForUser('Status was not 200');
               }
             })
             .catch((err) => {
+              this.loading = false;
               this.throwUnexpectedErrorForUser(err);
             });
         },
@@ -314,6 +327,8 @@ export default {
         type: 'is-success',
         hasIcon: true,
         onConfirm: () => {
+          this.loading = true;
+
           return this.$axios
             .post('/api/form/inprogress', {
               trfId: this.trfId,
@@ -322,15 +337,18 @@ export default {
             .then((res) => {
               if (res.status === 200) {
                 this.status = 'in progress'; // got status from API
+                this.loading = false;
                 this.$buefy.toast.open({
                   message: 'Request set in progress!',
                   type: 'is-success',
                 });
               } else {
+                this.loading = false;
                 this.throwUnexpectedErrorForUser('Status was not 200');
               }
             })
             .catch((err) => {
+              this.loading = false;
               this.throwUnexpectedErrorForUser(err);
             });
         },
@@ -349,6 +367,7 @@ export default {
         confirmText: 'Confirm Completion',
         cancelText: 'Cancel',
         onConfirm: (value) => {
+          this.loading = true;
           return this.$axios
             .post('/api/form/completed', {
               trfId: this.trfId,
@@ -358,16 +377,19 @@ export default {
             .then((res) => {
               if (res.status === 200) {
                 this.status = 'completed'; // got status from API
+                this.loading = false;
 
                 this.$buefy.toast.open({
                   message: 'Request set as complete!',
                   type: 'is-success',
                 });
               } else {
+                this.loading = false;
                 this.throwUnexpectedErrorForUser('Status was not 200');
               }
             })
             .catch((err) => {
+              this.loading = false;
               this.throwUnexpectedErrorForUser(err);
             });
         },
@@ -382,6 +404,7 @@ export default {
         type: 'is-danger',
         hasIcon: true,
         onConfirm: () => {
+          this.loading = true;
           return this.$axios
             .post('/api/form/deny', {
               trfId: this.trfId,
@@ -390,15 +413,19 @@ export default {
               if (res.status === 200) {
                 this.status = 'denied'; // get status from API
 
+                this.loading = false;
+
                 this.$buefy.toast.open({
                   message: 'Request has been successfully updated as "Denied"',
                   type: 'is-successful',
                 });
               } else {
+                this.loading = false;
                 this.throwUnexpectedErrorForUser('Status was not 200');
               }
             })
             .catch((err) => {
+              this.loading = false;
               this.throwUnexpectedErrorForUser(err);
             });
         },
@@ -406,6 +433,22 @@ export default {
     },
   },
   computed: {
+    canDeleteRequest() {
+      if (this.status === 'deleted') {
+        return false;
+      }
+      if (this.printable) {
+        return false;
+      }
+      if (this.error) {
+        return false;
+      }
+      const notOwner = this.username !== this.sessionUser.username;
+      if (notOwner && !this.sessionUser.isAdmin) {
+        return false;
+      }
+      return true;
+    },
     getWrapperClass() {
       const getWrapperCssStr = (status) => {
         switch (status) {
@@ -519,13 +562,16 @@ export default {
         mongoSignatoryUsername,
         mongoUsername,
         sessionUsername,
-        sessionIsAdminBool
+        sessionIsAdminBool,
+        researchAssistants
       ) => {
         if (sessionIsAdminBool) {
           return true;
         } else if (mongoSignatoryUsername === sessionUsername) {
           return true;
         } else if (mongoUsername === sessionUsername) {
+          return true;
+        } else if (researchAssistants.includes(sessionUsername)) {
           return true;
         } else {
           return false;
@@ -537,7 +583,8 @@ export default {
         this.signatoryObj.username, // required signatory username
         this.username, // form username
         username, // session username
-        isAdmin // session is admin
+        isAdmin, // session is admin
+        this.signatoryObj.researchAssistants
       );
     },
   },

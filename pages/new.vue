@@ -1,5 +1,7 @@
 <template>
   <div>
+    <b-loading is-full-page v-model="loading"></b-loading>
+
     <h1 class="title is-2">New Request</h1>
 
     <form v-if="!fetchingError">
@@ -43,7 +45,7 @@
           <b-field grouped v-else-if="signatories.length === 1">
             <label class="label">Signatory</label>
             <b-input
-              v-model="selectedSignatory"
+              :value="selectedSignatory.name"
               readonly
               disabled
               required
@@ -60,7 +62,7 @@
             >
               <option
                 v-for="option in signatories"
-                :value="option.username"
+                :value="option"
                 :key="option.username"
               >
                 {{ option.name }}
@@ -112,7 +114,7 @@
                 rounded
                 class="custom-b-input"
                 v-model="typedGenotype"
-                :data="autocompleteGenotypes"
+                :data="filteredAutocompleteGenotypes"
                 required
                 placeholder="Type to start search..."
                 icon="magnify"
@@ -188,22 +190,21 @@ export default {
   components: {
     FormConstructCard,
   },
-  mounted() {
-    const { user } = this.$auth.$state;
-    const { username, isAdmin, signatories, isGroupLeaderForObj } = user;
-
-    this.username = username;
-    this.isAdmin = isAdmin;
-    this.signatories = signatories;
-    this.selectedSignatory =
-      signatories.length === 1 ? signatories[0].name : null;
-    this.isGroupLeaderForObj = isGroupLeaderForObj;
-  },
   asyncData({ $axios }) {
     return $axios
       .get('/api/form/new')
       .then((res) => {
         const todaysDate = moment().format('DD-MM-YYYY');
+
+        const {
+          species,
+          genotypes,
+          vectorSelections,
+          tdnaSelections,
+          agroStrains,
+          previousConstructNames,
+          sessionUser,
+        } = res.data;
 
         const getActiveNamesFromObj = (arrOfObj) => {
           if (!arrOfObj) {
@@ -217,27 +218,29 @@ export default {
             .map((filteredObj) => filteredObj.name);
         };
 
-        const species = getActiveNamesFromObj(res.data.species);
-        const autocompleteGenotypes = getActiveNamesFromObj(res.data.genotypes);
-        const vectorSelections = getActiveNamesFromObj(
-          res.data.vectorSelections
-        );
-        const tdnaSelections = getActiveNamesFromObj(res.data.tdnaSelections);
-        const agroStrains = getActiveNamesFromObj(res.data.agroStrains);
-        const previousConstructNames = res.data.previousConstructNames;
+        const activeSpecies = getActiveNamesFromObj(species);
+        const activeGenotypes = getActiveNamesFromObj(genotypes);
+        const activeVectorSelections = getActiveNamesFromObj(vectorSelections);
+        const activeTdnaSelections = getActiveNamesFromObj(tdnaSelections);
+        const activeAgroStrains = getActiveNamesFromObj(agroStrains);
+
+        const { username, isAdmin, signatories, isGroupLeaderForObj } =
+          sessionUser;
+        const selectedSignatory =
+          signatories.length === 1 ? signatories[0] : null;
 
         return {
           date: todaysDate,
           fetchingError: '',
-          username: '',
-          isAdmin: false,
-          signatories: [],
-          isGroupLeaderForObj: null,
-          selectedSignatory: null,
+          username,
+          isAdmin,
+          signatories,
+          isGroupLeaderForObj,
+          selectedSignatory,
           sessionUser: res.data.sessionUser,
-          species: species,
+          species: activeSpecies,
           selectedSpecies: null,
-          autocompleteGenotypes: autocompleteGenotypes,
+          autocompleteGenotypes: activeGenotypes,
           typedGenotype: '',
           previousConstructNames: previousConstructNames.map((name) =>
             name.trim()
@@ -251,10 +254,11 @@ export default {
               agroStrain: null,
             },
           ],
-          vectorSelections: vectorSelections,
-          tdnaSelections: tdnaSelections,
-          agroStrains: agroStrains,
+          vectorSelections: activeVectorSelections,
+          tdnaSelections: activeTdnaSelections,
+          agroStrains: activeAgroStrains,
           notes: '',
+          loading: false,
         };
       })
       .catch((err) => {
@@ -267,9 +271,7 @@ export default {
   },
   methods: {
     submitForm() {
-      const selectedSignatoryObj = this.signatories.find(
-        (signatory) => signatory.username === this.selectedSignatory
-      );
+      this.loading = true;
       const isGroupLeader = !!this.isGroupLeaderForObj;
 
       const newFormObj = {
@@ -277,7 +279,7 @@ export default {
         username: this.username.trim().toLowerCase(),
         creatorIsAdmin: this.isAdmin,
         creatorIsGroupLeader: isGroupLeader,
-        signatoryObj: selectedSignatoryObj, // backend will fetch obj
+        signatoryObj: this.selectedSignatory,
         species: this.selectedSpecies.trim(),
         genotype: this.typedGenotype.trim(),
         constructs: this.constructs.map((construct) => ({
@@ -296,6 +298,7 @@ export default {
           if (res.status === 200) {
             console.log('created form, trfId:', res.data.trfId, res.trfId);
             if (res.data.error) {
+              this.loading = false;
               this.$buefy.toast.open({
                 message:
                   'Form added to database but another error occurred: ' +
@@ -304,23 +307,28 @@ export default {
               });
               this.$router.push('/new');
             } else {
+              this.loading = false;
               this.$buefy.toast.open({
                 message: 'Added to database!',
                 type: 'is-success',
               });
               if (!!res.data.trfId) {
+                this.loading = false;
                 this.$router.push(`/form?id=${res.data.trfId}`);
               } else {
+                this.loading = false;
                 this.$router.push('/new');
               }
             }
           } else if (res.status === 500 && res.data.error) {
+            this.loading = false;
             this.$buefy.toast.open({
               message: 'Unexpected error. Please contact system admin.',
               type: 'is-danger',
             });
             this.$router.push('/new');
           } else {
+            this.loading = false;
             this.$buefy.toast.open({
               message: 'Unexpected error. Please contact system admin.',
               type: 'is-danger',
@@ -330,6 +338,7 @@ export default {
         })
         .catch((err) => {
           console.error(err);
+          this.loading = false;
           this.$buefy.toast.open({
             message:
               err.message || 'Unexpected error. Please contact system admin.',
@@ -381,6 +390,21 @@ export default {
     },
   },
   computed: {
+    filteredAutocompleteGenotypes: function () {
+      if (!this.typedGenotype || this.typedGenotype === '') {
+        return this.autocompleteGenotypes;
+      } else {
+        const unfiltered = this.autocompleteGenotypes.slice();
+        const filtered = unfiltered.filter((genotypeStr) => {
+          return (
+            genotypeStr
+              .toLowerCase()
+              .indexOf(this.typedGenotype.toLowerCase()) !== -1
+          );
+        });
+        return filtered;
+      }
+    },
     canSubmitForm: function () {
       if (
         !this.date ||
