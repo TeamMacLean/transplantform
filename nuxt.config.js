@@ -21,7 +21,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: process.env.npm_package_name || 'TransPlant 2.0',
+    title: 'TransPlant',
     htmlAttrs: {
       lang: 'en',
     },
