@@ -323,16 +323,19 @@ export default {
       });
     },
     getIsClosable: (activeArr, activeItem, objMongoName, sessionUsername) => {
-      if (process.client)
-        if (
-          objMongoName === 'Admin' &&
-          activeItem.name === process.env.WEBMASTER
-        ) {
-          return false;
-        }
+      if (
+        objMongoName === 'Admin' &&
+        activeItem.name === process.env.WEBMASTER
+      ) {
+        return false;
+      }
 
       if (sessionUsername && activeItem.name === sessionUsername) {
         return false;
+      }
+
+      if (objMongoName === 'Genotype') {
+        return true;
       }
 
       return activeArr.length > 1;
