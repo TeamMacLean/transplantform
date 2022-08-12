@@ -147,6 +147,7 @@ export default {
   },
   data() {
     const { WEBMASTER_TESTING } = process.env;
+    const webmasterTesting = WEBMASTER_TESTING === 'true';
     return {
       user: null,
       isGroupLeader: null,
@@ -155,7 +156,7 @@ export default {
       isResearchAssistantFor: null,
       isNormalLoggedInUser: null,
       loading: true,
-      webmasterTesting: !!WEBMASTER_TESTING,
+      webmasterTesting,
     };
   },
   methods: {
