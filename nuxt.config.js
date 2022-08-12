@@ -13,6 +13,7 @@ export default {
     DIVERT_EMAILS_USERNAME: process.env.DIVERT_EMAILS_USERNAME,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
+    WEBMASTER_TESTING: process.env.WEBMASTER_TESTING,
   },
   // DOES NOT WORK COS MODELS ISSUE watch: ['~/api/*.js'],
   /*

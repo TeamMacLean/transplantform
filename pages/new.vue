@@ -4,6 +4,70 @@
 
     <form v-if="!fetchingError">
       <div class="row-wrapper">
+        <div class="pl10">
+          <b-field v-if="!isAdmin">
+            <label class="label">Username</label>
+            <b-input
+              v-model="username"
+              required
+              disabled
+              readonly
+              class="custom-b-input"
+            ></b-input>
+          </b-field>
+          <b-field grouped v-else>
+            <div class="entire-field">
+              <div class="label-and-input">
+                <label class="label">Username</label>
+                <b-input
+                  class="custom-b-input"
+                  v-model="username"
+                  required
+                ></b-input>
+              </div>
+
+              <p class="username-message">
+                Ensure correct username & signatory if manual entry - typos
+                unforgiven! (<b>Admin</b> only)
+              </p>
+            </div>
+          </b-field>
+        </div>
+        <div class="pl10">
+          <b-field v-if="signatories.length === 0">
+            <div class="wrap-warning">
+              <div>Warning: no signatories found!</div>
+              <div>Please contact admin.</div>
+            </div>
+          </b-field>
+          <b-field grouped v-else-if="signatories.length === 1">
+            <label class="label">Signatory</label>
+            <b-input
+              v-model="selectedSignatory"
+              readonly
+              disabled
+              required
+              class="custom-b-input"
+            ></b-input>
+          </b-field>
+          <b-field grouped v-else>
+            <label class="label">Signatory</label>
+            <b-select
+              placeholder="Required"
+              class="custom-b-input"
+              v-model="selectedSignatory"
+              required
+            >
+              <option
+                v-for="option in signatories"
+                :value="option.username"
+                :key="option.username"
+              >
+                {{ option.name }}
+              </option>
+            </b-select>
+          </b-field>
+        </div>
         <b-field class="field">
           <label class="label custom-label">Date</label>
           <b-input
@@ -12,68 +76,6 @@
             disabled
             class="custom-b-input"
           ></b-input>
-        </b-field>
-
-        <b-field v-if="!isAdmin">
-          <label class="label">Username</label>
-          <b-input
-            v-model="username"
-            required
-            disabled
-            readonly
-            class="custom-b-input"
-          ></b-input>
-        </b-field>
-        <b-field grouped v-else>
-          <div class="entire-field">
-            <div class="label-and-input">
-              <label class="label">Username</label>
-              <b-input
-                class="custom-b-input"
-                v-model="username"
-                required
-              ></b-input>
-            </div>
-
-            <p class="username-message">
-              Ensure correct username & signatory if manual entry - typos
-              unforgiven! (<b>Admin</b> only)
-            </p>
-          </div>
-        </b-field>
-
-        <b-field v-if="signatories.length === 0">
-          <div class="wrap-warning">
-            <div>Warning: no signatories found!</div>
-            <div>Please contact admin.</div>
-          </div>
-        </b-field>
-        <b-field grouped v-else-if="signatories.length === 1">
-          <label class="label">Signatory</label>
-          <b-input
-            v-model="selectedSignatory"
-            readonly
-            disabled
-            required
-            class="custom-b-input"
-          ></b-input>
-        </b-field>
-        <b-field grouped v-else>
-          <label class="label">Signatory</label>
-          <b-select
-            placeholder="Required"
-            class="custom-b-input"
-            v-model="selectedSignatory"
-            required
-          >
-            <option
-              v-for="option in signatories"
-              :value="option.username"
-              :key="option.username"
-            >
-              {{ option.name }}
-            </option>
-          </b-select>
         </b-field>
       </div>
 
@@ -473,5 +475,9 @@ export default {
 
 .row-wrapper > * {
   flex: 1;
+}
+
+.pl10 {
+  padding-left: 10px;
 }
 </style>

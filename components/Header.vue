@@ -81,7 +81,9 @@
     </nav>
     <!-- TEMP -->
     <div class="custom-admin-knowledge">
-      <div v-show="this.$auth.loggedIn && !this.loading">
+      <div
+        v-show="this.$auth.loggedIn && !this.loading && this.webmasterTesting"
+      >
         <p class="underline">
           My username is: '{{ (user && user.username) || '(Please refresh)' }}'
         </p>
@@ -144,6 +146,7 @@ export default {
     this.loading = false;
   },
   data() {
+    const { WEBMASTER_TESTING } = process.env;
     return {
       user: null,
       isGroupLeader: null,
@@ -152,6 +155,7 @@ export default {
       isResearchAssistantFor: null,
       isNormalLoggedInUser: null,
       loading: true,
+      webmasterTesting: !!WEBMASTER_TESTING,
     };
   },
   methods: {
