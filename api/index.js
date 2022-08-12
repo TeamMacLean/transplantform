@@ -103,6 +103,7 @@ router.post('/login', async (req, res) => {
       .then(async (user) => {
         let reqBodyUsername = req.body.username;
         let userMemberOf = user.memberOf;
+        let userDisplayName = user.displayName;
 
         // This is where you alter the roles for testing
         if (
@@ -116,6 +117,7 @@ router.post('/login', async (req, res) => {
               'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
               'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
             ];
+            userDisplayName = 'Jonathan Jones (FAKE)';
           }
           if (radioValue === 'alam') {
             reqBodyUsername = 'alam';
@@ -123,6 +125,7 @@ router.post('/login', async (req, res) => {
               'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
               'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
             ];
+            userDisplayName = 'Maheen Alam (FAKE)';
           }
           if (radioValue === 'heal') {
             reqBodyUsername = 'heal';
@@ -130,6 +133,7 @@ router.post('/login', async (req, res) => {
               'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
               'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
             ];
+            userDisplayName = 'Robert Heal (FAKE)';
           }
         }
 
@@ -185,7 +189,7 @@ router.post('/login', async (req, res) => {
         // signObj cannot be too big
         const signObj = {
           username: reqBodyUsername,
-          name: user.displayName,
+          name: userDisplayName,
           isAdmin: userIsAdmin,
           isGroupLeaderForObj: isGroupLeaderForObj,
           isResearchAssistantFor: isResearchAssistantFor,
