@@ -150,10 +150,9 @@ export default {
       return this.isResearchAssistant ? this.user.isResearchAssistantFor : null;
     },
     isNormalLoggedInUser() {
-      return (
-        !this.user ||
-        !this.user.isAdmin ||
-        !this.isGroupLeader ||
+      return !!(
+        !this.user.isAdmin &&
+        !this.isGroupLeader &&
         !this.isResearchAssistant
       );
     },

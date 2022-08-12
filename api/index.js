@@ -101,14 +101,37 @@ router.post('/login', async (req, res) => {
     ldap
       .authenticate(req.body.username, req.body.password)
       .then(async (user) => {
-        // This is where you alter the roles for testing
         let reqBodyUsername = req.body.username;
-        // reqBodyUsername = 'jjones';
         let userMemberOf = user.memberOf;
-        // userMemberOf = [
-        // 'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
-        // 'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
-        // ];
+
+        // This is where you alter the roles for testing
+        if (
+          (req.body.username === 'pikej' || req.body.username === 'deeks') &&
+          req.body.radio
+        ) {
+          const radioValue = req.body.radio;
+          if (radioValue === 'jjones') {
+            reqBodyUsername = 'jjones';
+            userMemberOf = [
+              'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+              'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+            ];
+          }
+          if (radioValue === 'alam') {
+            reqBodyUsername = 'alam';
+            userMemberOf = [
+              'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+              'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+            ];
+          }
+          if (radioValue === 'heal') {
+            reqBodyUsername = 'heal';
+            userMemberOf = [
+              'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+              'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+            ];
+          }
+        }
 
         const adminDocs = await Admin.find({}).sort({ date: 'descending' });
         const admins = adminDocs

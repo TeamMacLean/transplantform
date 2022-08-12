@@ -267,10 +267,10 @@ export default {
               if (res.status === 200) {
                 this.ldapGroups[groupIndex] = newGroup;
                 this.displaySuccessfulChanges();
-                return;
+                return true;
               } else {
                 this.displayUnexpectedError();
-                return;
+                return true;
               }
             })
             .catch((err) => {

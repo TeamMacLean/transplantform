@@ -39,6 +39,25 @@
               />
             </div>
           </div>
+          <div class="field">
+            <p class="pb5">Temporary testing of different roles</p>
+            <p><i>- Imagined roles not actual people</i></p>
+            <p class="pb20">
+              <i>- Only works for Jodie during testing phase</i>
+            </p>
+            <b-radio v-model="radio" name="name" native-value="pikej">
+              Admin/me (pikej)
+            </b-radio>
+            <b-radio v-model="radio" name="name" native-value="jjones">
+              Group Leader (jjones)
+            </b-radio>
+            <b-radio v-model="radio" name="name" native-value="alam">
+              Research Assistant (alam)
+            </b-radio>
+            <b-radio v-model="radio" name="name" native-value="heal">
+              User (heal)
+            </b-radio>
+          </div>
 
           <!--<div class="level options">-->
           <!--<div class="checkbox level-left">-->
@@ -72,6 +91,7 @@ export default {
     return {
       submitting: false,
       error: null,
+      radio: 'pikej',
       credentials: {
         username: '',
         password: '',
@@ -88,6 +108,8 @@ export default {
           data: {
             username: self.credentials.username,
             password: self.credentials.password,
+            // Only during Jodie testing
+            radio: self.radio,
           },
         })
         .then((results) => {
@@ -127,5 +149,12 @@ export default {
 
 #login .regular-checkbox {
   margin-right: 2px;
+}
+
+.pb20 {
+  padding-bottom: 20px;
+}
+.pb5 {
+  padding-bottom: 5px;
 }
 </style>

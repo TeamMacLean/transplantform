@@ -114,7 +114,6 @@ export default {
       isEditing: false,
       additionalRaUsernames: [],
       additionalLdapStrs: [],
-      //editedGroup: JSON.parse(JSON.stringify(this.group)),
     };
   },
   computed: {
