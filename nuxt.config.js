@@ -15,6 +15,7 @@ export default {
     SMTP_PORT: process.env.SMTP_PORT,
     WEBMASTER_TESTING: process.env.WEBMASTER_TESTING,
   },
+  telemetry: false,
   // DOES NOT WORK COS MODELS ISSUE watch: ['~/api/*.js'],
   /*
    ** Headers of the page
