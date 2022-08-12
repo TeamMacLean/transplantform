@@ -19,6 +19,7 @@
           <b-input
             v-model="username"
             required
+            disabled
             readonly
             class="custom-b-input"
           ></b-input>
@@ -47,11 +48,12 @@
             <div>Please contact admin.</div>
           </div>
         </b-field>
-        <b-field v-else-if="signatories.length === 1">
+        <b-field grouped v-else-if="signatories.length === 1">
           <label class="label">Signatory</label>
           <b-input
             v-model="selectedSignatory"
             readonly
+            disabled
             required
             class="custom-b-input"
           ></b-input>
@@ -230,7 +232,7 @@ export default {
           signatories: [],
           isGroupLeaderForObj: null,
           selectedSignatory: null,
-
+          sessionUser: res.data.sessionUser,
           species: species,
           selectedSpecies: null,
           autocompleteGenotypes: autocompleteGenotypes,
@@ -270,7 +272,7 @@ export default {
 
       const newFormObj = {
         date: this.date,
-        username: this.username.trim(),
+        username: this.username.trim().toLowerCase(),
         creatorIsAdmin: this.isAdmin,
         creatorIsGroupLeader: isGroupLeader,
         signatoryObj: selectedSignatoryObj, // backend will fetch obj

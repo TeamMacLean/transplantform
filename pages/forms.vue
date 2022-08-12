@@ -42,6 +42,12 @@
           </b-input>
           <p><i>Filter options: ID #, Date, Submitter, Species</i></p>
         </b-field>
+        <div v-if="displayResults.length">
+          {{ displayResults.length }} result{{
+            displayResults.length !== 1 ? 's' : ''
+          }}
+          found.
+        </div>
         <div>
           <table class="table">
             <thead>
@@ -79,12 +85,6 @@
               </tr>
             </tbody>
           </table>
-          <div v-if="displayResults.length">
-            {{ displayResults.length }} result{{
-              displayResults.length !== 1 ? 's' : ''
-            }}
-            found.
-          </div>
           <b-pagination
             v-show="displayResults.length > 10"
             :total="displayResults.length"
@@ -114,7 +114,7 @@
           v-if="isAdmin"
           @click="this.downloadCSVData"
           :disabled="!displayResults.length"
-          >Export to CSV</b-button
+          >Export current results to CSV</b-button
         >
       </div>
       <div v-else>No results found in database.</div>
@@ -139,7 +139,7 @@ export default {
       .get('/api/forms')
       .then((res) => {
         if (res.status === 200) {
-          const { ldapGroups, forms } = res.data;
+          const { ldapGroups, forms, sessionUser } = res.data;
 
           const statuses = getStatuses();
           const groupLeaderUsernames = ldapGroups.map((g) => g.username);
@@ -154,13 +154,8 @@ export default {
             allResults: forms && forms.length ? forms : [],
             query: '',
             current: 1,
-            // until mounted
-            isAdmin: false,
-            isGroupLeader: false,
-            isResearchAssistant: false,
+            sessionUser,
             selectedStatuses: statuses.filter((s) => s !== 'deleted'),
-            loading: true,
-            sessionUser: false,
           };
         } else {
           const err = res.data.error || 'Unexpected issue retrieving forms.';
@@ -177,23 +172,19 @@ export default {
         };
       });
   },
-
-  mounted() {
-    const { user } = this.$auth.$state;
-    const { isAdmin } = user;
-
-    const isGroupLeader = !!(
-      user.isGroupLeaderForObj && user.isGroupLeaderForObj.username
-    );
-    const isResearchAssistant = !!user.isResearchAssistantFor;
-
-    this.isAdmin = isAdmin;
-    this.isGroupLeader = isGroupLeader;
-    this.isResearchAssistant = isResearchAssistant;
-    this.loading = false;
-    this.sessionUser = user;
-  },
   computed: {
+    isAdmin() {
+      return this.sessionUser.isAdmin;
+    },
+    isGroupLeader() {
+      return !!(
+        this.sessionUser.isGroupLeaderForObj &&
+        this.sessionUser.isGroupLeaderForObj.username
+      );
+    },
+    isResearchAssistant() {
+      return !!this.sessionUser.isResearchAssistantFor;
+    },
     isNormalUser() {
       if (!this && !this.sessionUser) {
         return true;
@@ -227,6 +218,7 @@ export default {
         if (!isInSelectedGroup) {
           return false;
         }
+
         const isInSelectedStatuses = this.selectedStatuses.includes(
           form.status
         );

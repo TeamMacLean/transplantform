@@ -43,11 +43,15 @@ const sendEmail = async (mailObj) => {
       html: html, // plain text
     });
     const betterMailStatus = {
-      accepted: mailStatus.accepted,
-      rejected: mailStatus.rejected,
       ...mailStatus.envelope,
     };
-    // console.log('Message sent:', betterMailStatus);
+    if (mailStatus.accepted.length) {
+      betterMailStatus.accepted = mailStatus.accepted;
+    }
+    if (mailStatus.rejected.length) {
+      betterMailStatus.rejected = mailStatus.rejected;
+    }
+    console.log('Message sent:', betterMailStatus);
     return `Message sent: ${mailStatus.messageId}`;
   } catch (error) {
     console.error(error);

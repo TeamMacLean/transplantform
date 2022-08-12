@@ -61,24 +61,37 @@ async function sign(user) {
 
 //AUTH
 
-router.get('/user', (req, res) => {
-  const authorizationHeader = req.headers.authorization;
+const getUserFromReqHeaders = (req) => {
+  if (!req || !req.headers) {
+    return null;
+  }
+  const authVerificationStr =
+    req.headers.authorization && req.headers.authorization.length
+      ? req.headers.authorization.split(' ')[1]
+      : null;
+  const cookieVerificationStr =
+    req.headers.cookie && req.headers.cookie.length
+      ? req.headers.cookie.split('Bearer%20')[1]
+      : null;
 
-  if (authorizationHeader && authorizationHeader.split(' ')[0] === 'Bearer') {
-    jwt.verify(
-      authorizationHeader.split(' ')[1],
-      JWT_SECRET,
-      function (err, decoded) {
-        if (err) {
-          res.status(500).json({ error: err });
-        } else {
-          //this.$store.dispatch('setUser', decoded);
-          res.status(200).json({ user: decoded });
-        }
-      }
-    );
+  const token = authVerificationStr || cookieVerificationStr || null;
+
+  if (!token) {
+    return null;
+  }
+  const user = jwt.verify(token, JWT_SECRET);
+  return user;
+};
+
+router.get('/user', async (req, res) => {
+  const user = getUserFromReqHeaders(req);
+
+  if (!user) {
+    return res.status(401).json({
+      error: 'Unauthorised',
+    });
   } else {
-    res.status(500).json({ error: 'No Bearer header' });
+    return res.status(200).json({ user });
   }
 });
 
@@ -88,33 +101,45 @@ router.post('/login', async (req, res) => {
     ldap
       .authenticate(req.body.username, req.body.password)
       .then(async (user) => {
+        let reqBodyUsername = req.body.username;
+        //reqBodyUsername = 'jjones';
+        let userMemberOf = user.memberOf;
+        // userMemberOf = [
+        //   'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+        //   'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
+        // ];
+
         const adminDocs = await Admin.find({}).sort({ date: 'descending' });
-        const admins = adminDocs.map((admin) => admin.name);
-        const userIsAdmin = admins.includes(req.body.username);
+        const admins = adminDocs
+          .filter((admin) => !admin.archived)
+          .map((admin) => admin.name);
+        const userIsAdmin = admins.includes(reqBodyUsername);
 
         const allLdapGroups = await Group.find({}).sort({ date: 'descending' });
         const isGroupLeaderForObj =
-          allLdapGroups.find((group) => group.username === req.body.username) ||
+          allLdapGroups.find((group) => group.username === reqBodyUsername) ||
           null;
         const isResearchAssistantForObj =
           allLdapGroups.find((group) => {
-            group.researchAssistants.includes(req.body.username);
-            const res = group.researchAssistants.includes(req.body.username);
+            group.researchAssistants.includes(reqBodyUsername);
+            const res = group.researchAssistants.includes(reqBodyUsername);
             return res;
           }) || null;
         const isResearchAssistantFor = isResearchAssistantForObj
           ? isResearchAssistantForObj.name
           : null;
 
-        var signatories = [];
+        let signatories = [];
+        console.log('sig 1', signatories, typeof signatories);
         if (userIsAdmin) {
           signatories = allLdapGroups;
         } else if (isGroupLeaderForObj) {
-          signatories = isGroupLeaderForObj;
+          signatories = [isGroupLeaderForObj];
+          console.log('sig isgroupleader', signatories, typeof signatories);
         } else if (isResearchAssistantFor) {
-          signatories = isResearchAssistantForObj;
+          signatories = [isResearchAssistantForObj];
         } else {
-          user.memberOf.forEach((ldapGroupStr) => {
+          userMemberOf.forEach((ldapGroupStr) => {
             allLdapGroups.forEach((ldapGroup) => {
               const alreadySignatoryUsernames = signatories.map(
                 (signatory) => signatory.username
@@ -137,7 +162,7 @@ router.post('/login', async (req, res) => {
 
         // signObj cannot be too big
         const signObj = {
-          username: req.body.username,
+          username: reqBodyUsername,
           name: user.displayName,
           isAdmin: userIsAdmin,
           isGroupLeaderForObj: isGroupLeaderForObj,
@@ -145,14 +170,57 @@ router.post('/login', async (req, res) => {
           signatories: abridgedSignatories,
         };
         // testing
-        // const signObj = {
-        //   username: 'test',
-        //   name: 'Peter Edgar',
-        //   isAdmin: false,
-        //   isGroupLeaderForObj: {},
-        //   isResearchAssistantFor: null,
-        //   signatories: [{ username: 'talbotn', name: 'Nick Talbot' }],
-        // };
+        const tempTestSignObj = {
+          username: 'samuel',
+          name: 'No longer Admin',
+          isAdmin: true,
+          isGroupLeaderForObj: null,
+          isResearchAssistantFor: null,
+          signatories: [
+            {
+              name: 'ActiveSpeciesTest',
+              username: 'jjones',
+              _id: '62ec094bfd82b4faed12135e',
+              researchAssistants: ['alam', 'jeff', 'ActiveSpeciesTest'],
+            },
+            {
+              name: 'Matthew Moscou',
+              username: 'mmoscou',
+              _id: '62ec094bfd82b4faed12135f',
+              researchAssistants: ['pinzon'],
+            },
+            {
+              name: 'Peter van Esse',
+              username: 'vanessep',
+              _id: '62ec094bfd82b4faed121360',
+              researchAssistants: ['grootens', 'milnesl'],
+            },
+            {
+              name: 'Sophien Kamoun',
+              username: 'skamoun',
+              _id: '62ec094bfd82b4faed121361',
+              researchAssistants: ['winj'],
+            },
+            {
+              name: 'Wenbo Ma',
+              username: 'maw',
+              _id: '62ec094bfd82b4faed121362',
+              researchAssistants: ['natkinso'],
+            },
+            {
+              name: 'Cyril Zipfel',
+              username: 'zipfelc',
+              _id: '62ec094bfd82b4faed121363',
+              researchAssistants: ['rhodesj'],
+            },
+            {
+              name: 'Nick Talbot',
+              username: 'ntalbot',
+              _id: '62ec094bfd82b4faed121364',
+              researchAssistants: ['ryderl'],
+            },
+          ],
+        };
 
         sign(signObj)
           .then((token) => {
@@ -163,7 +231,7 @@ router.post('/login', async (req, res) => {
           });
       })
       .catch((err) => {
-        res.status(401).json({ message: 'Bad credentials' });
+        res.status(401).json({ message: 'Bad credentials: ' + err });
       });
   } else {
     res.status(401).json({ message: 'Incomplete credentials' });
@@ -179,6 +247,8 @@ router.post('/logout', (req, res) => {
 
 router.get('/form/new', async (req, res) => {
   try {
+    const sessionUser = getUserFromReqHeaders(req);
+
     const species = await Specie.find({}).sort({ date: 'descending' });
     const genotypes = await Genotype.find({}).sort({ date: 'descending' });
     const vectorSelections = await VectorSelection.find({}).sort({
@@ -203,6 +273,7 @@ router.get('/form/new', async (req, res) => {
       tdnaSelections,
       agroStrains,
       previousConstructNames,
+      sessionUser,
     });
   } catch (error) {
     res.send({ status: 500, error: error });
@@ -287,6 +358,8 @@ router.post('/form/new', async (req, res) => {
       res.send({ status: 200, error: err });
     });
     // console.log('email sent', emailResults);
+  } else {
+    console.log('auto approved, no email sent');
   }
 
   res.send({ status: 200, trfId: newTrfIdStr });
@@ -458,6 +531,8 @@ router.post('/form/completed', async (req, res) => {
 // get everything needed for admin page
 router.get('/admin/', async (req, res) => {
   try {
+    const sessionUser = getUserFromReqHeaders(req);
+
     const admins = await Admin.find({}).sort({ date: 'descending' });
     const species = await Specie.find({}).sort({ date: 'descending' });
     const genotypes = await Genotype.find({}).sort({ date: 'descending' });
@@ -479,6 +554,7 @@ router.get('/admin/', async (req, res) => {
       tdnaSelections,
       agroStrains,
       groups,
+      sessionUser,
     });
   } catch (error) {
     res.send({ status: 'error', error: error });
@@ -584,6 +660,8 @@ router.post('/admin/additional', async (req, res) => {
 
 router.get('/constructs', async (req, res) => {
   try {
+    const sessionUser = getUserFromReqHeaders(req);
+
     const forms = await Form.find({}).sort({ date: 'descending' });
     const formsWithNestedConstructs = forms.map((form) => ({
       constructs: form.constructs,
@@ -611,6 +689,7 @@ router.get('/constructs', async (req, res) => {
     res.send({
       status: 200,
       constructs: flatConstructs,
+      sessionUser,
     });
   } catch (error) {
     res.send({ status: 'error', error: error });
@@ -620,6 +699,8 @@ router.get('/constructs', async (req, res) => {
 
 router.get('/forms', async (req, res) => {
   try {
+    const sessionUser = getUserFromReqHeaders(req);
+
     const forms = await Form.find({}).sort({ date: 'descending' });
 
     const ldapGroups = await Group.find({}).sort({ date: 'descending' });
@@ -651,6 +732,7 @@ router.get('/forms', async (req, res) => {
       status: 200,
       forms: formsWithSignatories,
       ldapGroups,
+      sessionUser,
     });
   } catch (error) {
     res.send({ status: 'error', error: error });
@@ -660,6 +742,8 @@ router.get('/forms', async (req, res) => {
 
 router.get('/form', async (req, res) => {
   try {
+    const sessionUser = getUserFromReqHeaders(req);
+
     const trfId = req.originalUrl.split('=')[1];
 
     const theForm = await Form.findOne({ trfId: trfId });
@@ -680,6 +764,7 @@ router.get('/form', async (req, res) => {
       genotype: theForm.genotype,
       constructs: theForm.constructs,
       trfId: theForm.trfId,
+      sessionUser,
     });
   } catch (error) {
     res.send({ status: 'error', error: error });

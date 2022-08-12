@@ -44,6 +44,9 @@
             ref="inputs"
           >
             <div class="normal-field" v-if="activeTab === obj.mongoName">
+              <h4 v-if="obj.mongoName === 'Admin'" class="title is-6">
+                <i>Please use usernames.</i>
+              </h4>
               <label class="label">Active</label>
               <div v-if="obj.active && obj.active.length">
                 <div
@@ -54,7 +57,12 @@
                   <b-tag
                     size="is-medium"
                     :closable="
-                      getIsClosable(obj.active, activeItem, obj.mongoName)
+                      getIsClosable(
+                        obj.active,
+                        activeItem,
+                        obj.mongoName,
+                        sessionUsername
+                      )
                     "
                     aria-close-label="Close tag"
                     @close="promptToArchive(index, jIndex, activeItem._id)"
@@ -193,12 +201,11 @@ export default {
           toAdd: '',
         }));
 
-        const ldapGroups = res.data.groups;
-
         return {
-          ldapGroups: ldapGroups,
-          editItems: editItems,
-          activeTab: 'Specie',
+          ldapGroups: res.data.groups,
+          editItems,
+          activeTab: mongoNames[0],
+          sessionUsername: res.data.sessionUser.username,
         };
       })
       .catch((err) => {
@@ -315,16 +322,20 @@ export default {
         },
       });
     },
-    getIsClosable: (activeArr, activeItem, objMongoName) => {
-      if (
-        // disable webmasters from being deleted in admin section
-        process.env.WEBMASTER === activeItem.name &&
-        objMongoName === 'Admin'
-      ) {
+    getIsClosable: (activeArr, activeItem, objMongoName, sessionUsername) => {
+      if (process.client)
+        if (
+          objMongoName === 'Admin' &&
+          activeItem.name === process.env.WEBMASTER
+        ) {
+          return false;
+        }
+
+      if (sessionUsername && activeItem.name === sessionUsername) {
         return false;
-      } else {
-        return activeArr.length > 1;
       }
+
+      return activeArr.length > 1;
     },
     setActiveTab(tabName) {
       this.activeTab = tabName;
@@ -337,19 +348,23 @@ export default {
         message: 'Are you sure you want to add this entry?',
         ...defaultDialogOptions,
         onConfirm: async () => {
-          const trimmedToAdd = toAdd.trim();
+          const isEditAdmin =
+            this.editItems[editItemsIndex].mongoName === 'Admin';
+          const formattedToAdd = isEditAdmin
+            ? toAdd.trim().toLowerCase()
+            : toAdd.trim();
 
           return this.$axios
             .post(`/api/admin/additional`, {
               mongoName: mongoName,
-              newFieldValue: trimmedToAdd,
+              newFieldValue: formattedToAdd,
             })
             .then((res) => {
               if (res.status === 200) {
                 this.displaySuccessfulChanges();
                 this.editItems[editItemsIndex].active.push({
                   archived: false,
-                  name: trimmedToAdd,
+                  name: formattedToAdd,
                 });
                 return true;
               } else {
@@ -367,26 +382,29 @@ export default {
         },
       });
     },
-    getDisabledAddNew(index) {
-      const { toAdd } = this.editItems[index];
+    getDisabledAddNew(editItemsIndex) {
+      const { toAdd } = this.editItems[editItemsIndex];
 
       if (toAdd === '') {
         return true;
       }
 
-      const trimmedToAdd = toAdd.trim();
+      const isEditAdmin = this.editItems[editItemsIndex].mongoName === 'Admin';
+
+      const formattedToAdd = isEditAdmin
+        ? toAdd.trim().toLowerCase()
+        : toAdd.trim();
 
       const allNames = [];
-      this.editItems.forEach((item) => {
-        item.active.forEach((activeItem) => {
-          allNames.push(activeItem.name);
-        });
-        item.archived.forEach((archivedItem) => {
-          allNames.push(archivedItem.name);
-        });
+
+      this.editItems[editItemsIndex].active.forEach((activeItem) => {
+        allNames.push(activeItem.name);
+      });
+      this.editItems[editItemsIndex].archived.forEach((archivedItem) => {
+        allNames.push(archivedItem.name);
       });
 
-      if (allNames.includes(trimmedToAdd)) {
+      if (allNames.includes(formattedToAdd)) {
         return true;
       }
 

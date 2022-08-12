@@ -6,8 +6,7 @@
           {{ getTitleText }}
         </h1>
 
-        <b-loading v-if="loading" is-full-page></b-loading>
-        <div v-else-if="error">
+        <div v-if="error">
           <p class="pb10">
             {{ error }}
           </p>
@@ -157,116 +156,6 @@ export default {
   components: {
     DisplayConstructCard,
   },
-  mounted() {
-    // these are from computed but asyncData hates them there
-    // TODO refactor these functions dropped into this mounted hook
-    function sessionIsAdmin(ctx) {
-      if (!ctx || !ctx.$auth) {
-        return false;
-      }
-      const result = ctx.$auth.$state.user.isAdmin;
-      return result;
-    }
-    function sessionUsername(ctx) {
-      if (!ctx || !ctx.$auth) {
-        return false;
-      }
-
-      return ctx.$auth.$state.user.username;
-    }
-    function sessionIsSignatory(ctx) {
-      if (
-        !ctx ||
-        !ctx.$auth ||
-        !ctx.$auth.$state ||
-        !ctx.$auth.$state.user ||
-        !ctx.$auth.$state.user.username ||
-        !ctx.signatoryObj ||
-        !ctx.signatoryObj.username
-      ) {
-        return false;
-      }
-
-      return ctx.$auth.$state.user.username === ctx.signatoryObj.username;
-    }
-    function authorisedToApprove(ctx) {
-      if (
-        !ctx ||
-        !ctx.$auth ||
-        !ctx.$auth.$state ||
-        !ctx.$auth.$state.user ||
-        !ctx.signatoryObj
-      ) {
-        return false;
-      }
-
-      const { user } = ctx.$auth.$state;
-      const { username, isAdmin } = user;
-
-      // move
-      const getAuthorisedToApprove = (
-        mongoSignatoryUsername,
-        sessionUsername,
-        sessionIsAdminBool
-      ) => {
-        if (sessionIsAdminBool) {
-          return true;
-        } else if (mongoSignatoryUsername === sessionUsername) {
-          return true;
-        } else {
-          return false;
-        }
-      };
-
-      // Authorisation logic/check
-      return getAuthorisedToApprove(
-        ctx.signatoryObj.username, // required signatory username
-        username, // session username
-        isAdmin // session is admin
-      );
-    }
-    function authorisedToView(ctx) {
-      if (!ctx || !ctx.$auth || !ctx.signatoryObj) {
-        return false;
-      }
-
-      const { user } = ctx.$auth.$state;
-      const { username, isAdmin } = user;
-
-      // move
-      const getAuthorisedToView = (
-        mongoSignatoryUsername,
-        mongoUsername,
-        sessionUsername,
-        sessionIsAdminBool
-      ) => {
-        if (sessionIsAdminBool) {
-          return true;
-        } else if (mongoSignatoryUsername === sessionUsername) {
-          return true;
-        } else if (mongoUsername === sessionUsername) {
-          return true;
-        } else {
-          return false;
-        }
-      };
-
-      // Authorisation logic/check
-      return getAuthorisedToView(
-        ctx.signatoryObj.username, // required signatory username
-        ctx.username, // form username
-        username, // session username
-        isAdmin // session is admin
-      );
-    }
-
-    this.sessionIsAdmin = sessionIsAdmin(this);
-    this.sessionUsername = sessionUsername(this);
-    this.sessionIsSignatory = sessionIsSignatory(this);
-    this.authorisedToApprove = authorisedToApprove(this);
-    this.authorisedToView = authorisedToView(this);
-    this.loading = false;
-  },
   asyncData({ route, $axios, error }) {
     if (!route.query.id) {
       return {
@@ -291,7 +180,9 @@ export default {
             genotype,
             constructs,
             trfId,
+            sessionUser,
           } = res.data;
+
           return {
             creatorIsGroupLeader,
             notes,
@@ -305,45 +196,17 @@ export default {
             genotype,
             constructs,
             trfId,
-            error: '', // initialise regardless to avoid errors
+            sessionUser,
+            error: '', // initialise regardless
             completedMsg: '',
             completingInProgressSteps: false,
             printable: false,
-            //
-            sessionIsAdmin: false,
-            sessionUsername: false,
-            sessionIsSignatory: false,
-            authorisedToApprove: false,
-            authorisedToView: false,
-            loading: true,
           };
         } else {
           const err = res.data.error || 'Not getting form from TRF ID';
           console.error(err);
           return {
             error: 'No TRF found from URL params',
-            //
-            creatorIsGroupLeader: false,
-            notes: null,
-            status: null,
-            _id: null,
-            date: null,
-            username: null,
-            creatorIsAdmin: null,
-            signatoryObj: null,
-            species: null,
-            genotype: null,
-            constructs: null,
-            trfId: null,
-            completedMsg: '',
-            completingInProgressSteps: false,
-            printable: false,
-            sessionIsAdmin: false,
-            sessionUsername: false,
-            sessionIsSignatory: false,
-            authorisedToApprove: false,
-            authorisedToView: false,
-            loading: false,
           };
         }
       })
@@ -595,6 +458,87 @@ export default {
 
       const appendage = getAppendage(this.status);
       return `TRF Form #${this.trfId}${appendage}`;
+    },
+    sessionIsAdmin() {
+      const result = this.sessionUser.isAdmin;
+      return result;
+    },
+    sessionUsername() {
+      return this.sessionUser.username;
+    },
+    sessionIsSignatory() {
+      if (
+        !this.sessionUser ||
+        !this.sessionUser.username ||
+        !this.signatoryObj ||
+        !this.signatoryObj.username
+      ) {
+        return false;
+      }
+
+      return this.sessionUser.username === this.signatoryObj.username;
+    },
+    authorisedToApprove() {
+      if (!this.sessionUser || !this.signatoryObj) {
+        return false;
+      }
+
+      const { username, isAdmin } = this.sessionUser;
+
+      // move
+      const getAuthorisedToApprove = (
+        mongoSignatoryUsername,
+        sessionUsername,
+        sessionIsAdminBool
+      ) => {
+        if (sessionIsAdminBool) {
+          return true;
+        } else if (mongoSignatoryUsername === sessionUsername) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      // Authorisation logic/check
+      return getAuthorisedToApprove(
+        this.signatoryObj.username, // required signatory username
+        username, // session username
+        isAdmin // session is admin
+      );
+    },
+    authorisedToView() {
+      if (!this.signatoryObj) {
+        return false;
+      }
+
+      const { username, isAdmin } = this.sessionUser;
+
+      // move
+      const getAuthorisedToView = (
+        mongoSignatoryUsername,
+        mongoUsername,
+        sessionUsername,
+        sessionIsAdminBool
+      ) => {
+        if (sessionIsAdminBool) {
+          return true;
+        } else if (mongoSignatoryUsername === sessionUsername) {
+          return true;
+        } else if (mongoUsername === sessionUsername) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+
+      // Authorisation logic/check
+      return getAuthorisedToView(
+        this.signatoryObj.username, // required signatory username
+        this.username, // form username
+        username, // session username
+        isAdmin // session is admin
+      );
     },
   },
 };

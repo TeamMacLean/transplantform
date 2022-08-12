@@ -8,7 +8,7 @@ export default {
     host: process.env.HOST || 'localhost', // default: localhost
   },
   env: {
-    WEBMASTERS: process.env.WEBMASTERS,
+    WEBMASTER: process.env.WEBMASTER,
     ADMIN_GROUP_EMAIL: process.env.ADMIN_GROUP_EMAIL,
     DIVERT_EMAILS_USERNAME: process.env.DIVERT_EMAILS_USERNAME,
     SMTP_HOST: process.env.SMTP_HOST,

@@ -3,15 +3,17 @@
     <h1 class="title is-2">Contact Us</h1>
 
     <p>
-      For technical issues with the website, please contact the Webmaster
-      <a :href="webmasterEmail">here</a>.
+      For technical issues with the website, please contact the Webmaster at:
+      <a :href="webmasterMailTo">{{ webmasterEmail }}</a
+      >.
     </p>
 
     <br />
 
     <p>
-      For questions about orders, please contact the plant tissue culture
-      service <a :href="adminGroupEmail">here</a>.
+      For questions about orders, please contact the Plant Tissue Culture
+      Service Team at: <a :href="adminGroupMailTo">{{ adminGroupEmail }}</a
+      >.
     </p>
   </div>
 </template>
@@ -19,11 +21,17 @@
 <script>
 export default {
   computed: {
+    webmasterMailTo() {
+      return 'mailto:' + this.webmasterEmail;
+    },
+    adminGroupMailTo() {
+      return 'mailto:' + this.adminGroupEmail;
+    },
     webmasterEmail() {
-      return `mailto:${process.env.WEBMASTER}.nbi.ac.uk`;
+      return `${process.env.WEBMASTER}@nbi.ac.uk`;
     },
     adminGroupEmail() {
-      return `mailto:${process.env.ADMIN_GROUP_EMAIL}`;
+      return `${process.env.ADMIN_GROUP_EMAIL}@nbi.ac.uk`;
     },
   },
 };

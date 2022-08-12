@@ -30,6 +30,12 @@
           >
           </b-input>
         </b-field>
+        <div v-if="displayResults.length">
+          {{ displayResults.length }} result{{
+            displayResults.length !== 1 ? 's' : ''
+          }}
+          found.
+        </div>
         <div>
           <table class="table">
             <thead>
@@ -65,12 +71,6 @@
               </tr>
             </tbody>
           </table>
-          <div v-if="displayResults.length">
-            {{ displayResults.length }} result{{
-              displayResults.length !== 1 ? 's' : ''
-            }}
-            found.
-          </div>
           <b-pagination
             v-show="displayResults.length > 10"
             :total="displayResults.length"
@@ -95,7 +95,7 @@
         <b-button
           @click="this.downloadCSVData"
           :disabled="!displayResults.length"
-          >Export to CSV</b-button
+          >Export current results to CSV</b-button
         >
       </div>
       <div v-else>No results found in database.</div>

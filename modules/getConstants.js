@@ -1,7 +1,7 @@
 export const getStatuses = () => [
   'pending approval',
   'approved',
-  'rejected',
+  'denied',
   'in progress',
   'completed',
   'deleted',
