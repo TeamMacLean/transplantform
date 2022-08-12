@@ -4,7 +4,7 @@ const { DIVERT_EMAILS_USERNAME, ADMIN_GROUP_EMAIL } = process.env;
 
 const adminEmailString = DIVERT_EMAILS_USERNAME
   ? [
-      DIVERT_EMAILS_USERNAME + '+admingroup@nbi.ac.uk',
+      DIVERT_EMAILS_USERNAME + '+' + ADMIN_GROUP_EMAIL + '@nbi.ac.uk',
       DIVERT_EMAILS_USERNAME + '@nbi.ac.uk',
     ]
   : ADMIN_GROUP_EMAIL;
