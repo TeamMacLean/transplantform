@@ -153,6 +153,8 @@ export default {
       this.isResearchAssistantFor = isResearchAssistantFor;
       this.isNormalLoggedInUser = isNormalLoggedInUser;
       this.loading = false;
+
+      this.$nuxt.refresh();
     }
   },
   data() {
