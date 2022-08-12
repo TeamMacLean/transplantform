@@ -109,7 +109,6 @@ router.post('/login', async (req, res) => {
         // 'CN=TSL-Data-Jonathan-Jones,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
         // 'CN=slproj_23_modify,OU=TSLGroups,OU=NBIGroups,DC=nbi,DC=ac,DC=uk',
         // ];
-        // userMemberOf = [];
 
         const adminDocs = await Admin.find({}).sort({ date: 'descending' });
         const admins = adminDocs
