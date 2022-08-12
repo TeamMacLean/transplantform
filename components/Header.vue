@@ -29,7 +29,7 @@
         </div>
         <div class="navbar-end">
           <div
-            v-show="this.$auth.loggedIn"
+            v-if="this.$auth.loggedIn"
             class="navbar-item has-dropdown is-hoverable"
           >
             <a class="navbar-link">
@@ -38,13 +38,7 @@
                 class="fa-2x"
                 style="margin-right: 8px"
               />
-              {{
-                user && user.name
-                  ? user.name
-                  : loading
-                  ? 'Loading...'
-                  : 'Unknown User'
-              }}
+              {{ user && user.name ? user.name : '(Please refresh page)' }}
             </a>
 
             <div class="navbar-dropdown">
@@ -97,7 +91,7 @@
         <div v-else>
           <p class="underline">
             My username is: '{{
-              (user && user.username) || '(Please refresh)'
+              (user && user.username) || '(Please refresh page)'
             }}'
           </p>
           <p :class="user && user.isAdmin ? 'is-green' : 'is-red'">
@@ -135,29 +129,31 @@
 export default {
   name: 'HeaderAfterLogin',
   mounted() {
-    const theUser =
-      this && this.$auth && this.$auth.$state && this.$auth.$state.user
-        ? this.$auth.$state.user
+    if (this.user === null) {
+      const theUser =
+        this && this.$auth && this.$auth.$state && this.$auth.$state.user
+          ? this.$auth.$state.user
+          : null;
+
+      const isGroupLeader = !!(theUser && theUser.isGroupLeaderForObj);
+      const isGroupLeaderFor = isGroupLeader
+        ? theUser.isGroupLeaderForObj.username
         : null;
+      const isResearchAssistant = !!(theUser && theUser.isResearchAssistantFor);
+      const isResearchAssistantFor = isResearchAssistant
+        ? theUser.isResearchAssistantFor
+        : null;
+      const isNormalLoggedInUser =
+        !(theUser && theUser.isAdmin) && !isGroupLeader && !isResearchAssistant;
 
-    const isGroupLeader = !!(theUser && theUser.isGroupLeaderForObj);
-    const isGroupLeaderFor = isGroupLeader
-      ? theUser.isGroupLeaderForObj.username
-      : null;
-    const isResearchAssistant = !!(theUser && theUser.isResearchAssistantFor);
-    const isResearchAssistantFor = isResearchAssistant
-      ? theUser.isResearchAssistantFor
-      : null;
-    const isNormalLoggedInUser =
-      !(theUser && theUser.isAdmin) && !isGroupLeader && !isResearchAssistant;
-
-    this.user = theUser;
-    this.isGroupLeader = isGroupLeader;
-    this.isGroupLeaderFor = isGroupLeaderFor;
-    this.isResearchAssistant = isResearchAssistant;
-    this.isResearchAssistantFor = isResearchAssistantFor;
-    this.isNormalLoggedInUser = isNormalLoggedInUser;
-    this.loading = false;
+      this.user = theUser;
+      this.isGroupLeader = isGroupLeader;
+      this.isGroupLeaderFor = isGroupLeaderFor;
+      this.isResearchAssistant = isResearchAssistant;
+      this.isResearchAssistantFor = isResearchAssistantFor;
+      this.isNormalLoggedInUser = isNormalLoggedInUser;
+      this.loading = false;
+    }
   },
   data() {
     const { WEBMASTER_TESTING } = process.env;
