@@ -351,6 +351,135 @@ router.post('/form/new', async (req, res) => {
   res.send({ status: 200, trfId: newTrfIdStr });
 });
 
+router.get('/form/edit', async (req, res) => {
+  try {
+    const sessionUser = getUserFromReqHeaders(req);
+
+    const trfId = req.originalUrl.split('=')[1];
+
+    if (!sessionUser.isAdmin) {
+      console.log('not admin');
+      res.send({
+        status: 200,
+        form: { trfId },
+        sessionUser,
+        fetchingError: '',
+      });
+    } else {
+      const form = await Form.findOne({ trfId: trfId });
+
+      if (!form) {
+        console.log('cant find form');
+        res.send({
+          status: 200,
+          form: { trfId },
+          sessionUser,
+          fetchingError: 'Form not found in database',
+          species: null,
+          genotypes: null,
+          vectorSelections: null,
+          tdnaSelections: null,
+          agroStrains: null,
+          previousConstructNames: [],
+        });
+      } else {
+        const species = await Specie.find({}).sort({ date: 'descending' });
+        const genotypes = await Genotype.find({}).sort({ date: 'descending' });
+        const vectorSelections = await VectorSelection.find({}).sort({
+          date: 'descending',
+        });
+        const tdnaSelections = await TdnaSelection.find({}).sort({
+          date: 'descending',
+        });
+        const agroStrains = await AgroStrain.find({}).sort({
+          date: 'descending',
+        });
+        const forms = await Form.find({}).sort({ date: 'descending' });
+        const nestedConstructs = forms.map((form) => form.constructs);
+        const flatConstructs = nestedConstructs.flat();
+        const previousAndTheseConstructNames = flatConstructs.map(
+          (construct) => construct.constructName
+        );
+
+        const info = {
+          status: 200,
+          species,
+          fetchingError: '',
+          status: 200,
+          species,
+          genotypes,
+          vectorSelections,
+          tdnaSelections,
+          agroStrains,
+          previousAndTheseConstructNames,
+          sessionUser,
+          form,
+        };
+
+        res.send(info);
+      }
+    }
+  } catch (error) {
+    res.send({ status: 500, error: error });
+    console.error(error);
+  }
+});
+
+router.post('/form/edit', async (req, res) => {
+  try {
+    const {
+      date,
+      username,
+      creatorIsAdmin,
+      creatorIsGroupLeader,
+      signatoryObj,
+      species,
+      genotype,
+      constructs,
+      notes,
+      status,
+      trfId,
+    } = req.body;
+
+    const signatoryIdField = signatoryObj._id;
+    const signatoryObjectId = mongoose.Types.ObjectId(signatoryIdField);
+
+    await Form.updateOne(
+      { trfId: trfId },
+      {
+        $set: {
+          date,
+          username,
+          creatorIsAdmin,
+          creatorIsGroupLeader,
+          signatoryId: signatoryObjectId,
+          species,
+          genotype,
+          constructs,
+          notes,
+          status,
+        },
+      }
+    );
+
+    const allGenotypes = await Genotype.find({}).sort({ date: 'descending' });
+    const allGenotypeNames = allGenotypes.length
+      ? allGenotypes.map((genotype) => genotype.name.toLowerCase())
+      : [];
+    if (!allGenotypeNames.includes(genotype.toLowerCase())) {
+      const res = await Genotype.create({
+        name: genotype,
+        archived: false,
+      });
+    }
+  } catch (error) {
+    res.send({ status: 500, error: err });
+    console.err(error);
+  }
+
+  res.send({ status: 200 });
+});
+
 router.post('/form/delete', async (req, res) => {
   try {
     const { trfId, signatoryObj, username } = req.body;

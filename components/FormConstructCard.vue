@@ -5,7 +5,7 @@
         Construct #{{ theIndex + 1 }}
         <span v-if="incompleteConstruct" class="is-dangerous pl-1rem"
           >Construct incomplete.</span
-        ><span v-else class="is-successful pl-1rem">Construct completed!</span>
+        ><span v-else class="is-successful pl-1rem">Construct valid</span>
       </p>
       <button class="card-header-icon" aria-label="more options">
         <span class="icon">

@@ -19,6 +19,13 @@
           </p>
         </div>
         <div v-else>
+          <div class="mb20">
+            <nuxt-link
+              v-if="!printable && sessionUser.isAdmin"
+              :to="'/edit?id=' + trfId"
+              >Edit this form</nuxt-link
+            >
+          </div>
           <div v-show="!printable" class="status-wrapper">
             <h4 class="title is-4">
               Status:

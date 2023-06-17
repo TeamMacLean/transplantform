@@ -40,7 +40,7 @@
             placeholder="Enter any characters..."
           >
           </b-input>
-          <p><i>Filter options: ID #, Date, Submitter, Species</i></p>
+          <p><i>Filter options: ID #, Date, Submitter, Species, Genotype</i></p>
         </b-field>
         <div v-if="displayResults.length">
           {{ displayResults.length }} result{{
@@ -57,6 +57,7 @@
                 <th>Date</th>
                 <th>Submitter</th>
                 <th>Species</th>
+                <th>Genotype</th>
                 <th v-if="!isGroupLeader && !isResearchAssistant">Signatory</th>
                 <th>Status</th>
               </tr>
@@ -74,8 +75,9 @@
                 <td>{{ form.date }}</td>
                 <td>{{ form.username }}</td>
                 <td>{{ form.species || '-' }}</td>
+                <td>{{ form.genotype || '-' }}</td>
                 <td v-if="!isGroupLeader && !isResearchAssistant">
-                  {{ form.signatoryObj.username }}
+                  {{ form.signatoryObj.name }}
                 </td>
                 <td>
                   {{
@@ -225,6 +227,7 @@ export default {
         if (!isInSelectedStatuses) {
           return false;
         }
+
         if (this.query.length) {
           const isInQuery =
             form.date.toLowerCase().includes(this.query.toLowerCase()) ||
@@ -234,7 +237,8 @@ export default {
             //   .toLowerCase()
             //   .includes(this.query.toLowerCase()) ||
             // form.status.toLowerCase().includes(this.query.toLowerCase()) ||
-            form.trfId.toLowerCase().includes(this.query.toLowerCase());
+            form.trfId.toLowerCase().includes(this.query.toLowerCase()) ||
+            form.genotype.toLowerCase().includes(this.query.toLowerCase());
           if (!isInQuery) {
             return false;
           }

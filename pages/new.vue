@@ -223,7 +223,7 @@
 
       <hr />
 
-      <h3 class="title is-3">Constructs</h3>
+      <h3 class="title is-4">Constructs</h3>
       <div class="title is-6">
         <span>Please create in priority order. </span
         ><span v-if="onlyOneConstructAndItIsEmpty" class="is-dangerous"
