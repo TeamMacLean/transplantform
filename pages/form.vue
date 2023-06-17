@@ -620,7 +620,7 @@ export default {
 .wrap-warning {
   display: flex;
   flex-direction: column;
-  color: red;
+  color: #ff3860;
 }
 
 .display-construct-cards-wrapper {
@@ -673,7 +673,7 @@ hr {
 }
 
 .dangerous {
-  color: red;
+  color: #ff3860;
 }
 
 .finished {

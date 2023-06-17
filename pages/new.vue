@@ -665,7 +665,7 @@ export default {
 .wrap-warning {
   display: flex;
   flex-direction: column;
-  color: red;
+  color: #ff3860;
 }
 
 .form-construct-cards-wrapper {
@@ -710,7 +710,7 @@ export default {
 }
 
 .is-dangerous {
-  color: red;
+  color: #ff3860;
   font-style: italic;
 }
 </style>

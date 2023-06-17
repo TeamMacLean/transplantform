@@ -183,7 +183,7 @@ export default {
 }
 
 .is-red {
-  color: red;
+  color: #ff3860;
 }
 
 .underline {

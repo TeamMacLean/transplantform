@@ -78,7 +78,7 @@
           </button>
         </form>
         <div v-else>You are logged in!</div>
-        <div style="color: red" v-if="error">{{ error }}</div>
+        <div style="color: #ff3860" v-if="error">{{ error }}</div>
       </div>
     </div>
   </div>

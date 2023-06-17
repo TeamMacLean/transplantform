@@ -204,7 +204,7 @@ export default {
 }
 
 .is-dangerous {
-  color: red;
+  color: #ff3860;
   font-style: italic;
 }
 
