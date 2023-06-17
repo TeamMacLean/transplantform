@@ -222,6 +222,7 @@ router.post('/logout', (req, res) => {
 router.get('/form/new', async (req, res) => {
   try {
     const sessionUser = getUserFromReqHeaders(req);
+    const { isAdmin } = sessionUser;
 
     const species = await Specie.find({}).sort({ date: 'descending' });
     const genotypes = await Genotype.find({}).sort({ date: 'descending' });
@@ -239,6 +240,16 @@ router.get('/form/new', async (req, res) => {
       (construct) => construct.constructName
     );
 
+    const { creatorIsAdmin } = req.body;
+
+    const oldFormsFromUser = forms.filter((form) => {
+      if (isAdmin) {
+        return true; // all
+      } else {
+        return form.username === sessionUser.username;
+      }
+    }); // could map it too
+
     res.send({
       status: 200,
       species,
@@ -248,6 +259,7 @@ router.get('/form/new', async (req, res) => {
       agroStrains,
       previousConstructNames,
       sessionUser,
+      oldFormsFromUser,
     });
   } catch (error) {
     res.send({ status: 500, error: error });

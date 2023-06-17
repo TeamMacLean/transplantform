@@ -4,6 +4,87 @@
 
     <h1 class="title is-2">New Request</h1>
 
+    <b-button @click="openChooseOldFormModal" type="is-info is-light"
+      >Clone previous form contents</b-button
+    >
+
+    <b-modal
+      :active.sync="isOldFormsModalActive"
+      :can-cancel="['escape', 'outside', 'x']"
+      has-modal-card
+      class="card scrollable-content"
+      full-screen
+    >
+      <div class="card">
+        <div class="oldFormSelectWrapper">
+          <h2 class="title is-3">
+            Click to select a previously submitted form:
+          </h2>
+          <div>
+            Then click confirm below the results to select or cancel. (Press
+            'Esc' to close.)
+          </div>
+
+          <div class="tableWrapper">
+            <b-table
+              :data="oldFormsList"
+              :selected.sync="selectedOldForm"
+              focusable
+            >
+              <b-table-column field="date" label="Date" v-slot="props">
+                {{ props.row.date }}
+              </b-table-column>
+              <b-table-column field="trfId" label="Trf ID" v-slot="props">
+                {{ props.row.trfId }}
+              </b-table-column>
+              <b-table-column
+                v-if="isAdmin"
+                field="username"
+                label="Username"
+                v-slot="props"
+              >
+                {{ props.row.username }}
+              </b-table-column>
+              <b-table-column field="species" label="Species" v-slot="props">
+                {{ props.row.species }}
+              </b-table-column>
+              <b-table-column field="genotype" label="Genotype" v-slot="props">
+                {{ props.row.genotype }}
+              </b-table-column>
+              <b-table-column
+                field="constructNames"
+                label="Construct Names"
+                v-slot="props"
+              >
+                <div
+                  v-for="(constructObj, index) in props.row.constructs"
+                  :key="index"
+                >
+                  {{ constructObj.constructName }}
+                </div>
+              </b-table-column>
+            </b-table>
+          </div>
+          <b-field>
+            <b-button
+              type="is-success"
+              :disabled="!selectedOldForm"
+              @click="selectOldForm"
+              >Confirm</b-button
+            >
+            <b-button
+              class="ml10"
+              type="is-danger"
+              @click="closeChooseOldFormModal"
+              >Cancel</b-button
+            >
+          </b-field>
+        </div>
+      </div>
+    </b-modal>
+
+    <hr />
+
     <form v-if="!fetchingError">
       <div class="row-wrapper">
         <div class="pl10">
@@ -61,9 +142,9 @@
               required
             >
               <option
-                v-for="option in signatories"
+                v-for="(option, index) in signatories"
                 :value="option"
-                :key="option.username"
+                :key="index"
               >
                 {{ option.name }}
               </option>
@@ -94,7 +175,11 @@
                 v-model="selectedSpecies"
                 required
               >
-                <option v-for="option in species" :value="option" :key="option">
+                <option
+                  v-for="(option, index) in species"
+                  :value="option"
+                  :key="index"
+                >
                   {{ option }}
                 </option>
               </b-select>
@@ -106,7 +191,11 @@
           </div>
         </b-field>
 
-        <b-field grouped>
+        <b-field
+          grouped
+          :type="{ 'is-danger': clearedTypedGenotypeField }"
+          :message="clearedTypedGenotypeField ? 'Please create a Genotype' : ''"
+        >
           <div class="entire-field">
             <div class="label-and-input">
               <label class="label">Genotype</label>
@@ -115,7 +204,6 @@
                 class="custom-b-input"
                 v-model="typedGenotype"
                 :data="filteredAutocompleteGenotypes"
-                required
                 placeholder="Type to start search..."
                 icon="magnify"
                 clearable
@@ -125,8 +213,9 @@
               </b-autocomplete>
             </div>
             <p class="username-message">
-              Please find your genotype above, or type in a new entry to use
-              instead
+              Start typing to find previously selected genotypes on our system.
+              Entering a new genotype is possible and will be added to our
+              system.
             </p>
           </div>
         </b-field>
@@ -168,7 +257,10 @@
 
       <hr />
 
-      <b-button @click.prevent="submitForm" :disabled="!canSubmitForm"
+      <b-button
+        type="is-success"
+        @click.prevent="submitForm"
+        :disabled="!canSubmitForm"
         >Submit</b-button
       >
     </form>
@@ -204,6 +296,7 @@ export default {
           agroStrains,
           previousConstructNames,
           sessionUser,
+          oldFormsFromUser,
         } = res.data;
 
         const getActiveNamesFromObj = (arrOfObj) => {
@@ -259,6 +352,11 @@ export default {
           agroStrains: activeAgroStrains,
           notes: '',
           loading: false,
+          isOldFormsModalActive: false,
+          oldFormsList: oldFormsFromUser,
+          selectedOldForm: null,
+          temp: false,
+          clearedTypedGenotypeField: false,
         };
       })
       .catch((err) => {
@@ -268,6 +366,20 @@ export default {
             'Error fetching data. Please try again later or contact system admin.',
         };
       });
+  },
+  watch: {
+    typedGenotype(newValue, oldValue) {
+      // determine is user has cleared the typed genotype field
+      if (oldValue && !newValue) {
+        this.clearedTypedGenotypeField = true;
+      } else if (
+        oldValue === '' &&
+        this.clearedTypedGenotypeField &&
+        newValue !== oldValue
+      ) {
+        this.clearedTypedGenotypeField = false;
+      }
+    },
   },
   methods: {
     submitForm() {
@@ -359,6 +471,44 @@ export default {
       ];
 
       this.constructs = newConstructs;
+    },
+    closeChooseOldFormModal() {
+      this.selectedOldForm = null;
+      this.isOldFormsModalActive = false;
+    },
+    openChooseOldFormModal() {
+      this.isOldFormsModalActive = true;
+    },
+    selectOldForm() {
+      let errorStr = '';
+
+      if (this.species.includes(this.selectedOldForm.species)) {
+        this.selectedSpecies = this.selectedOldForm.species;
+      } else {
+        errorStr = `Species '${this.selectedOldForm.species}' not in list of active species. Please select a new species.`;
+      }
+
+      this.typedGenotype = this.selectedOldForm.genotype;
+      this.selectedGenotype = this.selectedOldForm.genotype;
+
+      this.constructs = this.selectedOldForm.constructs;
+
+      this.notes = this.selectedOldForm.notes;
+
+      if (errorStr) {
+        this.$buefy.toast.open({
+          message: errorStr,
+          type: 'is-warning',
+        });
+      } else {
+        this.$buefy.toast.open({
+          message: `Form TRF${this.selectedOldForm.trfId} copied! Please change construct names as necessary!`,
+          type: 'is-success',
+        });
+      }
+
+      this.selectedOldForm = null;
+      this.isOldFormsModalActive = false;
     },
     removeConstruct(index) {
       let newCards = this.constructs.slice();
@@ -503,5 +653,22 @@ export default {
 
 .pl10 {
   padding-left: 10px;
+}
+
+.ml10 {
+  margin-left: 10px;
+}
+
+.oldFormSelectWrapper {
+  padding: 2rem;
+}
+
+.tableWrapper {
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.scrollable-content {
+  overflow-y: auto;
 }
 </style>
