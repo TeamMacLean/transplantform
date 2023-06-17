@@ -36,7 +36,7 @@ const sendEmail = async (mailObj) => {
     // send mail with defined transport object
     let mailStatus = await transporter.sendMail({
       from: 'TSL Transplant Website transplant@nbi.ac.uk', // sender address
-      replyTo: ADMIN_GROUP_EMAIL,
+      replyTo: ADMIN_GROUP_EMAIL + '@nbi.ac.uk',
       to: to, // list of recipients
       cc: cc, // list of additional recipients
       subject: subject, // Subject line

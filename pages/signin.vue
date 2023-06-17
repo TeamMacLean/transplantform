@@ -43,19 +43,19 @@
             <p class="pb5">Temporary testing of different roles</p>
             <p><i>- Imagined roles not actual people</i></p>
             <p class="pb20">
-              <i>- Only works for Jodie during testing phase</i>
+              <i>- Only works for Jodie or George during testing phase</i>
             </p>
             <b-radio v-model="radio" name="name" native-value="pikej">
-              Admin/me (pikej)
+              Admin user (pikej or deeks)
             </b-radio>
             <b-radio v-model="radio" name="name" native-value="jjones">
-              Group Leader (jjones)
+              Group Leader user (jjones)
             </b-radio>
             <b-radio v-model="radio" name="name" native-value="alam">
-              Research Assistant (alam)
+              Research Assistant user (alam)
             </b-radio>
             <b-radio v-model="radio" name="name" native-value="heal">
-              User (heal)
+              Normal user (heal)
             </b-radio>
           </div>
 

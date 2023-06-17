@@ -2,23 +2,27 @@ const { DIVERT_EMAILS_USERNAME, ADMIN_GROUP_EMAIL } = process.env;
 
 // TODO get domain (transplant.tsl.ac.uk) from .env or calculated
 
-const adminEmailString = DIVERT_EMAILS_USERNAME
-  ? [
-      DIVERT_EMAILS_USERNAME + '+' + ADMIN_GROUP_EMAIL + '@nbi.ac.uk',
-      DIVERT_EMAILS_USERNAME + '@nbi.ac.uk',
-    ]
-  : ADMIN_GROUP_EMAIL;
+const adminEmailString = `
+  ${DIVERT_EMAILS_USERNAME ? DIVERT_EMAILS_USERNAME + '+' : ''}
+  ${ADMIN_GROUP_EMAIL}@nbi.ac.uk
+`;
 
-const getEmailFromUsername = (username) => {
-  if (DIVERT_EMAILS_USERNAME) {
-    return [
-      DIVERT_EMAILS_USERNAME + '+' + username + '@nbi.ac.uk',
-      DIVERT_EMAILS_USERNAME + '@nbi.ac.uk',
-    ];
-  } else {
-    return username + '@nbi.ac.uk';
-  }
-};
+const getEmailFromUsername = (username) => `
+  ${DIVERT_EMAILS_USERNAME ? DIVERT_EMAILS_USERNAME + '+' : ''}
+  ${username}@nbi.ac.uk
+`;
+
+// TODO Delete this function when above functions tested
+// const getEmailFromUsername = (username) => {
+//   if (DIVERT_EMAILS_USERNAME) {
+//     return [
+//       DIVERT_EMAILS_USERNAME + '+' + username + '@nbi.ac.uk',
+//       DIVERT_EMAILS_USERNAME + '@nbi.ac.uk',
+//     ];
+//   } else {
+//     return username + '@nbi.ac.uk';
+//   }
+// };
 
 const getApprovalOptions = (form) => {
   const { trfId, signatoryObj } = form;
