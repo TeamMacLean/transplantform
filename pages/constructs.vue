@@ -30,24 +30,25 @@
           >
           </b-input>
         </b-field>
-        <div v-if="displayResults.length">
+        <div class="pb10" v-if="displayResults.length">
           {{ displayResults.length }} result{{
             displayResults.length !== 1 ? 's' : ''
           }}
           found.
         </div>
         <div>
-          <table class="table">
+          <table class="table custom-table">
             <thead>
               <tr>
-                <th></th>
-                <th>Construct</th>
-                <th>Shortname</th>
-                <th>Binary Vector Backbone</th>
-                <th>T-DNA selection</th>
-                <th>Species</th>
-                <th>Genotype</th>
-                <th>TRF link</th>
+                <th style="width: 4%"></th>
+                <th style="width: 16%">Construct</th>
+                <th style="width: 10%">Shortname</th>
+                <th style="width: 20%">Description</th>
+                <th style="width: 10%">BV-Backbone</th>
+                <th style="width: 10%">T-DNA</th>
+                <th style="width: 10%">Species</th>
+                <th style="width: 10%">Genotype</th>
+                <th style="width: 10%">TRF link</th>
               </tr>
             </thead>
             <tbody v-if="displayResults.length">
@@ -55,6 +56,7 @@
                 <td>{{ construct.position }}</td>
                 <td>{{ construct.longName }}</td>
                 <td>{{ construct.shortName || '-' }}</td>
+                <td>{{ construct.description || '-' }}</td>
                 <td>
                   {{ construct.binaryVectorBackbone }}
                 </td>
@@ -276,5 +278,19 @@ td span:after {
 
 .paddingLeft {
   padding-left: 10px;
+}
+
+.custom-table {
+  font-size: 0.8em;
+  table-layout: fixed;
+  width: 100%;
+}
+
+td {
+  word-wrap: break-word;
+}
+
+.pb10 {
+  padding-bottom: 10px;
 }
 </style>

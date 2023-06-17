@@ -224,7 +224,12 @@
       <hr />
 
       <h3 class="title is-3">Constructs</h3>
-      <h3 class="title is-6">Please create in priority order</h3>
+      <div class="title is-6">
+        <span>Please create in priority order. </span
+        ><span v-if="onlyOneConstructAndItIsEmpty" class="is-dangerous"
+          >At least 1 construct must be created.</span
+        >
+      </div>
 
       <div class="form-construct-cards-wrapper">
         <FormConstructCard
@@ -240,7 +245,7 @@
           :isConstructNameUnavailable="isConstructNameUnavailable(index)"
         />
         <b-button @click="addConstruct" class="add-construct-button"
-          >Add Construct</b-button
+          >Add Another Construct</b-button
         >
       </div>
 
@@ -345,6 +350,7 @@ export default {
               vectorSelection: null,
               tdnaSelection: null,
               agroStrain: null,
+              description: '',
             },
           ],
           vectorSelections: activeVectorSelections,
@@ -400,6 +406,7 @@ export default {
           vectorSelection: construct.vectorSelection.trim(),
           tdnaSelection: construct.tdnaSelection.trim(),
           agroStrain: construct.agroStrain.trim(),
+          description: construct.description.trim(),
         })),
         notes: this.notes.trim(),
       };
@@ -467,6 +474,7 @@ export default {
           vectorSelection: null,
           tdnaSelection: null,
           agroStrain: null,
+          description: '',
         },
       ];
 
@@ -480,12 +488,26 @@ export default {
       this.isOldFormsModalActive = true;
     },
     selectOldForm() {
-      let errorStr = '';
+      let warningString = '';
 
       if (this.species.includes(this.selectedOldForm.species)) {
         this.selectedSpecies = this.selectedOldForm.species;
       } else {
-        errorStr = `Species '${this.selectedOldForm.species}' not in list of active species. Please select a new species.`;
+        warningString += `Species '${this.selectedOldForm.species}' not in list of active species. Please select a new species. `;
+      }
+
+      const oldFormSigIdString = this.oldFormsList.find(
+        (form) => form.trfId === this.selectedOldForm.trfId
+      ).signatoryId;
+
+      const availableSignatoriesIdStrings = this.signatories.map((s) => s._id);
+
+      if (availableSignatoriesIdStrings.includes(oldFormSigIdString)) {
+        this.selectedSignatory = this.signatories.find(
+          (s) => s._id === oldFormSigIdString
+        );
+      } else {
+        warningString += `Signatory '${this.selectedOldForm.signatoryObj}' unavailable. Please select a new signatory.`;
       }
 
       this.typedGenotype = this.selectedOldForm.genotype;
@@ -495,9 +517,9 @@ export default {
 
       this.notes = this.selectedOldForm.notes;
 
-      if (errorStr) {
+      if (warningString) {
         this.$buefy.toast.open({
-          message: errorStr,
+          message: warningString,
           type: 'is-warning',
         });
       } else {
@@ -540,6 +562,21 @@ export default {
     },
   },
   computed: {
+    onlyOneConstructAndItIsEmpty: function () {
+      if (this.constructs.length !== 1) {
+        return false;
+      } else if (
+        this.constructs[0].constructName === '' &&
+        this.constructs[0].binaryVectorBackbone === '' &&
+        this.constructs[0].vectorSelection === null &&
+        this.constructs[0].tdnaSelection === null &&
+        this.constructs[0].agroStrain === null
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     filteredAutocompleteGenotypes: function () {
       if (!this.typedGenotype || this.typedGenotype === '') {
         return this.autocompleteGenotypes;
@@ -567,13 +604,14 @@ export default {
       }
 
       let cardsAreValid = true;
-      this.constructs.forEach((card) => {
+      this.constructs.forEach((card, index) => {
         if (
           !card.constructName ||
           !card.binaryVectorBackbone ||
           !card.vectorSelection ||
           !card.tdnaSelection ||
-          !card.agroStrain
+          !card.agroStrain ||
+          this.isConstructNameUnavailable(index)
         ) {
           cardsAreValid = false;
         }
@@ -581,7 +619,6 @@ export default {
 
       return cardsAreValid;
     },
-
     filteredDataArray() {
       return this.autocompleteGenotypes.filter((option) => {
         return (
@@ -670,5 +707,10 @@ export default {
 
 .scrollable-content {
   overflow-y: auto;
+}
+
+.is-dangerous {
+  color: red;
+  font-style: italic;
 }
 </style>

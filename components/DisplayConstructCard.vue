@@ -33,6 +33,12 @@
             <div>{{ card.agroStrain }}</div>
           </b-field>
         </div>
+
+        <div class="row-wrapper">
+          <b-field label="Description">
+            <div>{{ card.description || '[None set]' }}</div>
+          </b-field>
+        </div>
       </div>
     </div>
   </div>

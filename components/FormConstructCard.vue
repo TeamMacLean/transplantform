@@ -1,7 +1,12 @@
 <template>
   <div class="card">
     <header class="card-header">
-      <p class="card-header-title">Construct #{{ theIndex + 1 }}</p>
+      <p class="card-header-title">
+        Construct #{{ theIndex + 1 }}
+        <span v-if="incompleteConstruct" class="is-dangerous pl-1rem"
+          >Construct incomplete.</span
+        ><span v-else class="is-successful pl-1rem">Construct completed!</span>
+      </p>
       <button class="card-header-icon" aria-label="more options">
         <span class="icon">
           <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -28,6 +33,20 @@
           ></b-input>
         </b-field>
 
+        <b-field label="Construct Description">
+          <b-input
+            placeholder="Optional"
+            v-model="card.description"
+            :value="card.description"
+            maxlength="50"
+            rows="1"
+            ref="messageInput"
+            type="textarea"
+          ></b-input>
+        </b-field>
+      </div>
+
+      <div class="row-wrapper">
         <b-field label="Binary Vector Backbone">
           <b-input
             placeholder="Required"
@@ -36,9 +55,7 @@
             :value="card.binaryVectorBackbone"
           ></b-input>
         </b-field>
-      </div>
 
-      <div class="row-wrapper">
         <b-field grouped>
           <div class="entire-field">
             <div class="label-and-input">
@@ -60,29 +77,9 @@
             </div>
           </div>
         </b-field>
+      </div>
 
-        <b-field grouped>
-          <div class="entire-field">
-            <div class="label-and-input">
-              <label class="label">T-DNA Selection</label>
-              <b-select
-                placeholder="Required"
-                class="custom-b-input"
-                required
-                v-model="card.tdnaSelection"
-              >
-                <option
-                  v-for="option in tdnaSelections"
-                  :value="option"
-                  :key="option"
-                >
-                  {{ option }}
-                </option>
-              </b-select>
-            </div>
-          </div>
-        </b-field>
-
+      <div class="row-wrapper">
         <b-field grouped>
           <div class="entire-field">
             <div class="label-and-input">
@@ -95,6 +92,27 @@
               >
                 <option
                   v-for="option in agroStrains"
+                  :value="option"
+                  :key="option"
+                >
+                  {{ option }}
+                </option>
+              </b-select>
+            </div>
+          </div>
+        </b-field>
+        <b-field grouped>
+          <div class="entire-field">
+            <div class="label-and-input">
+              <label class="label">T-DNA Selection</label>
+              <b-select
+                placeholder="Required"
+                class="custom-b-input"
+                required
+                v-model="card.tdnaSelection"
+              >
+                <option
+                  v-for="option in tdnaSelections"
                   :value="option"
                   :key="option"
                 >
@@ -128,6 +146,47 @@ export default {
     'tdnaSelections',
     'agroStrains',
   ],
+  computed: {
+    textAreaHeight() {
+      // TODO refactor (does nowt)
+      return Math.max(this.card.description.split('\n').length, 3) * 20;
+    },
+    incompleteConstruct() {
+      return (
+        !this.card.constructName ||
+        !this.card.binaryVectorBackbone ||
+        !this.card.vectorSelection ||
+        !this.card.agroStrain ||
+        !this.card.tdnaSelection ||
+        this.isConstructNameUnavailable
+      );
+    },
+  },
+  watch: {
+    message: function (newItem, oldItem) {
+      let { messageInput } = this.$refs;
+      const lineHeightInPixels = 24;
+
+      // Reset messageInput Height
+      messageInput.setAttribute(
+        `style`,
+        `height:${lineHeightInPixels}px;overflow-y:hidden;`
+      );
+
+      // Calculate number of lines (soft and hard)
+      const height = messageInput.style.height;
+      const scrollHeight = messageInput.scrollHeight;
+      messageInput.style.height = height;
+      const count = Math.floor(scrollHeight / lineHeightInPixels);
+
+      this.$nextTick(() => {
+        messageInput.setAttribute(
+          `style`,
+          `height:${count * lineHeightInPixels}px;overflow-y:hidden;`
+        );
+      });
+    },
+  },
 };
 </script>
 <style scoped>
@@ -142,5 +201,18 @@ export default {
 
 .row-wrapper > *:not(:first-child) {
   padding-left: 20px;
+}
+
+.is-dangerous {
+  color: red;
+  font-style: italic;
+}
+
+.pl-1rem {
+  padding-left: 1rem;
+}
+
+.is-successful {
+  color: green;
 }
 </style>

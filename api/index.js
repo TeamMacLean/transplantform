@@ -663,6 +663,7 @@ router.get('/constructs', async (req, res) => {
         flatConstructs.push({
           longName: c.constructName,
           shortName: c.shortName || null,
+          description: c.description || '',
           binaryVectorBackbone: c.binaryVectorBackbone,
           tdnaSelection: c.tdnaSelection,
           species: form.species,

@@ -215,6 +215,11 @@ const Form =
               required: true,
               unique: true,
             },
+            description: {
+              type: String,
+              required: false,
+              default: '',
+            },
             binaryVectorBackbone: {
               // could make ObjectId but time-consuming
               type: String,
