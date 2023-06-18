@@ -20,7 +20,7 @@
     </div>
     <div v-else>
       <div v-if="allResults.length">
-        <b-field label="Filter results:" class="filterWrapper">
+        <b-field label="Filter results by all fields:" class="filterWrapper">
           <b-input
             type="text"
             v-model="query"
@@ -41,35 +41,45 @@
             <thead>
               <tr>
                 <th style="width: 4%"></th>
-                <th style="width: 16%">Construct</th>
-                <th style="width: 10%">Shortname</th>
-                <th style="width: 20%">Description</th>
-                <th style="width: 10%">BV-Backbone</th>
-                <th style="width: 10%">T-DNA</th>
-                <th style="width: 10%">Species</th>
-                <th style="width: 10%">Genotype</th>
-                <th style="width: 10%">TRF link</th>
+                <th style="width: 7%">TRF</th>
+                <th style="width: 7%">Date</th>
+                <th style="width: 7%">User</th>
+                <th style="width: 8%">Signatory</th>
+                <th style="width: 8%">Species</th>
+                <th style="width: 7%">Genotype</th>
+                <th style="width: 13%">Long name</th>
+                <th style="width: 7%">Short</th>
+                <th style="width: 7%">BVB</th>
+                <th style="width: 9%">Vector</th>
+                <th style="width: 7%">AGStrain</th>
+                <th style="width: 9%">T-DNA</th>
               </tr>
             </thead>
             <tbody v-if="displayResults.length">
               <tr :key="index" v-for="(construct, index) in paginatedItems">
                 <td>{{ construct.position }}</td>
-                <td>{{ construct.longName }}</td>
-                <td>{{ construct.shortName || '-' }}</td>
-                <td>{{ construct.description || '-' }}</td>
-                <td>
-                  {{ construct.binaryVectorBackbone }}
-                </td>
-                <td>{{ construct.tdnaSelection }}</td>
-                <td>{{ construct.species }}</td>
-                <td>{{ construct.genotype }}</td>
                 <td>
                   <nuxt-link
                     :to="'/form?id=' + construct.trfId"
-                    class="navbar-item navbar-item-link"
+                    class="navbar-item navbar-item-link custom-link"
                     >{{ construct.trfId }}</nuxt-link
                   >
                 </td>
+                <td>{{ construct.date }}</td>
+                <td>{{ construct.username }}</td>
+                <td>{{ construct.signatoryDisplayName }}</td>
+                <td>{{ construct.species }}</td>
+                <td>{{ construct.genotype }}</td>
+                <td>{{ construct.longName }}</td>
+                <td>
+                  {{ construct.shortName || '-' }}
+                </td>
+                <td>
+                  {{ construct.binaryVectorBackbone }}
+                </td>
+                <td>{{ construct.vectorSelection }}</td>
+                <td>{{ construct.agroStrain }}</td>
+                <td>{{ construct.tdnaSelection }}</td>
               </tr>
             </tbody>
           </table>
@@ -100,6 +110,7 @@
           >Export current results to CSV</b-button
         >
       </div>
+      <div v-else-if="error">{{ error }}</div>
       <div v-else>No results found in database.</div>
     </div>
   </div>
@@ -113,14 +124,14 @@ export default {
       .get('/api/constructs')
       .then((res) => {
         if (res.status === 200) {
-          const { constructs } = res.data;
+          const { constructs, error } = res.data;
 
           return {
-            allResults: constructs,
-            displayResults: constructs,
+            allResults: constructs || [],
+            displayResults: constructs || [],
             query: '',
             current: 1,
-            error: '',
+            error: error ? 'Unexpected issue retrieving forms.' : '',
           };
         } else {
           const err = res.data.error || 'Unexpected issue retrieving forms.';
@@ -183,6 +194,23 @@ export default {
       } else {
         this.displayResults = this.allResults.filter(
           (construct) =>
+            construct.trfId.toLowerCase().includes(this.query.toLowerCase()) ||
+            construct.date
+              .toString()
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
+            construct.username
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
+            construct.signatoryDisplayName
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
+            construct.species
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
+            construct.genotype
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
             construct.longName
               .toLowerCase()
               .includes(this.query.toLowerCase()) ||
@@ -193,37 +221,46 @@ export default {
             construct.binaryVectorBackbone
               .toLowerCase()
               .includes(this.query.toLowerCase()) ||
+            construct.vectorSelection
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
+            construct.agroStrain
+              .toLowerCase()
+              .includes(this.query.toLowerCase()) ||
             construct.tdnaSelection
               .toLowerCase()
-              .includes(this.query.toLowerCase()) ||
-            construct.species
-              .toLowerCase()
-              .includes(this.query.toLowerCase()) ||
-            construct.genotype
-              .toLowerCase()
-              .includes(this.query.toLowerCase()) ||
-            construct.trfId.toLowerCase().includes(this.query.toLowerCase())
+              .includes(this.query.toLowerCase())
         );
       }
     },
     downloadCSVData() {
       let csv =
-        'Construct,Shortname,Binary Vector Backbone,T-DNA selection,Species,Genotype,TRF ID\n';
+        'ID,Date,Username,Signatory,Species,Genotype,Long Name, Short Name, Binary Vector Backbone, Vector Selection, AgroStrain, T-DNA Selection\n';
       this.displayResults.forEach((construct) => {
         csv +=
+          construct.trfId +
+          ',' +
+          construct.date +
+          ',' +
+          construct.username +
+          ',' +
+          construct.signatoryDisplayName +
+          ',' +
+          construct.species +
+          ',' +
+          construct.genotype +
+          ',' +
           construct.longName +
           ',' +
           (construct.shortName || 'null') +
           ',' +
           construct.binaryVectorBackbone +
           ',' +
+          construct.vectorSelection +
+          ',' +
+          construct.agroStrain +
+          ',' +
           construct.tdnaSelection +
-          ',' +
-          construct.species +
-          ',' +
-          construct.genotype +
-          ',' +
-          construct.trfId +
           '\n';
       });
 
@@ -268,10 +305,6 @@ td span:after {
   white-space: pre;
 }
 
-.reduceFontSize {
-  font-size: 0.8em;
-}
-
 .navbar-item-link {
   background: #e9ecec;
 }
@@ -281,7 +314,7 @@ td span:after {
 }
 
 .custom-table {
-  font-size: 0.8em;
+  font-size: 0.75em;
   table-layout: fixed;
   width: 100%;
 }
@@ -292,5 +325,11 @@ td {
 
 .pb10 {
   padding-bottom: 10px;
+}
+
+.custom-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

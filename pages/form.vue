@@ -139,7 +139,7 @@
             />
           </div>
 
-          <b-field label="Notes">
+          <b-field :class="printable && 'blank-space'" label="Notes">
             <div>{{ notes || '[No notes]' }}</div>
           </b-field>
 
@@ -741,5 +741,11 @@ hr {
 
 .ml10 {
   margin-left: 10px;
+}
+
+.blank-space {
+  border: 1px dotted grey;
+  padding: 2rem;
+  padding-bottom: 300px;
 }
 </style>

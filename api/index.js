@@ -777,12 +777,19 @@ router.get('/constructs', async (req, res) => {
   try {
     const sessionUser = getUserFromReqHeaders(req);
 
+    const signatoryObjs = await Group.find({});
+
     const forms = await Form.find({}).sort({ date: 'descending' });
     const formsWithNestedConstructs = forms.map((form) => ({
       constructs: form.constructs,
       species: form.species,
       genotype: form.genotype,
       trfId: form.trfId,
+      signatoryDisplayName: signatoryObjs.find(
+        (obj) => obj._id.toString() === form.signatoryId.toString()
+      ).name,
+      date: form.date,
+      username: form.username,
     }));
 
     var flatConstructs = [];
@@ -790,14 +797,18 @@ router.get('/constructs', async (req, res) => {
     formsWithNestedConstructs.forEach((form) => {
       form.constructs.forEach((c) => {
         flatConstructs.push({
-          longName: c.constructName,
-          shortName: c.shortName || null,
-          description: c.description || '',
-          binaryVectorBackbone: c.binaryVectorBackbone,
-          tdnaSelection: c.tdnaSelection,
+          trfId: form.trfId,
+          date: form.date,
+          username: form.username,
+          signatoryDisplayName: form.signatoryDisplayName,
           species: form.species,
           genotype: form.genotype,
-          trfId: form.trfId,
+          longName: c.constructName,
+          shortName: c.shortName || null,
+          binaryVectorBackbone: c.binaryVectorBackbone,
+          vectorSelection: c.vectorSelection,
+          agroStrain: c.agroStrain,
+          tdnaSelection: c.tdnaSelection,
         });
       });
     });
