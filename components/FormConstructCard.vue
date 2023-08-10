@@ -15,6 +15,7 @@
     </header>
     <div class="card-content">
       <div class="row-wrapper">
+        <!-- 
         <b-field
           label="Construct Name"
           :type="isConstructNameUnavailable ? 'is-danger' : null"
@@ -23,6 +24,10 @@
               ? 'Name duplicated in database or on form'
               : null
           "
+        >  
+        -->
+        <b-field
+          label="Construct Name"         
         >
           <b-input
             placeholder="Required"
@@ -45,7 +50,18 @@
           ></b-input>
         </b-field>
       </div>
-
+      <div class="row-wrapper">
+        <b-field
+          label="Construct ID"
+        >
+          <b-input
+            placeholder="Optional - Admins can assign this later"
+            v-model="card.shortName"
+            maxlength="20"
+            :value="card.shortName"
+          ></b-input>
+        </b-field>
+      </div>
       <div class="row-wrapper">
         <b-field label="Binary Vector Backbone">
           <b-input
@@ -141,7 +157,7 @@ export default {
     'theIndex',
     'card',
     'mustDisableDelete',
-    'isConstructNameUnavailable',
+    //'isConstructNameUnavailable',
     'vectorSelections',
     'tdnaSelections',
     'agroStrains',
@@ -157,8 +173,8 @@ export default {
         !this.card.binaryVectorBackbone ||
         !this.card.vectorSelection ||
         !this.card.agroStrain ||
-        !this.card.tdnaSelection ||
-        this.isConstructNameUnavailable
+        !this.card.tdnaSelection //||
+        //this.isConstructNameUnavailable customer killed feature
       );
     },
   },

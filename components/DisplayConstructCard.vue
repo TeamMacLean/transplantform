@@ -14,7 +14,7 @@
           <b-field label="Construct Name">
             <div>{{ card.constructName }}</div>
           </b-field>
-          <b-field label="Short Name">
+          <b-field label="Construct ID">
             <div>{{ card.shortName || '[None set]' }}</div>
           </b-field>
           <b-field label="Binary Vector Backbone">

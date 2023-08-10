@@ -200,8 +200,7 @@
             :tdnaSelections="tdnaSelections"
             :agroStrains="agroStrains"
             :removeConstruct="removeConstruct"
-            :isConstructNameUnavailable="isConstructNameUnavailable(index)"
-          />
+            />
           <b-button @click="addConstruct" class="add-construct-button"
             >Add Another Construct</b-button
           >
@@ -380,6 +379,7 @@ export default {
           tdnaSelection: construct.tdnaSelection.trim(),
           agroStrain: construct.agroStrain.trim(),
           description: construct.description.trim(),
+          shortName: construct.shortName.trim(),
         })),
         notes: this.notes.trim(),
         status: this.selectedStatus,
@@ -442,6 +442,7 @@ export default {
           tdnaSelection: null,
           agroStrain: null,
           description: '',
+          shortName: '',
         },
       ];
 
@@ -453,28 +454,28 @@ export default {
 
       this.constructs = newCards;
     },
-    isConstructNameUnavailable: function (index) {
-      // no error message if no construct name
-      if (this.constructs[index].constructName === '') {
-        return false;
-      }
+    // isConstructNameUnavailable: function (index) {
+    //   // no error message if no construct name
+    //   if (this.constructs[index].constructName === '') {
+    //     return false;
+    //   }
 
-      const unavailableConstructNames =
-        this.getUnavailableConstructNames(index);
-      if (!unavailableConstructNames || !unavailableConstructNames.length) {
-        return false;
-      }
+    //   const unavailableConstructNames =
+    //     this.getUnavailableConstructNames(index);
+    //   if (!unavailableConstructNames || !unavailableConstructNames.length) {
+    //     return false;
+    //   }
 
-      const targetConstructName = this.constructs[index].constructName.trim();
+    //   const targetConstructName = this.constructs[index].constructName.trim();
 
-      return unavailableConstructNames.includes(targetConstructName);
-    },
-    getUnavailableConstructNames: function (index) {
-      const amended = this.constructs.slice();
-      amended.splice(index, 1);
-      const currentOtherNames = amended.map((card) => card.constructName);
-      return this.previousConstructNames.concat(currentOtherNames);
-    },
+    //   return unavailableConstructNames.includes(targetConstructName);
+    // },
+    // getUnavailableConstructNames: function (index) {
+    //   const amended = this.constructs.slice();
+    //   amended.splice(index, 1);
+    //   const currentOtherNames = amended.map((card) => card.constructName);
+    //   return this.previousConstructNames.concat(currentOtherNames);
+    // },
   },
   computed: {
     onlyOneConstructAndItIsEmpty: function () {
@@ -525,8 +526,8 @@ export default {
           !card.binaryVectorBackbone ||
           !card.vectorSelection ||
           !card.tdnaSelection ||
-          !card.agroStrain ||
-          this.isConstructNameUnavailable(index)
+          !card.agroStrain //||
+          //this.isConstructNameUnavailable(index)
         ) {
           cardsAreValid = false;
         }

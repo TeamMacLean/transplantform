@@ -41,18 +41,18 @@
             <thead>
               <tr>
                 <th style="width: 4%"></th>
-                <th style="width: 7%">TRF</th>
-                <th style="width: 7%">Date</th>
-                <th style="width: 7%">User</th>
+                <th style="width: 8%">TRF ID</th>
+                <th style="width: 8%">Date</th>
+                <th style="width: 8%">User</th>
                 <th style="width: 8%">Signatory</th>
                 <th style="width: 8%">Species</th>
-                <th style="width: 7%">Genotype</th>
-                <th style="width: 13%">Long name</th>
-                <th style="width: 7%">Short</th>
-                <th style="width: 7%">BVB</th>
-                <th style="width: 9%">Vector</th>
-                <th style="width: 7%">AGStrain</th>
-                <th style="width: 9%">T-DNA</th>
+                <th style="width: 8%">Genotype</th>
+                <th style="width: 8%">Long name</th>
+                <th style="width: 8%">Construct ID</th>
+                <th style="width: 8%">Binary Vector Backbone</th>
+                <th style="width: 8%">Vector Selection</th>
+                <th style="width: 8%">AgroStrains</th>
+                <th style="width: 8%">T-DNA Selection</th>
               </tr>
             </thead>
             <tbody v-if="displayResults.length">
@@ -235,7 +235,7 @@ export default {
     },
     downloadCSVData() {
       let csv =
-        'ID,Date,Username,Signatory,Species,Genotype,Long Name, Short Name, Binary Vector Backbone, Vector Selection, AgroStrain, T-DNA Selection\n';
+        'ID,Date,Username,Signatory,Species,Genotype,Long Name,Construct ID,Binary Vector Backbone,Vector Selection,AgroStrain,T-DNA Selection\n';
       this.displayResults.forEach((construct) => {
         csv +=
           construct.trfId +

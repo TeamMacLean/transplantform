@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@creativebulma/bulma-tooltip": "^1.2.0",
-    "prettier": "2.7.1"
+    "prettier": "^2.7.1"
   },
   "comments": {
     "vue-template-compiler": "^2.6.12"

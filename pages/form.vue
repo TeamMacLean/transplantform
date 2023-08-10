@@ -1,103 +1,107 @@
 <template>
   <div>
     <b-loading is-full-page v-model="loading"></b-loading>
-    <div :class="getWrapperClass">
-      <div class="component-wrapper">
-        <h1 :class="getTitleClass">
-          {{ getTitleText }}
-        </h1>
+    <div>
+      <div 
+        v-if="!printable && sessionUser.isAdmin && trfId"      
+        class="mb20 bigger"
+      >
+        <nuxt-link
+          :to="'/edit?id=' + trfId"
+          >Edit this form</nuxt-link
+        >
+      </div>
 
-        <div v-if="error">
-          <p class="pb10">
-            {{ error }}
-          </p>
-        </div>
-        <div v-else-if="!authorisedToView">
-          <p>
-            You are not authorised to view this TRF. Please contact us if you
-            think this is in error.
-          </p>
-        </div>
-        <div v-else>
-          <div class="mb20">
-            <nuxt-link
-              v-if="!printable && sessionUser.isAdmin"
-              :to="'/edit?id=' + trfId"
-              >Edit this form</nuxt-link
-            >
+      <div :class="getWrapperClass">
+        <div class="component-wrapper">
+          <h1 :class="getTitleClass">
+            {{ getTitleText }}
+          </h1>
+
+          <div v-if="error">
+            <p class="pb10">
+              {{ error }}
+            </p>
           </div>
-          <div v-show="!printable" class="status-wrapper">
-            <h4 class="title is-4">
-              Status:
-              {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
-            </h4>
-            <div
+          <div v-else-if="!authorisedToView">
+            <p>
+              You are not authorised to view this TRF. Please contact us if you
+              think this is in error.
+            </p>
+          </div>
+          <div v-else>
+            <div v-show="!printable" class="status-wrapper">
+              <h4 class="title is-4">
+                Status:
+                {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
+              </h4>
+              <div
               v-if="
                 (sessionIsAdmin || sessionIsSignatory) &&
                 status === 'pending approval'
-              "
+                "
             >
-              <b-button @click="handleApprove" type="is-success is-light"
-                >Approve</b-button
-              >
-              <b-button @click="handleDeny" type="is-danger is-light"
-                >Deny</b-button
-              >
-              <!-- <hr /> -->
-            </div>
-            <div
-              v-if="
+            <b-button @click="handleApprove" type="is-success is-light"
+            >Approve</b-button
+            >
+            <b-button @click="handleDeny" type="is-danger is-light"
+            >Deny</b-button
+            >
+            <!-- <hr /> -->
+          </div>
+          <div
+          v-if="
                 sessionIsAdmin &&
                 status === 'approved' &&
                 !completingInProgressSteps
-              "
+                "
             >
-              <b-button @click="handleInitiateSetInProgress" type="is-success"
-                >Initiate 'Set In Progress'</b-button
-              >
-            </div>
-            <div
-              v-if="
+            <b-button @click="handleInitiateSetInProgress" type="is-success"
+            >Initiate 'Set In Progress'</b-button
+            >
+          </div>
+          <div
+          v-if="
                 sessionIsAdmin &&
                 status === 'approved' &&
                 completingInProgressSteps
-              "
+                "
               class="shortNamesFormWrapper"
-            >
+              >
               <h3 class="title is-5">Assign shortnames (Optional)</h3>
-
+              
               <div class="shortNamesWrapper">
                 <div
-                  v-for="(card, index) in constructs"
-                  :key="index"
-                  class="shortNameInputWrapper"
+                v-for="(card, index) in constructs"
+                :key="index"
+                class="shortNameInputWrapper"
                 >
-                  <b>Shortname:</b>
-                  <b-input
-                    class="padding"
-                    v-model="card.shortName"
-                    maxlength="10"
-                  />
-                  <div class="longNameWrapper">
-                    <b>Longname:</b> {{ card.constructName }}
-                  </div>
+                <b>Shortname:</b>
+                <b-input
+                class="padding"
+                v-model="card.shortName"
+                maxlength="20"
+                />
+                <div class="longNameWrapper">
+                  <b>Longname:</b> {{ card.constructName }}
                 </div>
               </div>
-              <b-button @click="cancelSetInProgress" type="is-danger"
-                >Cancel</b-button
-              >
-              <b-button @click="handleCompleteSetInProgress" type="is-success"
-                >Complete Set 'In Progress'</b-button
-              >
             </div>
-            <div
-              class="printAndCompleteWrapper"
-              v-if="sessionIsAdmin && status === 'in progress'"
+            <b-button @click="cancelSetInProgress" type="is-danger"
+            >Cancel</b-button
             >
-              <div class="printWrapper">
-                <b-button @click="handlePrint" type="is-success is-light"
-                  >Print request</b-button
-                >
+            <b-button @click="handleCompleteSetInProgress" type="is-success"
+            >Complete Set 'In Progress'</b-button
+            >
+          </div>
+          <div
+          class="printAndCompleteWrapper"
+          v-if="sessionIsAdmin && status === 'in progress'"
+          >
+          <div class="printWrapper">
+            <b-button @click="handlePrint" type="is-success is-light"
+            >Print request</b-button
+            >
               </div>
               <b-button class="ml10" @click="handleComplete" type="is-success"
                 >Complete request</b-button
@@ -147,6 +151,8 @@
         </div>
       </div>
     </div>
+  </div>
+
     <b-button
       type="is-danger"
       v-if="canDeleteRequest"
@@ -747,5 +753,9 @@ hr {
   border: 1px dotted grey;
   padding: 2rem;
   padding-bottom: 300px;
+}
+
+.bigger {
+  font-size: 1.5rem;
 }
 </style>

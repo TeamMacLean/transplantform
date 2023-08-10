@@ -213,7 +213,7 @@ const Form =
             constructName: {
               type: String,
               required: true,
-              unique: true,
+              // unique: true, => this constraint was killed by customer
             },
             description: {
               type: String,
@@ -243,6 +243,7 @@ const Form =
             shortName: {
               type: String,
               required: false,
+              default: '',
             },
           },
         ],
