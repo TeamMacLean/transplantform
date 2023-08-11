@@ -1,8 +1,8 @@
 // 1. Import the initial variables
-@import "~bulma/sass/utilities/initial-variables";
-@import "~bulma/sass/utilities/functions";
+@import '~bulma/sass/utilities/initial-variables';
+@import '~bulma/sass/utilities/functions';
 
-$cello: #37495C;
+$cello: #37495c;
 $cello-invert: #fff;
 $primary: $cello;
 $primary-invert: $cello-invert;
@@ -16,9 +16,8 @@ $primary-invert: $cello-invert;
 //$colors: map-merge($colors, $addColors);
 
 // 6. Import the rest of Bulma
-@import "~bulma/bulma";
-@import "~@creativebulma/bulma-tooltip";
-
+@import '~bulma/bulma';
+@import '~@creativebulma/bulma-tooltip';
 
 .tag:not(body) {
   &.is-outlined {
@@ -27,7 +26,14 @@ $primary-invert: $cello-invert;
   }
 }
 
+.__nuxt-error-page {
+  top: 60px;
+}
 
-.__nuxt-error-page{
-  top:60px;
+/* printing */
+.printable-mode #header {
+  display: none;
+}
+.printable-mode .section {
+  padding: 10px;
 }

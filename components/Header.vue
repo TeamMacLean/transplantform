@@ -1,7 +1,7 @@
 <template>
   <!-- THIS WRAPPER DIV IS ALSO TEMP whilst testing different user roles -->
   <!-- Also check that 'George Deeks (TSL) populates when all this user data stuff is stripped back out' -->
-  <div>
+  <div id="header">
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <nuxt-link to="/" class="navbar-item">

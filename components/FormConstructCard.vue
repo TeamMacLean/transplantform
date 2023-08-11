@@ -26,9 +26,7 @@
           "
         >  
         -->
-        <b-field
-          label="Construct Name"         
-        >
+        <b-field label="Construct Name">
           <b-input
             placeholder="Required"
             v-model="card.constructName"
@@ -51,9 +49,7 @@
         </b-field>
       </div>
       <div class="row-wrapper">
-        <b-field
-          label="Construct ID"
-        >
+        <b-field label="Construct ID">
           <b-input
             placeholder="Optional - Admins can assign this later"
             v-model="card.shortName"
@@ -163,10 +159,6 @@ export default {
     'agroStrains',
   ],
   computed: {
-    textAreaHeight() {
-      // TODO refactor (does nowt)
-      return Math.max(this.card.description.split('\n').length, 3) * 20;
-    },
     incompleteConstruct() {
       return (
         !this.card.constructName ||

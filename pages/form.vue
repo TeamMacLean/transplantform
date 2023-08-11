@@ -2,17 +2,14 @@
   <div>
     <b-loading is-full-page v-model="loading"></b-loading>
     <div>
-      <div 
-        v-if="!printable && sessionUser.isAdmin && trfId"      
+      <div
+        v-if="!printable && sessionUser.isAdmin && trfId"
         class="mb20 bigger"
       >
-        <nuxt-link
-          :to="'/edit?id=' + trfId"
-          >Edit this form</nuxt-link
-        >
+        <nuxt-link :to="'/edit?id=' + trfId">Edit this form</nuxt-link>
       </div>
 
-      <div :class="getWrapperClass">
+      <div v-if="!printable" :class="getWrapperClass">
         <div class="component-wrapper">
           <h1 :class="getTitleClass">
             {{ getTitleText }}
@@ -36,122 +33,229 @@
                 {{ this.status.charAt(0).toUpperCase() + this.status.slice(1) }}
               </h4>
               <div
-              v-if="
-                (sessionIsAdmin || sessionIsSignatory) &&
-                status === 'pending approval'
+                v-if="
+                  (sessionIsAdmin || sessionIsSignatory) &&
+                  status === 'pending approval'
                 "
-            >
-            <b-button @click="handleApprove" type="is-success is-light"
-            >Approve</b-button
-            >
-            <b-button @click="handleDeny" type="is-danger is-light"
-            >Deny</b-button
-            >
-            <!-- <hr /> -->
-          </div>
-          <div
-          v-if="
-                sessionIsAdmin &&
-                status === 'approved' &&
-                !completingInProgressSteps
-                "
-            >
-            <b-button @click="handleInitiateSetInProgress" type="is-success"
-            >Initiate 'Set In Progress'</b-button
-            >
-          </div>
-          <div
-          v-if="
-                sessionIsAdmin &&
-                status === 'approved' &&
-                completingInProgressSteps
-                "
-              class="shortNamesFormWrapper"
               >
-              <h3 class="title is-5">Assign shortnames (Optional)</h3>
-              
-              <div class="shortNamesWrapper">
-                <div
-                v-for="(card, index) in constructs"
-                :key="index"
-                class="shortNameInputWrapper"
+                <b-button @click="handleApprove" type="is-success is-light"
+                  >Approve</b-button
                 >
-                <b>Shortname:</b>
-                <b-input
-                class="padding"
-                v-model="card.shortName"
-                maxlength="20"
-                />
-                <div class="longNameWrapper">
-                  <b>Longname:</b> {{ card.constructName }}
-                </div>
+                <b-button @click="handleDeny" type="is-danger is-light"
+                  >Deny</b-button
+                >
               </div>
-            </div>
-            <b-button @click="cancelSetInProgress" type="is-danger"
-            >Cancel</b-button
-            >
-            <b-button @click="handleCompleteSetInProgress" type="is-success"
-            >Complete Set 'In Progress'</b-button
-            >
-          </div>
-          <div
-          class="printAndCompleteWrapper"
-          v-if="sessionIsAdmin && status === 'in progress'"
-          >
-          <div class="printWrapper">
-            <b-button @click="handlePrint" type="is-success is-light"
-            >Print request</b-button
-            >
-              </div>
-              <b-button class="ml10" @click="handleComplete" type="is-success"
-                >Complete request</b-button
+              <div
+                v-if="
+                  sessionIsAdmin &&
+                  status === 'approved' &&
+                  !completingInProgressSteps
+                "
               >
+                <b-button @click="handleInitiateSetInProgress" type="is-success"
+                  >Initiate 'Set In Progress'</b-button
+                >
+              </div>
+              <div
+                v-if="
+                  sessionIsAdmin &&
+                  status === 'approved' &&
+                  completingInProgressSteps
+                "
+                class="shortNamesFormWrapper"
+              >
+                <h3 class="title is-5">Assign shortnames (Optional)</h3>
+
+                <div class="shortNamesWrapper">
+                  <div
+                    v-for="(card, index) in constructs"
+                    :key="index"
+                    class="shortNameInputWrapper"
+                  >
+                    <b>Shortname:</b>
+                    <b-input
+                      class="padding"
+                      v-model="card.shortName"
+                      maxlength="20"
+                    />
+                    <div class="longNameWrapper">
+                      <b>Longname:</b> {{ card.constructName }}
+                    </div>
+                  </div>
+                </div>
+                <b-button @click="cancelSetInProgress" type="is-danger"
+                  >Cancel</b-button
+                >
+                <b-button @click="handleCompleteSetInProgress" type="is-success"
+                  >Complete Set 'In Progress'</b-button
+                >
+              </div>
+              <div
+                class="printAndCompleteWrapper"
+                v-if="sessionIsAdmin && status === 'in progress'"
+              >
+                <div class="printWrapper">
+                  <b-button @click="handlePrint" type="is-success is-light"
+                    >Print request</b-button
+                  >
+                </div>
+                <b-button class="ml10" @click="handleComplete" type="is-success"
+                  >Complete request</b-button
+                >
+              </div>
             </div>
+
+            <div class="row-wrapper mb20">
+              <b-field label="Date">
+                <div>{{ this.date }}</div>
+              </b-field>
+
+              <b-field label="Username">
+                <div>{{ this.username }}</div>
+              </b-field>
+
+              <b-field label="Signatory">
+                <div>{{ this.signatoryObj.name }}</div>
+              </b-field>
+              <b-field label="Species">
+                <div>{{ this.species }}</div>
+              </b-field>
+
+              <b-field label="Genotype">
+                <div>{{ this.genotype }}</div>
+              </b-field>
+            </div>
+
+            <h3 class="title is-4">Constructs</h3>
+            <h3 class="title is-6">In priority order</h3>
+
+            <div class="display-construct-cards-wrapper">
+              <DisplayConstructCard
+                v-for="(card, index) in constructs"
+                :theIndex="index"
+                :card="card"
+                :key="index"
+                :status="status"
+              />
+            </div>
+
+            <b-field :class="printable && 'blank-space'" label="Notes">
+              <div>{{ notes || '[No notes]' }}</div>
+            </b-field>
+
+            <hr />
           </div>
+        </div>
+      </div>
+      <div id="printableArea" v-else>
+        <h4 class="title is-4">Transformation Request Form</h4>
 
-          <div class="row-wrapper mb20">
-            <b-field label="Date">
-              <div>{{ this.date }}</div>
-            </b-field>
+        <div id="styled-table-container">
+          <div id="styled-table">
+            <table>
+              <tr v-for="n in 11" :key="n">
+                <!-- For the first row -->
+                <td class="first-col" v-if="n === 1">Date</td>
+                <td v-if="n === 1">{{ date }}</td>
 
-            <b-field label="Username">
-              <div>{{ this.username }}</div>
-            </b-field>
+                <!-- For the second row -->
+                <td v-if="n === 2">Username</td>
+                <td v-if="n === 2">{{ username }}</td>
 
-            <b-field label="Signatory">
-              <div>{{ this.signatoryObj.name }}</div>
-            </b-field>
-            <b-field label="Species">
-              <div>{{ this.species }}</div>
-            </b-field>
+                <!-- For the third row -->
+                <td v-if="n === 3">Group Leader</td>
+                <td v-if="n === 3">{{ signatoryObj.name }}</td>
 
-            <b-field label="Genotype">
-              <div>{{ this.genotype }}</div>
-            </b-field>
+                <!-- For the fourth row -->
+                <td v-if="n === 4">
+                  Plant to be Transformed (species and genotype)
+                </td>
+                <td class="no-table-padding" v-if="n === 4">
+                  <table>
+                    <tr>
+                      <td>Species: {{ species }}</td>
+                    </tr>
+                    <tr>
+                      <td>Genotype: {{ genotype }}</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- For the fifth row -->
+                <td v-if="n === 5">Construct Name</td>
+                <td class="no-table-padding" v-if="n === 5">
+                  <table>
+                    <tr v-for="(construct, index) in constructs" :key="index">
+                      <td class="fixed-width">{{ index + 1 }}.</td>
+                      <td>{{ construct.constructName }}</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- For the sixth row -->
+                <td v-else-if="n === 6">Binary Vector Backbone</td>
+                <td class="no-table-padding" v-if="n === 6">
+                  <table>
+                    <tr v-for="(construct, index) in constructs" :key="index">
+                      <td class="fixed-width">{{ index + 1 }}.</td>
+                      <td>{{ construct.binaryVectorBackbone }}</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- For the seventh row -->
+                <td v-else-if="n === 7">
+                  <i>Agrobacterium tumefaciens</i> Strain
+                </td>
+                <td class="no-table-padding" v-if="n === 7">
+                  <table>
+                    <tr v-for="(construct, index) in constructs" :key="index">
+                      <td class="fixed-width">{{ index + 1 }}.</td>
+                      <td>{{ construct.agroStrain }}</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- For the eigth row -->
+                <td v-else-if="n === 8">
+                  Binary Vector Selection (in <i>Agrobacterium tumefaciens</i>)
+                </td>
+                <td class="no-table-padding" v-if="n === 8">
+                  <table>
+                    <tr v-for="(construct, index) in constructs" :key="index">
+                      <td class="fixed-width">{{ index + 1 }}.</td>
+                      <td>{{ construct.vectorSelection }}</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- For the ninth row -->
+                <td v-else-if="n === 9">T-DNA Selection (in <i>plants</i>)</td>
+                <td class="no-table-padding" v-if="n === 9">
+                  <table>
+                    <tr v-for="(construct, index) in constructs" :key="index">
+                      <td class="fixed-width">{{ index + 1 }}.</td>
+                      <td>{{ construct.tdnaSelection }}</td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- For the 10th row -->
+                <td v-if="n === 10" colspan="2">Status: {{ status }}</td>
+
+                <!-- For the 11th row -->
+                <td v-if="n === 11" colspan="2">
+                  <div class="notes-room">
+                    <div class="pb1em">Notes:</div>
+                    <div v-if="notes">{{ notes }}</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
           </div>
-
-          <h3 class="title is-4">Constructs</h3>
-          <h3 class="title is-6">In priority order</h3>
-
-          <div class="display-construct-cards-wrapper">
-            <DisplayConstructCard
-              v-for="(card, index) in constructs"
-              :theIndex="index"
-              :card="card"
-              :key="index"
-              :status="status"
-            />
-          </div>
-
-          <b-field :class="printable && 'blank-space'" label="Notes">
-            <div>{{ notes || '[No notes]' }}</div>
-          </b-field>
-
-          <hr />
         </div>
       </div>
     </div>
-  </div>
 
     <b-button
       type="is-danger"
@@ -444,6 +548,24 @@ export default {
         },
       });
     },
+  },
+  /** print methods */
+  mounted() {
+    if (this.printable) {
+      document.body.classList.add('printable-mode');
+    }
+  },
+  watch: {
+    printable(newValue) {
+      if (newValue) {
+        document.body.classList.add('printable-mode');
+      } else {
+        document.body.classList.remove('printable-mode');
+      }
+    },
+  },
+  beforeDestroy() {
+    document.body.classList.remove('printable-mode');
   },
   computed: {
     canDeleteRequest() {
@@ -757,5 +879,63 @@ hr {
 
 .bigger {
   font-size: 1.5rem;
+}
+
+/* Table styles */
+#styled-table table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em; /* Reduce the font size slightly */
+}
+
+/* Black border for each row */
+#styled-table tr {
+  border-bottom: 1px solid black;
+}
+
+/* Remove the border from the last row */
+#styled-table tr:last-child {
+  border-bottom: none;
+}
+
+/* Adjusted cell padding for a tighter appearance */
+#styled-table td {
+  padding: 5px; /* Reduced padding from 10px to 5px */
+  border-right: 1px solid black; /* Add border to the right of each cell */
+}
+
+/* Remove the right border from the last cell in each row */
+#styled-table td:last-child {
+  border-right: none;
+}
+
+/* Double border effect using div and padding */
+#styled-table-container {
+  padding: 3px;
+  border: 1px solid black;
+}
+
+#styled-table {
+  border: 1px solid black;
+}
+
+.no-table-padding {
+  padding: 0 !important;
+}
+
+.fixed-width {
+  width: 2rem;
+}
+
+.first-col {
+  width: 30%;
+}
+
+.pb1em {
+  padding-bottom: 1.5em;
+}
+
+.notes-room {
+  padding-bottom: 50px;
 }
 </style>
