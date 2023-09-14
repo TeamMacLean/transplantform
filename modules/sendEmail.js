@@ -1,19 +1,11 @@
 'use strict';
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
-import getEmailOptions from './getEmailOptions';
 dotenv.config();
 
-const { SMTP_HOST, SMTP_PORT, ADMIN_GROUP_EMAIL } = process.env;
+const { SMTP_HOST, SMTP_PORT, ADMIN_GROUP_EMAIL, DIVERT_EMAILS_USERNAME } =
+  process.env;
 
-/**
- * actualSending
- * @param {Object} mailObj - Email meta data and body
- * @param {String} from - Email address of the sender
- * @param {Array} recipients - Array of recipients email address
- * @param {String} subject - Subject of the email
- * @param {String} message - message
- */
 const sendEmail = async (mailObj) => {
   const { to, cc, subject, html } = mailObj;
 
@@ -22,26 +14,33 @@ const sendEmail = async (mailObj) => {
   }
 
   try {
-    // Create a transporter
     let transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
-      // auth: {
-      //   user: "hello@schadokar.dev",
-      //   pass: "SMTP-KEY",
-      // },
-      //connectionTimeout: 10000,
     });
     // console.log('about to send message', mailObj);
-    // send mail with defined transport object
-    let mailStatus = await transporter.sendMail({
-      from: 'TSL Transplant Website transplant@nbi.ac.uk', // sender address
+
+    const finalTo = Array.isArray(to) ? [...to] : [to];
+
+    // tester+username@nbi.ac.uk is not sending, so directly add the tester's username
+    if (DIVERT_EMAILS_USERNAME) {
+      finalTo.push(`${DIVERT_EMAILS_USERNAME}@nbi.ac.uk`);
+    }
+
+    let mailOpts = {
+      from: 'TSL Transplant Website tsl-transplant@nbi.ac.uk', // sender address
       replyTo: ADMIN_GROUP_EMAIL + '@nbi.ac.uk',
-      to: to, // list of recipients
-      cc: cc, // list of additional recipients
+      to: finalTo, // list of recipients
       subject: subject, // Subject line
-      html: html, // plain text
-    });
+      html: html,
+    };
+
+    if (cc) {
+      mailOpts.cc = cc;
+    }
+
+    let mailStatus = await transporter.sendMail(mailOpts);
+
     const betterMailStatus = {
       ...mailStatus.envelope,
     };

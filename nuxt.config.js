@@ -9,8 +9,8 @@ export default {
   },
   env: {
     WEBMASTER: process.env.WEBMASTER,
-    ADMIN_GROUP_EMAIL: process.env.ADMIN_GROUP_EMAIL,
     DIVERT_EMAILS_USERNAME: process.env.DIVERT_EMAILS_USERNAME,
+    ADMIN_GROUP_EMAIL: process.env.ADMIN_GROUP_EMAIL,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
     WEBMASTER_TESTING: process.env.WEBMASTER_TESTING,

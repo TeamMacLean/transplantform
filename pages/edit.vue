@@ -200,7 +200,7 @@
             :tdnaSelections="tdnaSelections"
             :agroStrains="agroStrains"
             :removeConstruct="removeConstruct"
-            />
+          />
           <b-button @click="addConstruct" class="add-construct-button"
             >Add Another Construct</b-button
           >
@@ -378,8 +378,10 @@ export default {
           vectorSelection: construct.vectorSelection.trim(),
           tdnaSelection: construct.tdnaSelection.trim(),
           agroStrain: construct.agroStrain.trim(),
-          description: construct.description.trim(),
-          shortName: construct.shortName.trim(),
+          description: construct.description
+            ? construct.description.trim()
+            : '',
+          shortName: construct.shortName ? construct.shortName.trim() : '',
         })),
         notes: this.notes.trim(),
         status: this.selectedStatus,

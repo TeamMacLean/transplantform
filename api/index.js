@@ -268,87 +268,89 @@ router.get('/form/new', async (req, res) => {
 });
 
 router.post('/form/new', async (req, res) => {
-  const {
-    date,
-    username,
-    creatorIsAdmin,
-    creatorIsGroupLeader,
-    signatoryObj,
-    species,
-    genotype,
-    constructs,
-    notes,
-  } = req.body;
+  const responseObj = { status: 200 };
 
-  let theStatus =
-    creatorIsGroupLeader || creatorIsAdmin ? 'approved' : 'pending approval';
-
-  const signatoryId = signatoryObj._id;
-  const signatoryObjectId = mongoose.Types.ObjectId(signatoryId);
-
-  // calculate new TRF ID
-  const forms = await Form.find({}).sort({ date: 'descending' });
-  const trfIds = forms.map((f) => f.trfId);
-  var counter = 1;
-  var newTrfIdStr = 'TRF' + counter;
-  function recurseCheck(trfIdToCheck, counter) {
-    if (trfIds.includes(trfIdToCheck)) {
-      counter++;
-      trfIdToCheck = 'TRF' + counter;
-      return recurseCheck(trfIdToCheck, counter);
-    } else {
-      return trfIdToCheck;
-    }
-  }
-  newTrfIdStr = recurseCheck(newTrfIdStr, counter);
-
-  // console.log('about to create form', newTrfIdStr);
-  //const newFormEntry =
-  await Form.create({
-    date: date,
-    username: username,
-    creatorIsAdmin: creatorIsAdmin,
-    creatorIsGroupLeader: creatorIsGroupLeader,
-    signatoryId: signatoryObjectId,
-    species: species,
-    genotype: genotype,
-    constructs: constructs,
-    notes: notes,
-    status: theStatus,
-    trfId: newTrfIdStr,
-  }).catch((err) => {
-    res.send({ status: 500, error: err });
-    console.err(error);
-  });
-  // console.log('form created', newFormEntry);
-
-  const allGenotypes = await Genotype.find({}).sort({ date: 'descending' });
-  const allGenotypeNames = allGenotypes.length
-    ? allGenotypes.map((genotype) => genotype.name.toLowerCase())
-    : [];
-  if (!allGenotypeNames.includes(genotype.toLowerCase())) {
-    const res = await Genotype.create({
-      name: genotype,
-      archived: false,
-    });
-  }
-
-  if (theStatus === 'pending approval') {
-    // send Email to group leader and CC research assistant
-    const emailOptions = getEmailOptions('approval', {
+  try {
+    const {
+      date,
+      username,
+      creatorIsAdmin,
+      creatorIsGroupLeader,
       signatoryObj,
+      species,
+      genotype,
+      constructs,
+      notes,
+    } = req.body;
+
+    let theStatus =
+      creatorIsGroupLeader || creatorIsAdmin ? 'approved' : 'pending approval';
+
+    const signatoryId = signatoryObj._id;
+    const signatoryObjectId = mongoose.Types.ObjectId(signatoryId);
+
+    // calculate new TRF ID
+    const forms = await Form.find({}).sort({ date: 'descending' });
+    const trfIds = forms.map((f) => f.trfId);
+    var counter = 1;
+    var newTrfIdStr = 'TRF' + counter;
+    function recurseCheck(trfIdToCheck, counter) {
+      if (trfIds.includes(trfIdToCheck)) {
+        counter++;
+        trfIdToCheck = 'TRF' + counter;
+        return recurseCheck(trfIdToCheck, counter);
+      } else {
+        return trfIdToCheck;
+      }
+    }
+    newTrfIdStr = recurseCheck(newTrfIdStr, counter);
+
+    await Form.create({
+      date: date,
+      username: username,
+      creatorIsAdmin: creatorIsAdmin,
+      creatorIsGroupLeader: creatorIsGroupLeader,
+      signatoryId: signatoryObjectId,
+      species: species,
+      genotype: genotype,
+      constructs: constructs,
+      notes: notes,
+      status: theStatus,
       trfId: newTrfIdStr,
     });
-    const emailResults = await sendEmail(emailOptions).catch((err) => {
-      console.error('email failed', err);
-      res.send({ status: 200, error: err });
-    });
-    // console.log('email sent', emailResults);
-  } else {
-    console.log('auto approved, no email sent');
-  }
 
-  res.send({ status: 200, trfId: newTrfIdStr });
+    const allGenotypes = await Genotype.find({}).sort({ date: 'descending' });
+    const allGenotypeNames = allGenotypes.length
+      ? allGenotypes.map((genotype) => genotype.name.toLowerCase())
+      : [];
+    if (!allGenotypeNames.includes(genotype.toLowerCase())) {
+      await Genotype.create({
+        name: genotype,
+        archived: false,
+      });
+    }
+
+    if (theStatus === 'pending approval') {
+      // send Email to group leader and CC research assistant
+      const emailOptions = getEmailOptions('approval', {
+        signatoryObj,
+        trfId: newTrfIdStr,
+      });
+      // console.log('email options when approving form', emailOptions);
+      const emailResults = await sendEmail(emailOptions);
+      console.log('email sent to approve form', emailResults);
+    } else {
+      console.log('auto approved, no email sent');
+    }
+
+    responseObj.trfId = newTrfIdStr;
+  } catch (err) {
+    console.error(err);
+    responseObj.status = 500;
+    responseObj.error = err;
+  } finally {
+    res.status(responseObj.status).send(responseObj);
+  }
 });
 
 router.get('/form/edit', async (req, res) => {
@@ -493,6 +495,8 @@ router.post('/form/delete', async (req, res) => {
     );
 
     if (result.ok) {
+      console.log(`${trfId} deleted`);
+
       // send Email to group leader and user and admin
 
       const emailOptions = getEmailOptions('deletion', {
@@ -500,11 +504,12 @@ router.post('/form/delete', async (req, res) => {
         trfId,
         username,
       });
+      console.log('email options when deleting a TRF form', emailOptions);
       const emailResults = await sendEmail(emailOptions).catch((err) => {
         console.error('email failed', err);
         res.send({ status: 200, error: err });
       });
-      // console.log('email sent', emailResults);
+      console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
@@ -530,7 +535,7 @@ router.post('/form/approve', async (req, res) => {
 
     if (result.ok) {
       // probably should email admin to update them, but they didnt ask for this feature
-
+      console.log(`${trfId} approved by Group Leader`);
       res.send({ status: 200 });
     } else {
       throw new Error('Error updating form status');
@@ -555,6 +560,7 @@ router.post('/form/deny', async (req, res) => {
 
     if (result.ok) {
       // probably should email admin/user to update them, but they didnt ask for this feature
+      console.log(`${trfId} denied by Group Leader`);
 
       res.send({ status: 200 });
     } else {
@@ -585,17 +591,23 @@ router.post('/form/inprogress', async (req, res) => {
     );
 
     if (result.ok) {
+      console.log(`${trfId} set 'In Progress'`);
+
       // could email user but they didnt ask for this feature
 
       // send Email to admin (though unnecessary it was requested)
       const emailOptions = getEmailOptions('in progress', {
         trfId,
       });
+      // console.log(
+      //   'email options when setting form to in progress',
+      //   emailOptions
+      // );
       const emailResults = await sendEmail(emailOptions).catch((err) => {
         console.error('email failed', err);
         res.send({ status: 200, error: err });
       });
-      // console.log('email sent', emailResults);
+      console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
@@ -620,6 +632,8 @@ router.post('/form/completed', async (req, res) => {
     );
 
     if (result.ok) {
+      console.log(`${trfId} completed`);
+
       // send Email to admin (though unnecessary it was requested)
 
       const emailOptions = getEmailOptions('completed', {
@@ -627,11 +641,12 @@ router.post('/form/completed', async (req, res) => {
         username,
         completedMsg,
       });
+      // console.log('email options when setting form to completed', emailOptions);
       const emailResults = await sendEmail(emailOptions).catch((err) => {
         console.error('email failed', err);
         res.send({ status: 200, error: err });
       });
-      // console.log('email sent', emailResults);
+      console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
@@ -742,19 +757,6 @@ router.post('/admin/group', async (req, res) => {
     console.error(error);
   }
 });
-
-// router.post('/email', async (req, res) => {
-//   try {
-//     const emailObj = getEmailOptions('test', {});
-//     const emailResults = await sendEmail(emailObj);
-//     console.log('emailRes', emailResults);
-
-//     res.send({ status: 200, emailResults });
-//   } catch (error) {
-//     res.send({ status: 'error', error: error });
-//     console.error(error);
-//   }
-// });
 
 router.post('/admin/additional', async (req, res) => {
   try {

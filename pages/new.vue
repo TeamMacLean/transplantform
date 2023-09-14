@@ -406,8 +406,10 @@ export default {
           vectorSelection: construct.vectorSelection.trim(),
           tdnaSelection: construct.tdnaSelection.trim(),
           agroStrain: construct.agroStrain.trim(),
-          description: construct.description.trim(),
-          shortName: construct.shortName.trim(),
+          description: construct.description
+            ? construct.description.trim()
+            : '',
+          shortName: construct.shortName ? construct.shortName.trim() : '',
         })),
         notes: this.notes.trim(),
       };

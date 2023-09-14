@@ -171,73 +171,89 @@
                   Plant to be Transformed (species and genotype)
                 </td>
                 <td class="no-table-padding" v-if="n === 4">
-                  <table>
-                    <tr>
-                      <td>Species: {{ species }}</td>
-                    </tr>
-                    <tr>
-                      <td>Genotype: {{ genotype }}</td>
-                    </tr>
-                  </table>
+                  <div class="mega-table-wrapper">
+                    <table class="multi-input-table-within-cell">
+                      <tr>
+                        <td>Species: {{ species }}</td>
+                      </tr>
+                      <tr>
+                        <td>Genotype: {{ genotype }}</td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
 
                 <!-- For the fifth row -->
-                <td v-if="n === 5">Construct Name</td>
+                <td class="heading-column" v-if="n === 5">Construct Name</td>
                 <td class="no-table-padding" v-if="n === 5">
-                  <table>
-                    <tr v-for="(construct, index) in constructs" :key="index">
-                      <td class="fixed-width">{{ index + 1 }}.</td>
-                      <td>{{ construct.constructName }}</td>
-                    </tr>
-                  </table>
+                  <div class="mega-table-wrapper">
+                    <table class="multi-input-table-within-cell">
+                      <tr v-for="(construct, index) in constructs" :key="index">
+                        <td class="fixed-width">{{ index + 1 }}.</td>
+                        <td>{{ construct.constructName }}</td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
 
                 <!-- For the sixth row -->
-                <td v-else-if="n === 6">Binary Vector Backbone</td>
+                <td class="heading-column" v-else-if="n === 6">
+                  Binary Vector Backbone
+                </td>
                 <td class="no-table-padding" v-if="n === 6">
-                  <table>
-                    <tr v-for="(construct, index) in constructs" :key="index">
-                      <td class="fixed-width">{{ index + 1 }}.</td>
-                      <td>{{ construct.binaryVectorBackbone }}</td>
-                    </tr>
-                  </table>
+                  <div class="mega-table-wrapper">
+                    <table class="multi-input-table-within-cell">
+                      <tr v-for="(construct, index) in constructs" :key="index">
+                        <td class="fixed-width">{{ index + 1 }}.</td>
+                        <td>{{ construct.binaryVectorBackbone }}</td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
 
                 <!-- For the seventh row -->
-                <td v-else-if="n === 7">
+                <td class="heading-column" v-else-if="n === 7">
                   <i>Agrobacterium tumefaciens</i> Strain
                 </td>
                 <td class="no-table-padding" v-if="n === 7">
-                  <table>
-                    <tr v-for="(construct, index) in constructs" :key="index">
-                      <td class="fixed-width">{{ index + 1 }}.</td>
-                      <td>{{ construct.agroStrain }}</td>
-                    </tr>
-                  </table>
+                  <div class="mega-table-wrapper">
+                    <table class="multi-input-table-within-cell">
+                      <tr v-for="(construct, index) in constructs" :key="index">
+                        <td class="fixed-width">{{ index + 1 }}.</td>
+                        <td>{{ construct.agroStrain }}</td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
 
                 <!-- For the eigth row -->
-                <td v-else-if="n === 8">
+                <td class="heading-column" v-else-if="n === 8">
                   Binary Vector Selection (in <i>Agrobacterium tumefaciens</i>)
                 </td>
                 <td class="no-table-padding" v-if="n === 8">
-                  <table>
-                    <tr v-for="(construct, index) in constructs" :key="index">
-                      <td class="fixed-width">{{ index + 1 }}.</td>
-                      <td>{{ construct.vectorSelection }}</td>
-                    </tr>
-                  </table>
+                  <div class="mega-table-wrapper">
+                    <table class="multi-input-table-within-cell">
+                      <tr v-for="(construct, index) in constructs" :key="index">
+                        <td class="fixed-width">{{ index + 1 }}.</td>
+                        <td>{{ construct.vectorSelection }}</td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
 
                 <!-- For the ninth row -->
-                <td v-else-if="n === 9">T-DNA Selection (in <i>plants</i>)</td>
+                <td class="heading-column" v-else-if="n === 9">
+                  T-DNA Selection (in <i>plants</i>)
+                </td>
                 <td class="no-table-padding" v-if="n === 9">
-                  <table>
-                    <tr v-for="(construct, index) in constructs" :key="index">
-                      <td class="fixed-width">{{ index + 1 }}.</td>
-                      <td>{{ construct.tdnaSelection }}</td>
-                    </tr>
-                  </table>
+                  <div class="mega-table-wrapper">
+                    <table class="multi-input-table-within-cell">
+                      <tr v-for="(construct, index) in constructs" :key="index">
+                        <td class="fixed-width">{{ index + 1 }}.</td>
+                        <td>{{ construct.tdnaSelection }}</td>
+                      </tr>
+                    </table>
+                  </div>
                 </td>
 
                 <!-- For the 10th row -->
@@ -921,6 +937,31 @@ hr {
 
 .no-table-padding {
   padding: 0 !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.multi-input-table-within-cell {
+  box-sizing: border-box;
+  border-collapse: collapse !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: static;
+  height: 100%;
+  flex-grow: 1;
+}
+.mega-table-wrapper {
+  height: 100%;
+  overflow: auto;
+}
+
+.heading-column {
+  padding-bottom: 0 !important;
+  padding-top: 0.25em !important;
 }
 
 .fixed-width {
