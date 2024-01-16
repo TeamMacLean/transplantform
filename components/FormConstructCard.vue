@@ -49,17 +49,21 @@
         </b-field>
       </div>
       <div class="row-wrapper">
-        <b-field label="Construct ID">
+        <b-field label="TC-code">
           <b-input
-            placeholder="Optional - Admins can assign this later"
             v-model="card.shortName"
             maxlength="20"
             :value="card.shortName"
+            :placeholder="getTCcodePlaceholder"
+            :disabled="getTCcodeDisabled"
           ></b-input>
         </b-field>
       </div>
       <div class="row-wrapper">
-        <b-field label="Binary Vector Backbone">
+        <b-field>
+          <template slot="label">
+            Binary Vector Backbone (in <i>Agrobacterium</i>)
+          </template>
           <b-input
             placeholder="Required"
             v-model="card.binaryVectorBackbone"
@@ -95,7 +99,7 @@
         <b-field grouped>
           <div class="entire-field">
             <div class="label-and-input">
-              <label class="label">AgroStrains</label>
+              <label class="label">Agrobacterium Strain</label>
               <b-select
                 placeholder="Required"
                 class="custom-b-input"
@@ -116,7 +120,7 @@
         <b-field grouped>
           <div class="entire-field">
             <div class="label-and-input">
-              <label class="label">T-DNA Selection</label>
+              <label class="label"> T-DNA Selection (in <i>planta</i>) </label>
               <b-select
                 placeholder="Required"
                 class="custom-b-input"
@@ -157,6 +161,7 @@ export default {
     'vectorSelections',
     'tdnaSelections',
     'agroStrains',
+    'userIsAdmin',
   ],
   computed: {
     incompleteConstruct() {
@@ -168,6 +173,14 @@ export default {
         !this.card.tdnaSelection //||
         //this.isConstructNameUnavailable customer killed feature
       );
+    },
+    getTCcodePlaceholder() {
+      return this.userIsAdmin
+        ? 'Admins can assign now or later'
+        : 'Disabled - Admins can assign this later';
+    },
+    getTCcodeDisabled() {
+      return !this.userIsAdmin;
     },
   },
   watch: {

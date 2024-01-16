@@ -243,7 +243,7 @@
 
                 <!-- For the ninth row -->
                 <td class="heading-column" v-else-if="n === 9">
-                  T-DNA Selection (in <i>plants</i>)
+                  T-DNA Selection (in <i>planta</i>)
                 </td>
                 <td class="no-table-padding" v-if="n === 9">
                   <div class="mega-table-wrapper">

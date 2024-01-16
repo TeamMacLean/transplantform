@@ -112,11 +112,22 @@ export default {
             radio: self.radio,
           },
         })
-        .then((results) => {
+        .then((_) => {
           self.submitting = false;
 
+          let theNextPath = '/';
+
+          if (
+            this.$nuxt &&
+            this.$nuxt.context &&
+            this.$nuxt.from &&
+            this.$nuxt.from.path
+          ) {
+            theNextPath = this.$nuxt.from.path;
+          }
+
           this.$router.push({
-            path: this.$nuxt.context.from.path,
+            path: theNextPath,
           });
         })
         .catch((err) => {

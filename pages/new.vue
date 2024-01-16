@@ -5,7 +5,7 @@
     <h1 class="title is-2">New Request</h1>
 
     <b-button @click="openChooseOldFormModal" type="is-info is-light"
-      >Clone previous form contents</b-button
+      >Copy a previous TRF</b-button
     >
 
     <b-modal
@@ -242,6 +242,7 @@
           :tdnaSelections="tdnaSelections"
           :agroStrains="agroStrains"
           :removeConstruct="removeConstruct"
+          :userIsAdmin="isAdmin"
         />
         <b-button @click="addConstruct" class="add-construct-button"
           >Add Another Construct</b-button
@@ -345,7 +346,7 @@ export default {
           constructs: [
             {
               constructName: '',
-              shortName: '', // Construct ID
+              shortName: '', // TC-code
               binaryVectorBackbone: '',
               vectorSelection: null,
               tdnaSelection: null,
@@ -469,20 +470,33 @@ export default {
         });
     },
     addConstruct() {
-      const newConstructs = [
-        ...this.constructs,
-        {
-          constructName: '',
-          binaryVectorBackbone: '',
-          vectorSelection: null,
-          tdnaSelection: null,
-          agroStrain: null,
-          description: '',
-          shortName: '',
-        },
-      ];
+      let newConstructs = [];
+
+      if (this.constructs < 1) {
+        newConstructs = [
+          {
+            constructName: '',
+            binaryVectorBackbone: '',
+            vectorSelection: null,
+            tdnaSelection: null,
+            agroStrain: null,
+            description: '',
+            shortName: '',
+          },
+        ];
+      } else {
+        const mostRecentConstructIndex = this.constructs.length - 1;
+
+        newConstructs = [
+          ...this.constructs,
+          {
+            ...this.constructs[mostRecentConstructIndex],
+          },
+        ];
+      }
 
       this.constructs = newConstructs;
+      return;
     },
     closeChooseOldFormModal() {
       this.selectedOldForm = null;

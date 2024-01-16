@@ -14,7 +14,7 @@
           <b-field label="Construct Name">
             <div>{{ card.constructName }}</div>
           </b-field>
-          <b-field label="Construct ID">
+          <b-field label="TC-code">
             <div>{{ card.shortName || '[None set]' }}</div>
           </b-field>
           <b-field label="Binary Vector Backbone">
@@ -26,7 +26,10 @@
           <b-field label="Vector Selection">
             <div>{{ card.vectorSelection }}</div>
           </b-field>
-          <b-field label="T-DNA Selection">
+          <b-field>
+            <template slot="label">
+              T-DNA Selection (in <i>planta</i>)
+            </template>
             <div>{{ card.tdnaSelection }}</div>
           </b-field>
           <b-field label="AgroStrain">

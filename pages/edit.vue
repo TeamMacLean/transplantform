@@ -200,6 +200,7 @@
             :tdnaSelections="tdnaSelections"
             :agroStrains="agroStrains"
             :removeConstruct="removeConstruct"
+            :userIsAdmin="isAdmin"
           />
           <b-button @click="addConstruct" class="add-construct-button"
             >Add Another Construct</b-button

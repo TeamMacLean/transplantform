@@ -138,9 +138,13 @@ router.post('/login', async (req, res) => {
         }
 
         const adminDocs = await Admin.find({}).sort({ date: 'descending' });
+
         const admins = adminDocs
           .filter((admin) => !admin.archived)
           .map((admin) => admin.name);
+
+        // console.log('admins are:', admins);
+
         const userIsAdmin = admins.includes(reqBodyUsername);
 
         const allLdapGroups = await Group.find({}).sort({ date: 'descending' });
@@ -499,17 +503,19 @@ router.post('/form/delete', async (req, res) => {
 
       // send Email to group leader and user and admin
 
-      const emailOptions = getEmailOptions('deletion', {
-        signatoryObj,
-        trfId,
-        username,
-      });
-      console.log('email options when deleting a TRF form', emailOptions);
-      const emailResults = await sendEmail(emailOptions).catch((err) => {
-        console.error('email failed', err);
-        res.send({ status: 200, error: err });
-      });
-      console.log('email sent', emailResults);
+      // NO LONGER NEEDED 16-Jan-2023
+
+      // const emailOptions = getEmailOptions('deletion', {
+      //   signatoryObj,
+      //   trfId,
+      //   username,
+      // });
+      // console.log('email options when deleting a TRF form', emailOptions);
+      // const emailResults = await sendEmail(emailOptions).catch((err) => {
+      //   console.error('email failed', err);
+      //   res.send({ status: 200, error: err });
+      // });
+      // console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {
@@ -636,17 +642,19 @@ router.post('/form/completed', async (req, res) => {
 
       // send Email to admin (though unnecessary it was requested)
 
-      const emailOptions = getEmailOptions('completed', {
-        trfId,
-        username,
-        completedMsg,
-      });
+      // no longer needed 16-Jan-2023
+
+      // const emailOptions = getEmailOptions('completed', {
+      //   trfId,
+      //   username,
+      //   completedMsg,
+      // });
       // console.log('email options when setting form to completed', emailOptions);
-      const emailResults = await sendEmail(emailOptions).catch((err) => {
-        console.error('email failed', err);
-        res.send({ status: 200, error: err });
-      });
-      console.log('email sent', emailResults);
+      // const emailResults = await sendEmail(emailOptions).catch((err) => {
+      //   console.error('email failed', err);
+      //   res.send({ status: 200, error: err });
+      // });
+      // console.log('email sent', emailResults);
 
       res.send({ status: 200 });
     } else {

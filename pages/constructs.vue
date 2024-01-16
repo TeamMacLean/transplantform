@@ -47,8 +47,8 @@
                 <th style="width: 8%">Signatory</th>
                 <th style="width: 8%">Species</th>
                 <th style="width: 8%">Genotype</th>
-                <th style="width: 8%">Long name</th>
-                <th style="width: 8%">Construct ID</th>
+                <th style="width: 8%">Construct name</th>
+                <th style="width: 8%">TC-code</th>
                 <th style="width: 8%">Binary Vector Backbone</th>
                 <th style="width: 8%">Vector Selection</th>
                 <th style="width: 8%">AgroStrains</th>
@@ -235,7 +235,7 @@ export default {
     },
     downloadCSVData() {
       let csv =
-        'ID,Date,Username,Signatory,Species,Genotype,Long Name,Construct ID,Binary Vector Backbone,Vector Selection,AgroStrain,T-DNA Selection\n';
+        'ID,Date,Username,Signatory,Species,Genotype,Construct Name,TC-code,Binary Vector Backbone,Vector Selection,AgroStrain,T-DNA Selection\n';
       this.displayResults.forEach((construct) => {
         csv +=
           construct.trfId +
