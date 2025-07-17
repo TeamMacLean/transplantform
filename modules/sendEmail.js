@@ -14,10 +14,18 @@ const sendEmail = async (mailObj) => {
   }
 
   try {
-    let transporter = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
-    });
+    let transporter = nodemailer.createTransport(
+      smtpTransport({
+        host: emailConfig.host,
+        port: emailConfig.port,
+        // Add other SMTP options here if necessary (e.g., secure, auth)
+        secure: false,
+        tls: {
+          rejectUnauthorized: false,
+        },
+      })
+    );
+
     // console.log('about to send message', mailObj);
 
     const finalTo = Array.isArray(to) ? [...to] : [to];
